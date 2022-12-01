@@ -10,7 +10,13 @@
 
     <link href="{{ url_for('static', filename='css/style.css' ) }} " rel="stylesheet">
     
-    <title>Battleborn Mobile</title>
+
+    {% if title %}
+        <title>Battleborn Mobile - {{ title }}</title>
+    {% else %}
+        <title>Battleborn Mobile</title>
+    {% endif %}
+        
 </head>
 <body>
   <div>

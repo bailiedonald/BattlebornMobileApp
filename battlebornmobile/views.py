@@ -21,7 +21,8 @@ def user(name):
 #Scheduler
 @app.route('/scheduler')
 def scheduler():
-    return render_template("scheduler.html", appointmnet_requests = appointmnet_requests)
+    return render_template("scheduler.html")
+    # , appointmnet_requests = appointmnet_requests)
 
 #Services
 @app.route('/services')
@@ -33,12 +34,28 @@ def services():
 def contact():
     return render_template("contact.html")
 
-#Login Page
-@app.route('/login')
-def login():
-    return render_template("login.html")
-
 #Layout
 @app.route('/layout')
 def layout():
     return render_template("layout.html")
+
+#Registration Page
+@app.route("/registration", methods=['GET', 'POST'])
+def registstration():
+    form = RegistrationForm()
+    if form.validate_on_submit():
+        flash(f'Account created for {form.username.data}!', 'success')
+        return redirect(url_for('home'))
+    return render_template('regististration.html', title='Register', form=form)
+
+#Login Page
+@app.route("/login", methods=['GET', 'POST'])
+def login():
+    form = LoginForm()
+    if form.validate_on_submit():
+        if form.email.data == 'admin@blog.com' and form.password.data == 'password':
+            flash('You have been logged in!', 'success')
+            return redirect(url_for('home'))
+        else:
+            flash('Login Unsuccessful. Please check username and password', 'danger')
+    return render_template('login.html', title='Login', form=form)
