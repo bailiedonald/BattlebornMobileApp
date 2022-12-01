@@ -1,43 +1,9 @@
-from flask import Flask, render_template, flash
-from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField
-from wtforms.validators import DataRequired
-from flask_sqlalchemy import SQLAlchemy
-from datetime import datetime
+from flask import render_template, url_for, flash, redirect
+from battlebornmobile import app
+from battlebornmobile.forms import RegistrationForm, LoginForm
+from battlebornmobile.models import User
 
-
-#Create FlaskInstance
-app = Flask(__name__)
-
-# Secret Key
-app.config['SECRET_KEY'] = "Super Secret Password"
-
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:@localhost:5432/battleborn'
-
-
-
-#Initailize Database
-db = SQLAlchemy(app)
-
-#Create db Model
-class Friends(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(200), nullable=False)
-    date_created = db.Column(db.DateTime, default=datetime.utcnow)
-    # Create a Function to return a string
-    def __repr__(self):
-        return '<Name %r>' % self.id
-
-class User(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(80), unique=True, nullable=False)
-    email = db.Column(db.String(120), unique=True, nullable=False)
-
-    def __repr__(self):
-        return '<User %r>' % self.username
-
-
-#Route Decorators
+#Home Page
 @app.route('/')
 def index():
     return render_template("index.html")

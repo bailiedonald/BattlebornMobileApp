@@ -1,18 +1,21 @@
-from flask import Flask, render_template, flash
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField
-from wtforms.validators import DataRequired
-from flask_sqlalchemy import SQLAlchemy
-from datetime import datetime
+from wtforms import StringField, PasswordField, SubmitField, BooleanField
+from wtforms.validators import DataRequired, Length, Email, EqualTo
 
 
-# Create a form Class
-class UserForm(FlaskForm):
-    username = StringField("Name", validators=[DataRequired()])
-    email = StringField("Email", validators=[DataRequired()])
-    submit = SubmitField("Submit")
+class RegistrationForm(FlaskForm):
+    username = StringField('Username',
+                           validators=[DataRequired(), Length(min=2, max=20)])
+    email = StringField('Email',
+                        validators=[DataRequired(), Email()])
+    password = PasswordField('Password', validators=[DataRequired()])
+    confirm_password = PasswordField('Confirm Password',
+                                     validators=[DataRequired(), EqualTo('password')])
+    submit = SubmitField('Sign Up')
 
-# Create a form Class
-class NameForm(FlaskForm):
-    name = StringField("What is your name?", validators=[DataRequired()])
-    submit = SubmitField("Submit")
+
+class LoginForm(FlaskForm):
+    email = StringField('Email', validators=[DataRequired(), Email()])
+    password = PasswordField('Password', validators=[DataRequired()])
+    remember = BooleanField('Remember Me')
+    submit = SubmitField('Login')

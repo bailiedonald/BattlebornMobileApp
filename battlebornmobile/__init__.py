@@ -6,4 +6,4 @@ app.config['SECRET_KEY'] = 'Super Secret Password'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///battleborn.db'
 db = SQLAlchemy(app)
 
-from app import views
+from battlebornmobile import views
