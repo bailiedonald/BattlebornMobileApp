@@ -1,6 +1,6 @@
-from flask import render_template, url_for, flash, redirect
+from flask import render_template, url_for, flash, redirect, request
 from battlebornmobile import app, db, bcrypt
-from battlebornmobile.forms import RegistrationForm, LoginForm
+from battlebornmobile.forms import SignUpForm, LoginForm
 from battlebornmobile.models import User
 from flask_login import login_user, current_user, logout_user, login_required
 
@@ -41,12 +41,12 @@ def contact():
 def layout():
     return render_template("layout.html")
 
-#Registration Page
-@app.route("/register", methods=['GET', 'POST'])
-def register():
+#Sign Up Page
+@app.route("/signup", methods=['GET', 'POST'])
+def signup():
     if current_user.is_authenticated:
         return redirect(url_for('home'))
-    form = RegistrationForm()
+    form = SignUpForm()
     if form.validate_on_submit():
         hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
         user = User(username=form.username.data, email=form.email.data, password=hashed_password)
@@ -54,7 +54,7 @@ def register():
         db.session.commit()
         flash('Your account has been created! You are now able to log in', 'success')
         return redirect(url_for('login'))
-    return render_template('register.html', title='Register', form=form)
+    return render_template('signup.html', title='Sign Up', form=form)
 
 #Login Page
 @app.route("/login", methods=['GET', 'POST'])
