@@ -21,7 +21,7 @@ def user(name):
     return render_template("user.html", name=name)
 
 #Scheduler
-@app.route('/scheduler')
+@app.route('/staff/scheduler')
 def scheduler():
     return render_template("scheduler.html")
     # , appointmnet_requests = appointmnet_requests)
