@@ -20,12 +20,6 @@ def about():
 def user(name):
     return render_template("user.html", name=name)
 
-#Scheduler
-@app.route('/staff/scheduler')
-def scheduler():
-    return render_template("scheduler.html")
-    # , appointmnet_requests = appointmnet_requests)
-
 #Services
 @app.route('/services')
 def services():
@@ -72,22 +66,6 @@ def login():
             flash('Login Unsuccessful. Please check email and password', 'danger')
     return render_template('login.html', title='Login', form=form)
 
-#Customer Login Page
-@app.route("/staff/login", methods=['GET', 'POST'])
-def stafflogin():
-    if current_user.is_authenticated:
-        return redirect(url_for('index'))
-    form = LoginForm()
-    if form.validate_on_submit():
-        user = User.query.filter_by(email=form.email.data).first()
-        if user and bcrypt.check_password_hash(user.password, form.password.data):
-            login_user(user, remember=form.remember.data)
-            next_page = request.args.get('next')
-            return redirect(next_page) if next_page else redirect(url_for('index'))
-        else:
-            flash('Login Unsuccessful. Please check email and password', 'danger')
-    return render_template('stafflogin.html', title='Staff Login', form=form)
-
 #Logout Page
 @app.route("/logout")
 def logout():
@@ -106,3 +84,30 @@ def account():
 @login_required
 def appointment():
     return render_template('appointment.html', title='AppointmentRequest')
+
+
+#Staff Login Page
+@app.route("/staff/login", methods=['GET', 'POST'])
+def stafflogin():
+    if current_user.is_authenticated:
+        return redirect(url_for('staffdashboard'))
+    form = LoginForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data).first()
+        if user and bcrypt.check_password_hash(user.password, form.password.data):
+            login_user(user, remember=form.remember.data)
+            next_page = request.args.get('next')
+            return redirect(next_page) if next_page else redirect(url_for('index'))
+        else:
+            flash('Login Unsuccessful. Please check email and password', 'danger')
+    return render_template('stafflogin.html', title='Staff Login', form=form)
+
+#Staff Dashboard
+@app.route('/staff/staffdashboard')
+def staffdashboard():
+    return render_template("staffdashboard.html")
+
+#Scheduler
+@app.route('/staff/scheduler')
+def scheduler():
+    return render_template("scheduler.html")
