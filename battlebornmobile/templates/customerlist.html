@@ -1,0 +1,14 @@
+{% extends 'layout.html' %}
+{% block content %}
+<a class="ml-2" href="{{ url_for('staffdashboard') }}">Staff Dashboard</a>
+<h1>Customer List</h1>
+<p>
+    display a list of all users from the database that staff can update.
+    <ol>
+        <li>Customer 1</li>
+        <li>Customer 2</li>
+        <li>Customer 3</li>
+    </ol>
+</p>
+
+{% endblock %}

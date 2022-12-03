@@ -1,6 +1,6 @@
 from flask import render_template, url_for, flash, redirect, request
 from battlebornmobile import app, db, bcrypt
-from battlebornmobile.forms import SignUpForm, LoginForm
+from battlebornmobile.forms import SignUpForm, LoginForm, StaffLoginForm
 from battlebornmobile.models import User
 from flask_login import login_user, current_user, logout_user, login_required
 
@@ -89,15 +89,11 @@ def appointment():
 #Staff Login Page
 @app.route("/staff/login", methods=['GET', 'POST'])
 def stafflogin():
-    if current_user.is_authenticated:
-        return redirect(url_for('staffdashboard'))
-    form = LoginForm()
+    form = StaffLoginForm()
     if form.validate_on_submit():
-        user = User.query.filter_by(email=form.email.data).first()
-        if user and bcrypt.check_password_hash(user.password, form.password.data):
-            login_user(user, remember=form.remember.data)
-            next_page = request.args.get('next')
-            return redirect(next_page) if next_page else redirect(url_for('index'))
+        if form.email.data == 'admin@battleborn.com' and form.password.data == 'Bighorn775':
+            flash('You have been logged in!', 'success')
+            return redirect(url_for('staffdashboard'))
         else:
             flash('Login Unsuccessful. Please check email and password', 'danger')
     return render_template('stafflogin.html', title='Staff Login', form=form)
@@ -111,3 +107,8 @@ def staffdashboard():
 @app.route('/staff/scheduler')
 def scheduler():
     return render_template("scheduler.html")
+
+#Customer List
+@app.route('/staff/customerlist')
+def customerlist():
+    return render_template("customerlist.html")
