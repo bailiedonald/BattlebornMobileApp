@@ -85,7 +85,7 @@ class Service(db.Model, UserMixin):
     ServiceID = db.Column(db.Integer, primary_key=True)
     ServiceType = db.Column(db.String(25), nullable=False)
     ServiceDatePerformed = db.Column(db.Date, nullable=False)
-    ServiceCost = db.Column(db.model, nullable=False)
+    ServiceCost = db.Column(db.Integer, nullable=False)
     ServicePaymentSatus = db.Column(db.Boolean, nullable=False)
 
     def __repr__(self):
