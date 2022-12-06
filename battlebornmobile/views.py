@@ -1,6 +1,6 @@
 from flask import render_template, url_for, flash, redirect, request
 from battlebornmobile import app, db, bcrypt
-from battlebornmobile.forms import SignUpForm, LoginForm, StaffLoginForm
+from battlebornmobile.forms import SignUpForm, LoginForm, StaffLoginForm, StaffSignUpForm 
 from battlebornmobile.models import User, Staff, Customer
 from flask_login import login_user, current_user, logout_user, login_required
 
@@ -91,7 +91,7 @@ def appointment():
 def staffsignup():
     if current_user.is_authenticated:
         return redirect(url_for('index'))
-    form = SignUpForm()
+    form = StaffSignUpForm()
     if form.validate_on_submit():
         hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
         user = Staff(username=form.username.data, email=form.email.data, password=hashed_password)
@@ -115,7 +115,7 @@ def stafflogin():
             return redirect(next_page) if next_page else redirect(url_for('index'))
         else:
             flash('Login Unsuccessful. Please check email and password', 'danger')
-    return render_template('login.html', title='Login', form=form)
+    return render_template('stafflogin.html', title='Login', form=form)
 
 
 #Staff Dashboard
