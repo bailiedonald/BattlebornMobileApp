@@ -3,3 +3,4 @@ testing my commit
 
 if User.query.filter_by(can_view_records=True).first().can_view_records then edit stuff
  
+testing
