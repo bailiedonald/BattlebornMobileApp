@@ -86,21 +86,21 @@ def appointment():
     return render_template('appointment.html', title='AppointmentRequest')
 
 
-# #Staff Login Page
-# @app.route("/staff/login", methods=['GET', 'POST'])
-# def stafflogin():
-#     if current_user.is_authenticated:
-#         return redirect(url_for('index'))
-#     form = StaffLoginForm()
-#     if form.validate_on_submit():
-#         user = StaffLogin.query.filter_by(email=form.email.data).first()
-#         if user and bcrypt.check_password_hash(user.password, form.password.data):
-#             login_user(user, remember=form.remember.data)
-#             next_page = request.args.get('next')
-#             return redirect(next_page) if next_page else redirect(url_for('staffdashboard'))
-#         else:
-#             flash('Login Unsuccessful. Please check email and password', 'danger')
-#     return render_template('stafflogin.html', title='Login', form=form)
+#Staff Login Page
+@app.route("/staff/login", methods=['GET', 'POST'])
+def stafflogin():
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
+    form = StaffLoginForm()
+    if form.validate_on_submit():
+        user = StaffLogin.query.filter_by(email=form.email.data).first()
+        if user and bcrypt.check_password_hash(user.password, form.password.data):
+            login_user(user, remember=form.remember.data)
+            next_page = request.args.get('next')
+            return redirect(next_page) if next_page else redirect(url_for('staffdashboard'))
+        else:
+            flash('Login Unsuccessful. Please check email and password', 'danger')
+    return render_template('stafflogin.html', title='Login', form=form)
 
 
 #Staff Dashboard

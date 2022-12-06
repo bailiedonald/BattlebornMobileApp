@@ -10,7 +10,7 @@ def load_user(user_id):
 
 
 class User(db.Model, UserMixin):
-    CustomerID = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(50), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     image_file = db.Column(db.String(20), nullable=False, default='default.jpg')
@@ -21,9 +21,8 @@ class User(db.Model, UserMixin):
     PhoneNumber = db.Column(db.Integer)
     can_view_records = db.Column(db.Boolean, default=False, nullable=False)
 
-
     def __repr__(self):
-        return f"User('{self.CustomerID}','{self.username}', '{self.email}', '{self.image_file}')"
+        return f"User('{self.user_id}','{self.username}', '{self.email}', '{self.image_file}')"
 
 
 class Pet(db.Model, UserMixin):
