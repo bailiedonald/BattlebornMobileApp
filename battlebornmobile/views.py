@@ -1,6 +1,6 @@
 from flask import render_template, url_for, flash, redirect, request
 from battlebornmobile import app, db, bcrypt
-from battlebornmobile.forms import SignUpForm, LoginForm, StaffLoginForm, StaffSignUpForm 
+from battlebornmobile.forms import SignUpForm, LoginForm, StaffLoginForm
 from battlebornmobile.models import User, Pet
 from flask_login import login_user, current_user, logout_user, login_required
 
@@ -43,7 +43,7 @@ def signup():
     form = SignUpForm()
     if form.validate_on_submit():
         hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
-        user = CustomerLogin(username=form.username.data, email=form.email.data, password=hashed_password)
+        user = User(username=form.username.data, email=form.email.data, password=hashed_password)
         db.session.add(user)
         db.session.commit()
         flash('Your account has been created! You are now able to log in', 'success')
@@ -57,7 +57,7 @@ def login():
         return redirect(url_for('index'))
     form = LoginForm()
     if form.validate_on_submit():
-        user = CustomerLogin.query.filter_by(email=form.email.data).first()
+        user = User.query.filter_by(email=form.email.data).first()
         if user and bcrypt.check_password_hash(user.password, form.password.data):
             login_user(user, remember=form.remember.data)
             next_page = request.args.get('next')
@@ -85,21 +85,6 @@ def account():
 def appointment():
     return render_template('appointment.html', title='AppointmentRequest')
 
-
-# #Staff Sign Up Page
-# @app.route("/staff/signup", methods=['GET', 'POST'])
-# def staffsignup():
-#     if current_user.is_authenticated:
-#         return redirect(url_for('index'))
-#     form = StaffSignUpForm()
-#     if form.validate_on_submit():
-#         hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
-#         user = StaffLogin(username=form.username.data, email=form.email.data, password=hashed_password)
-#         db.session.add(user)
-#         db.session.commit()
-#         flash('Your account has been created! You are now able to log in', 'success')
-#         return redirect(url_for('stafflogin'))
-#     return render_template('staffsignup.html', title='Sign Up', form=form)
 
 # #Staff Login Page
 # @app.route("/staff/login", methods=['GET', 'POST'])
