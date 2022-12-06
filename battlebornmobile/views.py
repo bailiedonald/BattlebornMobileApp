@@ -1,7 +1,7 @@
 from flask import render_template, url_for, flash, redirect, request
 from battlebornmobile import app, db, bcrypt
 from battlebornmobile.forms import SignUpForm, LoginForm, StaffLoginForm, StaffSignUpForm 
-from battlebornmobile.models import User, Staff, Customer
+from battlebornmobile.models import User, StaffLogin, CustomerLogin
 from flask_login import login_user, current_user, logout_user, login_required
 
 
@@ -43,7 +43,7 @@ def signup():
     form = SignUpForm()
     if form.validate_on_submit():
         hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
-        user = Customer(username=form.username.data, email=form.email.data, password=hashed_password)
+        user = CustomerLogin(username=form.username.data, email=form.email.data, password=hashed_password)
         db.session.add(user)
         db.session.commit()
         flash('Your account has been created! You are now able to log in', 'success')
@@ -57,7 +57,7 @@ def login():
         return redirect(url_for('index'))
     form = LoginForm()
     if form.validate_on_submit():
-        user = Customer.query.filter_by(email=form.email.data).first()
+        user = CustomerLogin.query.filter_by(email=form.email.data).first()
         if user and bcrypt.check_password_hash(user.password, form.password.data):
             login_user(user, remember=form.remember.data)
             next_page = request.args.get('next')
@@ -94,7 +94,7 @@ def staffsignup():
     form = StaffSignUpForm()
     if form.validate_on_submit():
         hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
-        user = Staff(username=form.username.data, email=form.email.data, password=hashed_password)
+        user = StaffLogin(username=form.username.data, email=form.email.data, password=hashed_password)
         db.session.add(user)
         db.session.commit()
         flash('Your account has been created! You are now able to log in', 'success')
@@ -108,7 +108,7 @@ def stafflogin():
         return redirect(url_for('index'))
     form = StaffLoginForm()
     if form.validate_on_submit():
-        user = Staff.query.filter_by(email=form.email.data).first()
+        user = StaffLogin.query.filter_by(email=form.email.data).first()
         if user and bcrypt.check_password_hash(user.password, form.password.data):
             login_user(user, remember=form.remember.data)
             next_page = request.args.get('next')

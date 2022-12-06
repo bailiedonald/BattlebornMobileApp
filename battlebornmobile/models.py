@@ -19,56 +19,55 @@ class User(db.Model, UserMixin):
     def __repr__(self):
         return f"User('{self.username}', '{self.email}', '{self.image_file}')"
 
-class Customer(db.Model, UserMixin):
-    CustomerID = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(20), unique=True, nullable=False)
-    email = db.Column(db.String(120), unique=True, nullable=False)
-    image_file = db.Column(db.String(20), nullable=False, default='default.jpg')
-    password = db.Column(db.String(60), nullable=False)
-    CustomerFirstName = db.Column(db.String(30), nullable=False)
-    CustomerLastName = db.Column(db.String(30), nullable=False)
-    CustomerDOB = db.Column(db.Integer, nullable=False)
-    CustomerPhoneNumber = db.Column(db.Integer)
-
-    def __repr__(self):
-        return f"Customer('{self.CustomerID}','{self.username}', '{self.email}', '{self.CustomerLastName}', '{self.CustomerFirstName}''{self.CustomerDOB}','{self.CustomerPhoneNumber}')"
-
-# class CustomerLogin(db.Model, UserMixin):      
-#     id = db.Column(db.Integer, primary_key=True)
-#     username = db.Column(db.String(20))
+# class Customer(db.Model, UserMixin):
+#     CustomerID = db.Column(db.Integer, primary_key=True)
+#     username = db.Column(db.String(20), unique=True, nullable=False)
 #     email = db.Column(db.String(120), unique=True, nullable=False)
 #     image_file = db.Column(db.String(20), nullable=False, default='default.jpg')
 #     password = db.Column(db.String(60), nullable=False)
+#     CustomerFirstName = db.Column(db.String(30), nullable=True)
+#     CustomerLastName = db.Column(db.String(30), nullable=True)
+#     CustomerDOB = db.Column(db.Integer, nullable=True)
+#     CustomerPhoneNumber = db.Column(db.Integer)
 
 #     def __repr__(self):
-#         return f"CustomerLogin('{self.username}', '{self.email}', '{self.image_file}')"
+#         return f"Customer('{self.CustomerID}','{self.username}', '{self.email}', '{self.image_file}')"
 
-
-class Staff(db.Model, UserMixin):
-    StaffID = db.Column(db.Integer, primary_key=True)
+class CustomerLogin(db.Model, UserMixin):      
+    id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(20))
     email = db.Column(db.String(120), unique=True, nullable=False)
     image_file = db.Column(db.String(20), nullable=False, default='default.jpg')
     password = db.Column(db.String(60), nullable=False)
-    StaffFirstName = db.Column(db.String(30), nullable=False)
-    StaffLastName = db.Column(db.String(30), nullable=False)
-    StaffDOB = db.Column(db.Integer, nullable=False)
-    StaffEmail = db.Column(db.String(120))
-    StaffPhoneNumber = db.Column(db.Integer)
 
     def __repr__(self):
-        return f"Staff('{self.StaffID}','{self.username}', '{self.email}', '{self.image_file}', '{self.StaffLastName}', '{self.StaffFirstName}''{self.StaffDOB}','{self.StaffPhoneNumber}')"              
+        return f"CustomerLogin('{self.username}', '{self.email}', '{self.image_file}')"
 
 
-# class StaffLogin(db.Model, UserMixin):
-#     id = db.Column(db.Integer, primary_key=True)
+# class Staff(db.Model, UserMixin):
+#     StaffID = db.Column(db.Integer, primary_key=True)
 #     username = db.Column(db.String(20))
 #     email = db.Column(db.String(120), unique=True, nullable=False)
 #     image_file = db.Column(db.String(20), nullable=False, default='default.jpg')
 #     password = db.Column(db.String(60), nullable=False)
+#     StaffFirstName = db.Column(db.String(30), nullable=True)
+#     StaffLastName = db.Column(db.String(30), nullable=True)
+#     StaffDOB = db.Column(db.Integer, nullable=True)
+#     StaffPhoneNumber = db.Column(db.Integer)
 
 #     def __repr__(self):
-#         return f"StaffLogin('{self.username}', '{self.email}', '{self.image_file}')"
+#         return f"Staff('{self.StaffID}','{self.username}', '{self.email}', '{self.image_file}')"              
+
+
+class StaffLogin(db.Model, UserMixin):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(20))
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    image_file = db.Column(db.String(20), nullable=False, default='default.jpg')
+    password = db.Column(db.String(60), nullable=False)
+
+    def __repr__(self):
+        return f"StaffLogin('{self.username}', '{self.email}', '{self.image_file}')"
 
 
 class Pet(db.Model, UserMixin):
