@@ -21,17 +21,21 @@ class User(db.Model, UserMixin):
 
 class Customer(db.Model, UserMixin):
     CustomerID = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(20), unique=True, nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    image_file = db.Column(db.String(20), nullable=False, default='default.jpg')
+    password = db.Column(db.String(60), nullable=False)
     CustomerFirstName = db.Column(db.String(30), nullable=False)
     CustomerLastName = db.Column(db.String(30), nullable=False)
     CustomerDOB = db.Column(db.Integer, nullable=False)
-    CustomerEmail = db.Column(db.String(120))
     CustomerPhoneNumber = db.Column(db.Integer)
 
     def __repr__(self):
-        return f"Customer('{self.CustomerID}', '{self.CustomerLastName}', '{self.CustomerFirstName}''{self.CustomerDOB}','{self.CustomerEmail}','{self.CustomerPhoneNumber}')"
+        return f"Customer('{self.CustomerID}','{self.username}', '{self.email}', '{self.CustomerLastName}', '{self.CustomerFirstName}''{self.CustomerDOB}','{self.CustomerPhoneNumber}')"
 
-class CustomerLogin(db.Model, UserMixin):
-    username = db.Column(db.String(20), primary_key=True)
+class CustomerLogin(db.Model, UserMixin):      
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(20))
     email = db.Column(db.String(120), unique=True, nullable=False)
     image_file = db.Column(db.String(20), nullable=False, default='default.jpg')
     password = db.Column(db.String(60), nullable=False)
@@ -42,6 +46,10 @@ class CustomerLogin(db.Model, UserMixin):
 
 class Staff(db.Model, UserMixin):
     StaffID = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(20))
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    image_file = db.Column(db.String(20), nullable=False, default='default.jpg')
+    password = db.Column(db.String(60), nullable=False)
     StaffFirstName = db.Column(db.String(30), nullable=False)
     StaffLastName = db.Column(db.String(30), nullable=False)
     StaffDOB = db.Column(db.Integer, nullable=False)
@@ -49,11 +57,12 @@ class Staff(db.Model, UserMixin):
     StaffPhoneNumber = db.Column(db.Integer)
 
     def __repr__(self):
-        return f"Staff('{self.StaffID}', '{self.StaffLastName}', '{self.StaffFirstName}''{self.StaffDOB}','{self.StaffEmail}','{self.StaffPhoneNumber}')"              
+        return f"Staff('{self.StaffID}','{self.username}', '{self.email}', '{self.image_file}', '{self.StaffLastName}', '{self.StaffFirstName}''{self.StaffDOB}','{self.StaffPhoneNumber}')"              
 
 
 class StaffLogin(db.Model, UserMixin):
-    username = db.Column(db.String(20), primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(20))
     email = db.Column(db.String(120), unique=True, nullable=False)
     image_file = db.Column(db.String(20), nullable=False, default='default.jpg')
     password = db.Column(db.String(60), nullable=False)
