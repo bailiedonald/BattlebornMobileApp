@@ -111,3 +111,8 @@ def staffdashboard():
 @app.route('/staff/scheduler')
 def scheduler():
     return render_template("scheduler.html")
+
+#Customer List
+@app.route('/staff/customerlist')
+def customerlist():
+    return render_template("customerlist.html")
