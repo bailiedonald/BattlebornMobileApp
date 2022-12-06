@@ -82,28 +82,28 @@ class Pet(db.Model, UserMixin):
     def __repr__(self):
         return f"Pet('{self.PetID}', '{self.PetName}', '{self.PetSpecies}', '{self.PetBreed}','{self.PetHeight}','{self.PetWeight}')"
 
-class Records(db.Model, UserMixin):
-    RecordID = db.Column(db.Integer, primary_key=True)
-    RecordType = db.Column(db.String(25), nullable=False)
-    DateEntered = db.Column(db.Date, nullable=False)
+# class Records(db.Model, UserMixin):
+#     RecordID = db.Column(db.Integer, primary_key=True)
+#     RecordType = db.Column(db.String(25), nullable=False)
+#     DateEntered = db.Column(db.Date, nullable=False)
 
-    def __repr__(self):
-        return f"Records('{self.RecordID}', '{self.RecordType}', '{self.DateEntered}')"
+#     def __repr__(self):
+#         return f"Records('{self.RecordID}', '{self.RecordType}', '{self.DateEntered}')"
 
-class Service(db.Model, UserMixin):
-    ServiceID = db.Column(db.Integer, primary_key=True)
-    ServiceType = db.Column(db.String(25), nullable=False)
-    ServiceDatePerformed = db.Column(db.Date, nullable=False)
-    ServiceCost = db.Column(db.Integer, nullable=False)
-    ServicePaymentSatus = db.Column(db.Boolean, nullable=False)
+# class Service(db.Model, UserMixin):
+#     ServiceID = db.Column(db.Integer, primary_key=True)
+#     ServiceType = db.Column(db.String(25), nullable=False)
+#     ServiceDatePerformed = db.Column(db.Date, nullable=False)
+#     ServiceCost = db.Column(db.Integer, nullable=False)
+#     ServicePaymentSatus = db.Column(db.Boolean, nullable=False)
 
-    def __repr__(self):
-        return f"Service('{self.ServiceID}', '{self.ServiceType}', '{self.ServiceDatePerformed}', '{self.ServiceCost}','{self.ServicePaymentSatus}')"
+#     def __repr__(self):
+#         return f"Service('{self.ServiceID}', '{self.ServiceType}', '{self.ServiceDatePerformed}', '{self.ServiceCost}','{self.ServicePaymentSatus}')"
 
 
-class InsuranceProviders(db.Model, UserMixin):
-    InsuranceID = db.Column(db.Integer, primary_key=True)
-    CompanyName = db.Column(db.String(25), nullable=False)
+# class InsuranceProviders(db.Model, UserMixin):
+#     InsuranceID = db.Column(db.Integer, primary_key=True)
+#     CompanyName = db.Column(db.String(25), nullable=False)
 
-    def __repr__(self):
-        return f"InsuranceProviders('{self.InsuranceID}', '{self.CompanyName}')"    
+#     def __repr__(self):
+#         return f"InsuranceProviders('{self.InsuranceID}', '{self.CompanyName}')"    
