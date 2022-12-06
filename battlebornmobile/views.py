@@ -86,21 +86,6 @@ def appointment():
     return render_template('appointment.html', title='AppointmentRequest')
 
 
-# #Staff Sign Up Page
-# @app.route("/staff/signup", methods=['GET', 'POST'])
-# def staffsignup():
-#     if current_user.is_authenticated:
-#         return redirect(url_for('index'))
-#     form = StaffSignUpForm()
-#     if form.validate_on_submit():
-#         hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
-#         user = StaffLogin(username=form.username.data, email=form.email.data, password=hashed_password)
-#         db.session.add(user)
-#         db.session.commit()
-#         flash('Your account has been created! You are now able to log in', 'success')
-#         return redirect(url_for('stafflogin'))
-#     return render_template('staffsignup.html', title='Sign Up', form=form)
-
 # #Staff Login Page
 # @app.route("/staff/login", methods=['GET', 'POST'])
 # def stafflogin():
