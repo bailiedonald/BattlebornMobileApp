@@ -62,3 +62,11 @@ class Pet(db.Model, UserMixin):
 
 #     def __repr__(self):
 #         return f"InsuranceProviders('{self.InsuranceID}', '{self.CompanyName}')"    
+
+
+class Appointment(db.Model, UserMixin):
+    AppointmentID = db.Column(db.Integer, primary_key=True)
+    Status = db.Column(db.Boolean, nullable=False)
+
+    def __repr__(self):
+        return f"Appointment('{self.AppointmentID}', '{self.Status}')"  
