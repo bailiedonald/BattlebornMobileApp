@@ -1,6 +1,6 @@
 var cal = {
     
-    mon : false, 
+    mon : true, 
     events : null, 
     sMth : 0, 
     sYear : 0, 
