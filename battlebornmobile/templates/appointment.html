@@ -62,10 +62,14 @@ input[type=submit]:hover {
 }
 </style>
 
+<script type="text/javascript">
+    function clicked() 
+    {
+        alert('clicked');
+    }
+</script>
+
 <div class="container">
-  <div style="text-align:center">
-    <h3>Hello {{ current_user.username | capitalize }} Make An Appointment Request</h3>
-  </div>
   <div class="row">
     <div class="column">
       <img src="/static/images/bmvhlogo.jpeg" style="width:100%">
@@ -86,7 +90,7 @@ input[type=submit]:hover {
         </select>
         <label for="subject">Discription</label>
         <textarea id="subject" name="subject" placeholder="Write something.." style="height:50px"></textarea>
-        <a href="/" target="_blank"><button type="button" class="btn btn-success">Submit </button></a>
+        <a href="/account" target="_blank"><button type="button" class="btn btn-success" onclick="return confirm('Your Request Has Been Submitted')">Submit </button></a>
       </form>
     </div>
   </div>
