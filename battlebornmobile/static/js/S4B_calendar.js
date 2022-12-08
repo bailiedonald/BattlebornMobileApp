@@ -86,27 +86,7 @@ var cal = {
       // (C5) LOAD & DRAW CALENDAR
       cal.load();
     },
-  
-    // (D) LOAD EVENTS
-    load : () => {
-      // (D1) SET SELECTED PERIOD
-      cal.sMth = parseInt(cal.hMth.value);
-      cal.sYear = parseInt(cal.hYear.value);
-      cal.sDIM = new Date(cal.sYear, cal.sMth, 0).getDate();
-      cal.sFD = new Date(cal.sYear, cal.sMth-1, 1).getDay();
-      cal.sLD = new Date(cal.sYear, cal.sMth-1, cal.sDIM).getDay();
-      let m = cal.sMth;
-      if (m < 10) { m = "0" + m; }
-      cal.sF = parseInt(String(cal.sYear) + String(m) + "010000");
-      cal.sL = parseInt(String(cal.sYear) + String(m) + String(cal.sDIM) + "2359");
-  
-      // (D2) AJAX GET EVENTS
-      cal.ajax("get", { month : cal.sMth, year : cal.sYear }, evt => {
-        cal.events = JSON.parse(evt);
-        cal.draw();
-      });
-    },
-  
+
     // (E) DRAW CALENDAR
     draw : () => {
       // (E1) CALCULATE DAY MONTH YEAR
@@ -207,7 +187,26 @@ var cal = {
         }
       }}
     },
-  
+      // (D) LOAD EVENTS
+      load : () => {
+        // (D1) SET SELECTED PERIOD
+        cal.sMth = parseInt(cal.hMth.value);
+        cal.sYear = parseInt(cal.hYear.value);
+        cal.sDIM = new Date(cal.sYear, cal.sMth, 0).getDate();
+        cal.sFD = new Date(cal.sYear, cal.sMth-1, 1).getDay();
+        cal.sLD = new Date(cal.sYear, cal.sMth-1, cal.sDIM).getDay();
+        let m = cal.sMth;
+        if (m < 10) { m = "0" + m; }
+        cal.sF = parseInt(String(cal.sYear) + String(m) + "010000");
+        cal.sL = parseInt(String(cal.sYear) + String(m) + String(cal.sDIM) + "2359");
+    
+        // (D2) AJAX GET EVENTS
+        cal.ajax("get", { month : cal.sMth, year : cal.sYear }, evt => {
+          cal.events = JSON.parse(evt);
+          cal.draw();
+        });
+      },
+    
     // (F) SHOW EVENT FORM
     show : id => {
       if (id) {
