@@ -25,7 +25,7 @@ def user(name):
 def services():
     return render_template("services.html")
 
-#Services
+#Contact
 @app.route('/contact')
 def contact():
     return render_template("contact.html")
@@ -108,12 +108,39 @@ def stafflogin():
 def staffdashboard():
     return render_template("staffdashboard.html")
 
+appointmnet_requests = [
+    {
+        'customer': 'Hagrid',
+        'service': 'Neutering and Vaccines',
+        'pet_name': 'Fluffy',
+        'date_requested': 'December 20, 2022'
+    },
+    {
+        'customer': 'Harry',
+        'service': 'Wings clipped',
+        'pet_name': 'Hedwig',
+        'date_requested': 'December 15, 2018'
+    },
+    {
+        'customer': 'Ron',
+        'service': 'Rabbies Vacine',
+        'pet_name': 'Scabbers',
+        'date_requested': 'December 17, 2022'
+    }
+
+]
+
 #Scheduler
 @app.route('/staff/scheduler')
 def scheduler():
-    return render_template("scheduler.html")
+    return render_template("scheduler.html", appointmnet_requests = appointmnet_requests)
 
 #Customer List
 @app.route('/staff/customerlist')
 def customerlist():
     return render_template("customerlist.html")
+
+#Confirm Appointments
+@app.route('/staff/appointments')
+def cconfirmappointments():
+    return render_template("confirmappointment.html")
