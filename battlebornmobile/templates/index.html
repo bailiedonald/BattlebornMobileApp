@@ -1,7 +1,174 @@
 {% extends 'layout.html' %}
-
 {% block content %}
-    <div>
+
+
+<!--Images/Title-->
+
+<div id="slides" class="carousel slide" data-ride="carousel">
+    <ul class="carousel-indicators">
+        <li data-target="#slides" data-slide-to="0" class="active"></li>
+        <li data-target="#slides" data-slide-to="1"></li>
+        <li data-target="#slides" data-slide-to="2"></li>
+    </ul>
+    <div class="carousel-inner">
+        <div class="carousel-item active">
+            <img src={{ url_for('static', filename='images/cat-dog.jpg' ) }}>
+            <div class="carousel-caption">
+                <h1 class="display-1">BattleBorn Mobile Veterinary Hospital</h1>
+                <button type="button" class="btn btn-outline-light btn-lg">MAKE APPOINTMENT</button>
+            </div>
+        </div>
+        <div class="carousel-item">
+            <img src={{ url_for('static', filename='images/vets.jpg' ) }}>
+            <div class="carousel-caption">
+                <h1 class="display-2">BattleBorn Mobile Veterinary Hospital</h1>
+
+                <button type="button" class="btn btn-outline-light btn-lg">MAKE APPOINTMENT</button>
+            </div>
+        </div>
+        <div class="carousel-item">
+            <img src={{ url_for('static', filename='images/horse-dog2.jpg' ) }}>
+            <div class="carousel-caption">
+                <h1 class="display-2">BattleBorn Mobile Veterinary Hospital</h1>
+
+                <button type="button" class="btn btn-outline-light btn-lg">MAKE APPOINTMENT</button>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+<!--
+<div class="container-fluid">
+    <div class="row jumbotron">
+        <div class="col-xs-12 col-sm-12 col-md-9 col-lg-9 col-xl-10">
+
+        </div>
+    </div>
+</div>
+-->
+
+<!--Opening Messages-->
+<div class="container-fluid padding">
+<div class="row welcome text-center">
+    <div class="col-12">
+        <h1 class="display-4">Supporting Healthy Animals.</h1>
+    </div>
+
+    <div class="col-12">
+        <p class="lead">Here at BattleBorn Vet we offer compassionate care along with personal approach. 
+            We know how much your animals mean to you and we are here to help!</p>
+    </div>
+</div>
+</div>
+
+<!--Three Points-->
+<div class="container-fluid padding">
+    <div class="row text-center padding">
+        <div class="col-xs-12 col-sm-6 col-md-4">
+            <i class="fa fa-users" aria-hidden="true"></i>
+            <h3>FAMILY OWNED & OPERATED</h3>
+            <p>Real and visible owners. </p>
+        </div>
+        <div class="col-sm-12 col-md-4">
+            <i class="fa fa-car" aria-hidden="true"></i>
+            <h3>MOBILE SERVICE</h3>
+            <p>We go where you need us most. </p>
+        </div>
+        <div class="col-xs-12 col-sm-6 col-md-4">
+            <i class="fa fa-user-md" aria-hidden="true"></i>
+            <h3>EXPERIENCED VETERINARIANS</h3>
+            <p>Education you can count on. </p>
+        </div>
+    
+    </div>
+    <hr class="my-4">
+    </div>
+
+
+
+<!--Services-->
+<div class="container padding">
+<div class="row justify-content-around padding">
+    <div class="col">
+        <h2>Our Team & What We Do</h2>
+        <p>We are a mobile veterinary service bringing our services stright to your doorstep. No longer having the stress of traveling to the vet on both you and your pet. Keeping you and your pets happy from the comfort of your own home. </p>
+        <p>We aren't your typical vet as we offer a wide range of services for a wide range of animals. Not only do we do house call but also farm calls!</p>
+        <p>Check out our Services page for more details and if you have any questions regarding our services please reach out to us! Also, check out our About Us page to learn more about our team</p>
+        <br>
+        <a href="#" class="btn btn-primary">Learn More</a>
+    </div>
+    <div class="col">
+        <img src={{ url_for('static', filename='images/home-services.jpg' ) }} class="image-fluid">
+    </div>
+</div>
+</div>
+
+<hr class="border">
+
+<!--Background Image
+<figure>
+    <div class="fixed-wrap">
+        <div id="fixed">     
+        </div>
+    </div>
+</figure>
+-->
+
+
+
+<!--Social Media-->
+<div class="container-fluid padding">
+<div class="row text-center padding">
+    <div class="col-12">
+        <h2>Connect</h2>
+
+    </div>
+    <div class="col-12 social padding">
+        <a href="https://www.facebook.com/BattleBornMVH"><i class="fa-brands fa-facebook" ></i></a>
+        <a href="https://twitter.com/mobile_born"><i class="fa-brands fa-twitter" aria-hidden="true"></i></a>
+        <a href="https://www.google.com/search?q=Battleborn+Mobile+Veterinary+Services&rlz=1C1UEAD_enUS998US998&sxsrf=ALiCzsYzO074d7ULKJZGKEkWiCJ5G18z4A%3A1670433662378&ei=fsuQY8jcFrrIkPIP_Je4iAo&ved=0ahUKEwjIk8Soguj7AhU6JEQIHfwLDqEQ4dUDCBA&uact=5&oq=Battleborn+Mobile+Veterinary+Services&gs_lcp=Cgxnd3Mtd2l6LXNlcnAQAzIFCCEQoAEyBQghEKABMgUIIRCgATIFCCEQoAEyBQghEKsCMgUIIRCSAzIFCCEQkgMyBQghEJIDMgUIIRCSAzIFCCEQkgNKBAhBGABKBAhGGABQAFgAYPgHaABwAXgAgAF7iAF7kgEDMC4xmAEAoAECoAEBwAEB&sclient=gws-wiz-serp"><i class="fa-brands fa-google" aria-hidden="true"></i></a>
+    </div>
+
+</div>
+</div>
+
+<!--Footer-->
+<footer>
+    <div class="container-fluid padding">
+        <div class="row text-center">
+            <div class="col-md-4">
+                <img src={{ url_for('static', filename='images/bmvhlogo.jpeg' ) }} width="50" height="50">
+                <hr class="light">
+                <p>(775) 360-6148</p>
+                <p>Matt@Battlebornmvh.com</p>
+                <p>Please allow up to 48 hours for a call back or returned email.</p>
+            </div>
+            <div class="col-md-4">
+                <hr class="light">
+                <h5>Our Hours</h5>
+                <hr class="light">
+                <p>Friday: By appointment only</p>
+                <p>Saturday: By appointment only</p>
+                <p>Sunday: By appointment only</p>
+            </div>
+            <div class="col-md-4">
+                <hr class="light">
+                <h5>Service Area</h5>
+                <hr class="light">
+                <p>Reno, NV</p>
+                <p>Spark, NV</p>
+                <p>Carson City, NV</p>
+                <p>Minden, NV</p>
+            </div>
+            <div class="col-expand-lg">
+                <hr class="light">
+                <h5>&copy; https://battlebornmvh.com </h5>
+            </div>
+        </div>
+    </div>
+</footer>
+<!--      <div>
         <center>
             <h1>Supporting Healthy Animals</h1>
         </center>
@@ -19,6 +186,7 @@
             <h2>Schedule a well-pet appointment today!</h2>
             <h3>(775) 360-6148</h3>
         </center>
-    </div>
-{% endblock %}
+    </div> -->
 
+
+    {% endblock %}
