@@ -142,5 +142,5 @@ def customerlist():
 
 #Confirm Appointments
 @app.route('/staff/appointments')
-def cconfirmappointments():
+def confirmappointments():
     return render_template("confirmappointment.html")
