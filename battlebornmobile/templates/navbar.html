@@ -21,6 +21,7 @@
 </div>
 <!-- Left side of Navbar -->
   <ul class="navbar-nav mr-auto">
+    {% if current_user.is_authenticated == False or current_user.StaffAccess == False %}
     <li class="nav-item">
       <a class="navbar-brand" href="/">Home</a>
     </li>
@@ -33,24 +34,35 @@
     <li class="nav-item">
       <a class="navbar-brand" href="/contact">Contact Us</a>
     </li>
-  </ul>
-<!-- Right side of Navbar -->
-  <ul class="navbar-nav ml-auto">
     <li class="nav-item">
       <a class="navbar-brand" href="/appointment">Make Appointment</a>
     </li>
+    {% endif %}
+  </ul>
+<!-- Right side of Navbar -->
+  <ul class="navbar-nav ml-auto">
     {% if current_user.is_authenticated %}
+      {% if current_user.StaffAccess == False %}
+      <li class="nav-item">
+        <a class="navbar-brand" href="/dashboard">Account</a>
+      </li>
+      {% endif %}
+      {% if current_user.StaffAccess %}
+        <li class="nav-item">
+          <a class="navbar-brand" href="/staff/dashboard">Staff</a>
+        </li>
+        <li class="nav-item">
+          <a class="navbar-brand" href="/staff/scheduler">Schedule Appointments</a>
+        </li>
+     {% endif %}
+     {% if current_user.AdminAccess %}
+     <li class="nav-item">
+       <a class="navbar-brand" href="/admin/dashboard">Admin</a>
+     </li>
+    {% endif %}
     <li class="nav-item">
-      <a class="navbar-brand" href="/logout">Logout</a>
-    </li>
-    <li class="nav-item">
-      <a class="navbar-brand" href="/patient/dashboard">Account</a>
-    </li>
-
-    <li class="nav-item">
-      <a class="navbar-brand" href="/staff/dashboard">Staff</a>
-    </li>
-
+        <a class="navbar-brand" href="/logout">Logout</a>
+      </li>     
     {% else %}
     <li class="nav-item">
       <a class="navbar-brand" href="/login">Login</a>

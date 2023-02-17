@@ -45,7 +45,7 @@ def signup():
         return redirect(url_for('login'))
     return render_template('signup.html', title='Sign Up', form=form)
 
-#Customer Login Page
+#Login Page
 @app.route("/login", methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
@@ -56,7 +56,7 @@ def login():
         if user and bcrypt.check_password_hash(user.password, form.password.data):
             login_user(user, remember=form.remember.data)
             next_page = request.args.get('next')
-            return redirect(next_page) if next_page else redirect(url_for('index'))
+            return redirect(next_page) if next_page else redirect(url_for('dashboard'))
         else:
             flash('Login Unsuccessful. Please check email and password', 'danger')
     return render_template('login.html', title='Login', form=form)
@@ -75,52 +75,35 @@ def appointment():
     return render_template('appointment.html', title='AppointmentRequest')
 
 
-#Staff Login Page
-@app.route("/staff/login", methods=['GET', 'POST'])
-def stafflogin():
-    if current_user.is_authenticated:
-        return redirect(url_for('index'))
-    form = StaffLoginForm()
-    if form.validate_on_submit():
-        user = User.query.filter_by(email=form.email.data).first()
-        if user and bcrypt.check_password_hash(user.password, form.password.data):
-            login_user(user, remember=form.remember.data)
-            next_page = request.args.get('next')
-            return redirect(next_page) if next_page else redirect(url_for('staffdashboard'))
-        else:
-            flash('Login Unsuccessful. Please check email and password', 'danger')
-    return render_template('stafflogin.html', title='Login', form=form)
-
-
-
 #Admin Dashboard
 @app.route('/admin/dashboard')
 @login_required
 def admindashboard():
-    if current_user.AdminAccess == True:
+    admin = current_user.AdminAccess
+    if admin == True:
         return render_template("dashboardadmin.html")
     else:
         flash ("Access Denied Admin Only.")
-        return render_template("index.html")
+        return render_template("dashboard.html")
 
 
-#Patient Dashboard
-@app.route('/patient/dashboard')
+#Main Dashboard
+@app.route('/dashboard')
 @login_required
-def patientdashboard():
-
-    return render_template("dashboardpatient.html")
+def dashboard():
+    return render_template("dashboard.html")
 
 
 #Staff Dashboard
 @app.route('/staff/dashboard')
 @login_required
 def staffdashboard():
-    if current_user.StaffAccess == True:
+    staff = current_user.StaffAccess
+    if staff == True:
         return render_template("dashboardstaff.html")
     else:
         flash ("Access Denied Staff Only.")
-        return render_template("index.html")
+        return render_template("dashboard.html")
 
 
 
