@@ -23,6 +23,8 @@ class User(db.Model, UserMixin):
     StaffAccess = db.Column(db.Boolean, default=False, nullable=False)
     AdminAccess = db.Column(db.Boolean, default=False, nullable=False)
 
+
+    
     def __repr__(self):
         return f"User('{self.id}','{self.username}', '{self.email}', '{self.image_file}')"
 
