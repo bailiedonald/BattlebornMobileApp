@@ -67,12 +67,6 @@ def logout():
     logout_user()
     return redirect(url_for('index'))
 
-#Account Page
-@app.route("/account")
-@login_required
-def account():
-    return render_template('account.html', title='Account')
-
 
 #Appointment Request Page
 @app.route("/appointment")
@@ -101,17 +95,18 @@ def stafflogin():
 
 #Admin Dashboard
 @app.route('/admin/dashboard')
-def staffdashboard():
+def admindashboard():
     return render_template("dashboardadmin.html")
     
 
 #Staff Dashboard
 @app.route('/patient/dashboard')
-def staffdashboard():
+def patientdashboard():
     return render_template("dashboardpatient.html")
 
+
 #Staff Dashboard
-@app.route('/staff/staffdashboard')
+@app.route('/staff/dashboard')
 def staffdashboard():
     return render_template("dashboardstaff.html")
 
