@@ -15,11 +15,6 @@ def index():
 def about():
     return render_template("about.html")
 
-#User Profile
-@app.route('/user/<name>')
-def user(name):
-    return render_template("user.html", name=name)
-
 #Services
 @app.route('/services')
 def services():
@@ -103,10 +98,24 @@ def stafflogin():
     return render_template('stafflogin.html', title='Login', form=form)
 
 
+
+#Admin Dashboard
+@app.route('/admin/dashboard')
+def staffdashboard():
+    return render_template("dashboardadmin.html")
+    
+
+#Staff Dashboard
+@app.route('/patient/dashboard')
+def staffdashboard():
+    return render_template("dashboardpatient.html")
+
 #Staff Dashboard
 @app.route('/staff/staffdashboard')
 def staffdashboard():
-    return render_template("staffdashboard.html")
+    return render_template("dashboardstaff.html")
+
+
 
 appointmnet_requests = [
     {
@@ -144,3 +153,5 @@ def customerlist():
 @app.route('/staff/appointments')
 def confirmappointments():
     return render_template("confirmappointment.html")
+
+
