@@ -95,20 +95,32 @@ def stafflogin():
 
 #Admin Dashboard
 @app.route('/admin/dashboard')
+@login_required
 def admindashboard():
-    return render_template("dashboardadmin.html")
-    
+    if current_user.AdminAccess == True:
+        return render_template("dashboardadmin.html")
+    else:
+        flash ("Access Denied Admin Only.")
+        return render_template("index.html")
 
-#Staff Dashboard
+
+#Patient Dashboard
 @app.route('/patient/dashboard')
+@login_required
 def patientdashboard():
+
     return render_template("dashboardpatient.html")
 
 
 #Staff Dashboard
 @app.route('/staff/dashboard')
+@login_required
 def staffdashboard():
-    return render_template("dashboardstaff.html")
+    if current_user.StaffAccess == True:
+        return render_template("dashboardstaff.html")
+    else:
+        flash ("Access Denied Staff Only.")
+        return render_template("index.html")
 
 
 
