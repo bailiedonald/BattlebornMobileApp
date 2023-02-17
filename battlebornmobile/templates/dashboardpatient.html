@@ -1,4 +1,70 @@
 {% extends 'layout.html' %}
 {% block content %}
-<h1>Hello {{ current_user.username | capitalize }} </h1>
+
+{% for message in get_flashed_messages() %}
+	
+	<div class="alert alert-warning alert-dismissible fade show" role="alert">
+	  {{ message }}
+	  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+	</div>
+
+	
+{% endfor %}
+
+    <h1>Hello {{ current_user.username | capitalize }} </h1>
+	<h2>Dashboard</h2>
+	<br/>
+
+	<div class="card">
+    <div class="card-body">
+        <p class="card-text">
+            <div class="container">
+            <div class="row">
+                <div class="col-8">
+
+            <strong>Name:</strong>
+            {{ current_user.name }}<br/>
+
+            <strong>Username:</strong>
+            {{ current_user.username }}<br/>
+
+            <strong>User Id:</strong>
+            {{ current_user.id }}<br/>
+
+            <strong>Email:</strong>
+            {{ current_user.email }}<br/>
+
+            <strong>Favorite Color:</strong>
+            {{ current_user.favorite_color }}<br/>
+
+            <strong>About Author:</strong>
+            {{ current_user.about_author }}<br/>
+
+            <strong>Profile Pic:</strong>
+            {{ current_user.profile_pic }}<br/>
+
+            <strong>Date Joined:</strong>
+            {{ current_user.date_added }}<br/>	
+        </p>
+	</div>
+	<div class="col-4">
+		{% if current_user.profile_pic %}
+
+		<img src="{{ url_for('static', filename='images/' + current_user.profile_pic)}}" width="200" align="right">
+		
+		{% else %}
+
+		<img src="{{ url_for('static', filename='images/default.jpeg')}}" width="200" align="right">
+
+		{% endif %}
+	
+	</div>
+	</div>
+	</div>
+
+
+  </div>
+</div>
+	
+
 {% endblock %}
