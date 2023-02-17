@@ -17,24 +17,29 @@ class User(db.Model, UserMixin):
     password = db.Column(db.String(60), nullable=False)
     FirstName = db.Column(db.String(30), nullable=True)
     LastName = db.Column(db.String(30), nullable=True)
-    DOB = db.Column(db.Integer, nullable=True)
-    PhoneNumber = db.Column(db.Integer)
-    Address = db.Column(db.String(250))
+    PhoneNumber = db.Column(db.Integer, nullable=True)
+    Address = db.Column(db.String(250), nullable=True)
     StaffAccess = db.Column(db.Boolean, default=False, nullable=False)
     AdminAccess = db.Column(db.Boolean, default=False, nullable=False)
+
+# User Can Have Many Posts 
+	pets = db.relationship('Pets', backref='ownerer')
 
     def __repr__(self):
         return f"User('{self.id}','{self.username}', '{self.email}', '{self.image_file}')"
 
 
-class Pet(db.Model, UserMixin):
-    PetID = db.Column(db.Integer, primary_key=True)
-    PetName = db.Column(db.String(30), nullable=False)
-    PetSpecies = db.Column(db.String(20), nullable=False)
-    PetBreed = db.Column(db.String(50))
-    PetHeight = db.Column(db.Integer)
-    PetWeight = db.Column(db.Integer)
-
+class Pets(db.Model, UserMixin):
+    id = db.Column(db.Integer, primary_key=True)
+    petname = db.Column(db.String(30), nullable=False)
+    date_of_birth = db.Column(db.String(50), nullable=True)
+    petspecies = db.Column(db.String(20), nullable=False)
+    petbreed = db.Column(db.String(50))
+    petheight = db.Column(db.Integer)
+    petweight = db.Column(db.Integer)
+    Vaccine = db.Column(db.DateTime, default=datetime.utcnow)
+# Foreign Key To Link Users (refer to primary key of the user)
+    Owner_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
     def __repr__(self):
         return f"Pet('{self.PetID}', '{self.PetName}', '{self.PetSpecies}', '{self.PetBreed}','{self.PetHeight}','{self.PetWeight}')"

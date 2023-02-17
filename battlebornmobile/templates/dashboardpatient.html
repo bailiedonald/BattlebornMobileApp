@@ -11,55 +11,88 @@
 	
 {% endfor %}
 
-    <h1>Hello {{ current_user.FirstName | capitalize }} </h1>
-	<h2>Dashboard</h2>
+    <h1>Hello {{ current_user.username | capitalize }} </h1>
+	<h2>{{ current_user.username | capitalize }} Dashboard</h2>
 	<br/>
 
 	<div class="card">
+        <div class="card-body">
+            <p class="card-text">
+                <div class="container">
+                <div class="row">
+                    <div class="col-8">
+            
+                <strong>Name:</strong>
+                {{ current_user.FirstName }} {{ current_user.LaststName }}  <br/>
+
+                <strong>Username:</strong>
+                {{ current_user.username }}<br/>
+
+                <strong>Email:</strong>
+                {{ current_user.email }}<br/>
+
+                <strong>Contact Number:</strong>
+                {{ current_user.PhoneNumber }}<br/>
+
+                <strong>Address:</strong>
+                {{ current_user.Address }}<br/>
+
+            </p>
+        </div>
+        <div class="col-4">
+                {% if current_user.profile_pic %}
+
+                <img src="{{ url_for('static', filename='images/' + current_user.profile_pic)}}" width="200" align="right">
+                
+                {% else %}
+
+                <img src="{{ url_for('static', filename='images/matt.jpeg')}}" width="200" align="right">
+
+                {% endif %}
+            
+        </div>
+	</div>
+</br>
+<div class="card">
     <div class="card-body">
+        <div class="col-4">
+            {% if current_user.profile_pic %}
+
+            <img src="{{ url_for('static', filename='images/' + current_user.profile_pic)}}" width="200" align="left">
+            
+            {% else %}
+
+            <img src="{{ url_for('static', filename='images/cat-dog.jpg')}}" width="200" align="left">
+
+            {% endif %}
+        </div>
         <p class="card-text">
             <div class="container">
             <div class="row">
                 <div class="col-8">
         
-            <strong>Name:</strong>
-            {{ current_user.FirstName }} {{ current_user.LaststName }}  <br/>
-
-            <strong>Username:</strong>
-            {{ current_user.username }}<br/>
-
-            <strong>Email:</strong>
-            {{ current_user.email }}<br/>
-
-            <strong>Date of Birth:</strong>
-            {{ current_user.DOB }}<br/>
-
-            <strong>Contact Number:</strong>
-            {{ current_user.PhoneNumber }}<br/>
-
-            <strong>Address:</strong>
-            {{ current_user.Address }}<br/>
+            <strong>Pet Name:</strong>
+            {{ current_user.FirstName }}
+            <strong>     Date of Birth:</strong>
+            {{ current_user.DOB }}</br>
+            <strong>Species:</strong>
+            {{ current_user.username }}
+            <strong>     Breed:</strong>
+            {{ current_user.email }}
+            <br>
+            <strong>Hieght:</strong>
+            {{ current_user.PhoneNumber }}
+            <strong>     Wieght:</strong>
+            {{ current_user.PhoneNumber }}
+            <br>
+            <strong>Vaccine Records:</strong>
+            {{ current_user.Address }}
 
         </p>
-	</div>
-	<div class="col-4">
-		{% if current_user.profile_pic %}
+    </div>
 
-		<img src="{{ url_for('static', filename='images/' + current_user.profile_pic)}}" width="200" align="right">
-		
-		{% else %}
-
-		<img src="{{ url_for('static', filename='images/default.jpeg')}}" width="200" align="right">
-
-		{% endif %}
-	
-	</div>
-	</div>
-	</div>
-
-
-  </div>
 </div>
-	
+       
+        
 
 {% endblock %}
