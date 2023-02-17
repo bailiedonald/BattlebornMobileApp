@@ -11,7 +11,7 @@
 	
 {% endfor %}
 
-    <h1>Hello {{ current_user.username | capitalize }} </h1>
+    <h1>Hello {{ current_user.FirstName | capitalize }} </h1>
 	<h2>Dashboard</h2>
 	<br/>
 
@@ -21,30 +21,25 @@
             <div class="container">
             <div class="row">
                 <div class="col-8">
-
+        
             <strong>Name:</strong>
-            {{ current_user.name }}<br/>
+            {{ current_user.FirstName }} {{ current_user.LaststName }}  <br/>
 
             <strong>Username:</strong>
             {{ current_user.username }}<br/>
 
-            <strong>User Id:</strong>
-            {{ current_user.id }}<br/>
-
             <strong>Email:</strong>
             {{ current_user.email }}<br/>
 
-            <strong>Favorite Color:</strong>
-            {{ current_user.favorite_color }}<br/>
+            <strong>Date of Birth:</strong>
+            {{ current_user.DOB }}<br/>
 
-            <strong>About Author:</strong>
-            {{ current_user.about_author }}<br/>
+            <strong>Contact Number:</strong>
+            {{ current_user.PhoneNumber }}<br/>
 
-            <strong>Profile Pic:</strong>
-            {{ current_user.profile_pic }}<br/>
+            <strong>Address:</strong>
+            {{ current_user.Address }}<br/>
 
-            <strong>Date Joined:</strong>
-            {{ current_user.date_added }}<br/>	
         </p>
 	</div>
 	<div class="col-4">

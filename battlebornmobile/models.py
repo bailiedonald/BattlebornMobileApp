@@ -19,7 +19,9 @@ class User(db.Model, UserMixin):
     LastName = db.Column(db.String(30), nullable=True)
     DOB = db.Column(db.Integer, nullable=True)
     PhoneNumber = db.Column(db.Integer)
-    can_view_records = db.Column(db.Boolean, default=False, nullable=False)
+    Address = db.Column(db.String(250))
+    StaffAccess = db.Column(db.Boolean, default=False, nullable=False)
+    AdminAccess = db.Column(db.Boolean, default=False, nullable=False)
 
     def __repr__(self):
         return f"User('{self.id}','{self.username}', '{self.email}', '{self.image_file}')"
