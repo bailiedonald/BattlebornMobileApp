@@ -22,6 +22,7 @@ class User(db.Model, UserMixin):
     Address = db.Column(db.String(250))
     StaffAccess = db.Column(db.Boolean, default=False, nullable=False)
     AdminAccess = db.Column(db.Boolean, default=False, nullable=False)
+    pets = db.relationship('Pet', backref= 'owner')
 
 
     
@@ -30,12 +31,14 @@ class User(db.Model, UserMixin):
 
 
 class Pet(db.Model, UserMixin):
-    PetID = db.Column(db.Integer, primary_key=True)
-    PetName = db.Column(db.String(30), nullable=False)
-    PetSpecies = db.Column(db.String(20), nullable=False)
-    PetBreed = db.Column(db.String(50))
-    PetHeight = db.Column(db.Integer)
-    PetWeight = db.Column(db.Integer)
+    id = db.Column(db.Integer, primary_key=True)
+    pet_name = db.Column(db.String(30), nullable=False)
+    pet_species = db.Column(db.String(20), nullable=False)
+    pet_breed = db.Column(db.String(50))
+    pet_height = db.Column(db.Integer)
+    pet_weight = db.Column(db.Integer)
+    #Linkink to Pet Owner in user Database
+    owner_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
 
     def __repr__(self):
