@@ -17,7 +17,6 @@ class User(db.Model, UserMixin):
     password = db.Column(db.String(60), nullable=False)
     FirstName = db.Column(db.String(30), nullable=True)
     LastName = db.Column(db.String(30), nullable=True)
-    DOB = db.Column(db.Integer, nullable=True)
     PhoneNumber = db.Column(db.Integer)
     Address = db.Column(db.String(250))
     StaffAccess = db.Column(db.Boolean, default=False, nullable=False)
@@ -33,11 +32,14 @@ class User(db.Model, UserMixin):
 class Pet(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     pet_name = db.Column(db.String(30), nullable=False)
+    pet_dob = db.Column(db.String(30), nullable=False)
     pet_species = db.Column(db.String(20), nullable=False)
-    pet_breed = db.Column(db.String(50))
-    pet_height = db.Column(db.Integer)
-    pet_weight = db.Column(db.Integer)
-    #Linkink to Pet Owner in user Database
+    pet_breed = db.Column(db.String(20))
+    pet_color = db.Column(db.String(10))
+    pet_height = db.Column(db.String(10))
+    pet_weight = db.Column(db.String(10))
+    pet_pic = db.Column(db.String(20), nullable=False, default='default.jpg')
+    #Link to Pet Owner in user Database
     owner_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
 
