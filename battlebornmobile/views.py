@@ -135,9 +135,9 @@ def scheduler():
     return render_template("scheduler.html", appointmnet_requests = appointmnet_requests)
 
 #Customer List
-@app.route('/staff/customerlist')
-def customerlist():
-    return render_template("customerlist.html")
+@app.route('/staff/records')
+def records():
+    return render_template("records.html")
 
 #Confirm Appointments
 @app.route('/staff/appointments')
