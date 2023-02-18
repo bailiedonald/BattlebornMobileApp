@@ -50,21 +50,21 @@ def signup():
 def add_pet():
     form = PetForm()
     if form.validate_on_submit():
-        pet = Pet(pet_name=form.pet_name.data, pet_dob=form.pet_dob.data, pet_species=form.pet_species.data, pet_breed=form.pet_breed.data, pet_color=form.pet_color.data, pet_height=form.pet_hieght.data, pet_weight=form.pet_wieght.data)
+        pet = Pet(pet_name=form.pet_name.data, pet_dob=form.pet_dob.data, pet_species=form.pet_species.data, pet_breed=form.pet_breed.data, pet_color=form.pet_color.data, pet_height=form.pet_height.data, pet_weight=form.pet_weight.data)
         #Clearing the form
         form.pet_name.data = ' '
         form.pet_dob.data = ' '
         form.pet_species.data = ' '
         form.pet_breed.data = ' '
         form.pet_color.data = ' '
-        form.pet_hieght.data = ' '
-        form.pet_wieght.data = ' '
+        form.pet_height.data = ' '
+        form.pet_weight.data = ' '
         
         #Add Pet to Pet Database
         db.session.add(pet)
         db.session.commit()
         flash('Your pet has been added!', 'success')
-        return render_template("dashboard.html")
+    return render_template("add_pet.html", form=form)
        
         
 

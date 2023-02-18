@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'layout.html' %}
 
 {% block content %}
 
@@ -29,7 +29,7 @@
 		{{ form.pet_species(class="form-control") }}
 		<br/>
 		
-		{{ form.pet_breed.labelel(class="form-label") }}
+		{{ form.pet_breed.label(class="form-label") }}
 		{{ form.pet_breed(class="form-control") }}
 		<br/>
 
@@ -37,12 +37,12 @@
 		{{ form.pet_color(class="form-control") }}
 		<br/>
 		
-		{{ form.pet_hieght.label(class="form-label") }}
-		{{ form.pet_hieght(class="form-control") }}
+		{{ form.pet_height.label(class="form-label") }}
+		{{ form.pet_height(class="form-control") }}
 		<br/>
 		
-		{{ form.pet_wieght.label(class="form-label") }}
-		{{ form.pet_wieght(class="form-control") }}
+		{{ form.pet_weight.label(class="form-label") }}
+		{{ form.pet_weight(class="form-control") }}
 		<br/>
 
 		{{ form.submit(class="btn btn-secondary") }}
