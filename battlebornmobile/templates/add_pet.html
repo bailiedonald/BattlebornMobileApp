@@ -3,85 +3,61 @@
 {% block content %}
 
 {% for message in get_flashed_messages() %}
-	
 	<div class="alert alert-warning alert-dismissible fade show" role="alert">
 	  {{ message }}
 	  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 	</div>
-
-	
 {% endfor %}
 
+{% if current_user.is_authenticated %}
 
-{% if name %}
-	<h1>Pet Added!</h1>
-	<br/><br/>
-<table class="table table-hover table-bordered table-striped">
-
-{% for our_user in our_users %}
-	<tr>
-	<td>{{ our_user.id }}. <a href="{{ url_for('update', id=our_user.id)}}">{{ our_user.name }}</a> - {{ our_user.email }} - {{ our_user.favorite_color }} - 
-		<a href="{{ url_for('delete', id=our_user.id)}}">Delete</a></td>
-	</tr>
-{% endfor %}
-
-</table>
-	
-
-{% else %}
-	<h1>User List:</h1>
+<h1>Add A Pet</h1>
 	<br/>
 <div class="shadow p-3 mb-5 bg-body rounded">
 	<form method="POST">
 		{{ form.hidden_tag() }}
 
-		{{ form.name.label(class="form-label") }}
-
-		{{ form.name(class="form-control") }}
-		<br/>
-
-		{{ form.username.label(class="form-label") }}
-
-		{{ form.username(class="form-control") }}
-		<br/>
-
-		{{ form.email.label(class="form-label") }}
-
-		{{ form.email(class="form-control") }}
-		<br/>
-
-		{{ form.favorite_color.label(class="form-label") }}
-
-		{{ form.favorite_color(class="form-control") }}
+		{{ form.pet_name.label(class="form-label") }}
+		{{ form.pet_name(class="form-control") }}
 		<br/>
 		
-		{{ form.password_hash.label(class="form-label") }}
-
-		{{ form.password_hash(class="form-control") }}
+		{{ form.pet_dob.label(class="form-label") }}
+		{{ form.pet_dob(class="form-control") }}
+		<br/>
+		
+		{{ form.pet_species.label(class="form-label") }}
+		{{ form.pet_species(class="form-control") }}
+		<br/>
+		
+		{{ form.pet_breed.labelel(class="form-label") }}
+		{{ form.pet_breed(class="form-control") }}
 		<br/>
 
-		{{ form.password_hash2.label(class="form-label") }}
-
-		{{ form.password_hash2(class="form-control") }}
+		{{ form.pet_color.label(class="form-label") }}
+		{{ form.pet_color(class="form-control") }}
+		<br/>
+		
+		{{ form.pet_hieght.label(class="form-label") }}
+		{{ form.pet_hieght(class="form-control") }}
+		<br/>
+		
+		{{ form.pet_wieght.label(class="form-label") }}
+		{{ form.pet_wieght(class="form-control") }}
 		<br/>
 
 		{{ form.submit(class="btn btn-secondary") }}
 
 
 	</form>
+
 </div>
-<br/><br/><br/>
-<table class="table table-hover table-bordered table-striped">
+{% else %}
+<h2>Must Be Logged In...</h2>
+<p>Sorry, You must be logged in to access this page!</p>
 
-{% for our_user in our_users %}
-	<tr>
-	<td>{{ our_user.id }}. <a href="{{ url_for('update', id=our_user.id)}}">{{ our_user.name }}</a> - {{our_user.username }} - {{ our_user.email }} - {{ our_user.favorite_color }} - 
-	PW: {{ our_user.password_hash }} - 
-	<a href="{{ url_for('delete', id=our_user.id)}}">Delete</a></td>
-	</tr>
-{% endfor %}
+<a href="{{ url_for('login') }}">Login Here</a>
 
-</table>
 {% endif %}
+
 
 {% endblock %}
