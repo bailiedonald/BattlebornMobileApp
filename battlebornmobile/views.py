@@ -1,6 +1,6 @@
 from flask import render_template, url_for, flash, redirect, request
 from battlebornmobile import app, db, bcrypt
-from battlebornmobile.forms import SignUpForm, LoginForm
+from battlebornmobile.forms import SignUpForm, LoginForm, PetForm
 from battlebornmobile.models import User, Pet
 from flask_login import login_user, current_user, logout_user, login_required
 
@@ -44,6 +44,30 @@ def signup():
         flash('Your account has been created! You are now able to log in', 'success')
         return redirect(url_for('login'))
     return render_template('signup.html', title='Sign Up', form=form)
+
+#Add Pet
+@app.route("/pet/add", methods=['GET', 'POST'])
+def add_pet():
+    form = PetForm()
+    if form.validate_on_submit():
+        pet = Pet(pet_name=form.pet_name.data, pet_dob=form.pet_dob.data, pet_species=form.pet_species.data, pet_breed=form.pet_breed.data, pet_color=form.pet_color.data, pet_height=form.pet_hieght.data, pet_weight=form.pet_wieght.data)
+        #Clearing the form
+        form.pet_name.data = ' '
+        form.pet_dob.data = ' '
+        form.pet_species.data = ' '
+        form.pet_breed.data = ' '
+        form.pet_color.data = ' '
+        form.pet_hieght.data = ' '
+        form.pet_wieght.data = ' '
+        
+        #Add Pet to Pet Database
+        db.session.add(pet)
+        db.session.commit()
+        flash('Your pet has been added!', 'success')
+        return render_template("dashboard.html")
+       
+        
+
 
 #Login Page
 @app.route("/login", methods=['GET', 'POST'])

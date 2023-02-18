@@ -44,7 +44,7 @@ class Pet(db.Model, UserMixin):
 
 
     def __repr__(self):
-        return f"Pet('{self.PetID}', '{self.PetName}', '{self.PetSpecies}', '{self.PetBreed}','{self.PetHeight}','{self.PetWeight}')"
+        return f"Pet('{self.id}', '{self.pet_name}', '{self.pet_dob}', '{self.Ppet_species}', '{self.pet_breed}', '{self.pet_color}','{self.pet_height}','{self.pet_weight}')"
 
 # class Records(db.Model, UserMixin):
 #     RecordID = db.Column(db.Integer, primary_key=True)

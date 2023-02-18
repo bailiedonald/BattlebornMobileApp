@@ -27,3 +27,16 @@ class LoginForm(FlaskForm):
     password = PasswordField('Password', validators=[DataRequired()])
     remember = BooleanField('Remember Me')
     submit = SubmitField('Login')
+
+
+class PetForm(FlaskForm):
+    id = StringField()
+    pet_name = StringField("Pet Name", validators=[DataRequired()])
+    pet_dob = StringField("Pet Birthday", validators=[DataRequired()])
+    pet_species = StringField("Pet Species", validators=[DataRequired()])
+    pet_breed = StringField("Pet Breed", validators=[DataRequired()])
+    pet_color = StringField("Pet Color", validators=[DataRequired()])
+    pet_height = StringField("Pet Hieght")
+    pet_weight = StringField("Pet Wieght")
+    # owner_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    submit = SubmitField('Add Pet')
