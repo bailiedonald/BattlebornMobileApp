@@ -1,6 +1,6 @@
 from flask import render_template, url_for, flash, redirect, request
 from battlebornmobile import app, db, bcrypt
-from battlebornmobile.forms import SignUpForm, LoginForm, StaffLoginForm
+from battlebornmobile.forms import SignUpForm, LoginForm
 from battlebornmobile.models import User, Pet
 from flask_login import login_user, current_user, logout_user, login_required
 
