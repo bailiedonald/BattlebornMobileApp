@@ -9,6 +9,17 @@ def load_user(user_id):
 
 
 
+# class Permissons(db.model)
+#     id = db.Column(db.Integer, primary_key=True)
+#     slug = db.column(db.String(50)
+#     description = db.Column(db.String(250))
+
+#     def __repr__(self):
+#         return f"Permissons('{self.id}')"  
+
+
+
+
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(50), unique=True, nullable=False)
@@ -74,7 +85,7 @@ class Pet(db.Model, UserMixin):
 
 
 class Appointment(db.Model, UserMixin):
-    AppointmentID = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     Status = db.Column(db.Boolean, nullable=False)
 
     def __repr__(self):

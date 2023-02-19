@@ -37,6 +37,6 @@ class PetForm(FlaskForm):
     pet_breed = StringField("Pet Breed", validators=[DataRequired()])
     pet_color = StringField("Pet Color", validators=[DataRequired()])
     pet_height = StringField("Pet Hieght")
-    pet_weight = StringField("Pet Wieght")
+    pet_weight = StringField("Pet Weight")
     # owner_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     submit = SubmitField('Add Pet')
