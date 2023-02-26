@@ -47,8 +47,6 @@ def signup():
 
 
 
-
-
 #Add Pet
 @app.route("/pet/add", methods=['GET', 'POST'])
 def add_pet():
