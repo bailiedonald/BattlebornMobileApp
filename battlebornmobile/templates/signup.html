@@ -31,7 +31,28 @@
                     {% else %}
                         {{ form.email(class="form-control form-control-lg") }}
                     {% endif %}
-                </div>
+                </div>                
+                {{ form.firstName.label(class="form-label") }}
+                {{ form.firstName(class="form-control") }}
+                <br/>
+                {{ form.lastName.label(class="form-label") }}
+                {{ form.lastName(class="form-control") }}
+                <br/>
+                {{ form.phoneNumber.label(class="form-label") }}
+		        {{ form.phoneNumber(class="form-control") }}
+		        <br/>
+                {{ form.streetNumber.label(class="form-label") }}
+                {{ form.streetNumber(class="form-control") }}
+                <br/>
+                {{ form.city.label(class="form-label") }}
+                {{ form.city(class="form-control") }}
+                <br/>
+                {{ form.state.label(class="form-label") }}
+                {{ form.state(class="form-control") }}
+                <br/>        
+                {{ form.zipcode.label(class="form-label") }}
+                {{ form.zipcode(class="form-control") }}
+                <br/>
                 <div class="form-group">
                     {{ form.password.label(class="form-control-label") }}
                     {% if form.password.errors %}

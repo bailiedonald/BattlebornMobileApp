@@ -2,65 +2,83 @@
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"/>
   <style>
 
-    .navbar-nav {
+    .navbar-nav 
+    {
       flex-direction: row;
     }
-    
-    .nav-link {
+
+    .nav-link 
+    {
       padding-right: .5rem !important;
       padding-left: .5rem !important;
     }
-    
+
   </style>
 </head>
 
 
 <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
-<div class="container-fluid">
-  <a class="navbar-brand" href="#"><img src={{ url_for('static', filename='images/bmvhlogo.jpeg' ) }} width="75" height="75"></a>
-</div>
-<!-- Left side of Navbar -->
+  <div class="container-fluid">
+    <a class="navbar-brand" href="#"><img src={{ url_for('static', filename='images/bmvhlogo.jpeg' ) }} width="75" height="75"></a>
+  </div>
+  <!-- Left side of Navbar -->
   <ul class="navbar-nav mr-auto">
-    <li class="nav-item">
-      <a class="navbar-brand" href="/">Home</a>
-    </li>
-    <li class="nav-item">
-      <a class="navbar-brand" href="/services">Services</a>
-    </li>
-    <li class="nav-item">
-      <a class="navbar-brand" href="/about">AboutUs</a>
-    </li>
-    <li class="nav-item">
-      <a class="navbar-brand" href="/contact">Contact Us</a>
-    </li>
+    {% if current_user.is_authenticated == False or current_user.StaffAccess == False %}
+      <li class="nav-item">
+        <a class="navbar-brand" href="/">Home</a>
+      </li>
+      <li class="nav-item">
+        <a class="navbar-brand" href="/services">Services</a>
+      </li>
+      <li class="nav-item">
+       <a class="navbar-brand" href="/about">AboutUs</a>
+      </li>
+      <li class="nav-item">
+        <a class="navbar-brand" href="/contact">Contact Us</a>
+      </li>
+      <li class="nav-item">
+        <a class="navbar-brand" href="/appointment">Make Appointment</a>
+      </li>
+    {% endif %}
   </ul>
-<!-- Right side of Navbar -->
+  <!-- Right side of Navbar -->
   <ul class="navbar-nav ml-auto">
-    <li class="nav-item">
-      <a class="navbar-brand" href="/appointment">Make Appointment</a>
-    </li>
     {% if current_user.is_authenticated %}
-    <li class="nav-item">
-      <a class="navbar-brand" href="/logout">Logout</a>
-    </li>
-    <li class="nav-item">
-      <a class="navbar-brand" href="/account">Account</a>
-    </li>
+      {% if current_user.StaffAccess == False %}
+        <li class="nav-item">
+          <a class="navbar-brand" href="/dashboard">Account</a>
+        </li>
+      {% endif %}
+     
+      {% if current_user.StaffAccess %}
+        <li class="nav-item">
+          <a class="navbar-brand" href="/staff/dashboard">Staff Dashboard</a>
+        </li>
+        <li class="nav-item">
+          <a class="navbar-brand" href="/staff/scheduler">Schedule Appointments</a>
+        </li>
+        <li class="nav-item">
+          <a class="navbar-brand" href="/staff/records">Update Records</a>
+        </li>
+      {% endif %}
 
-    <li class="nav-item">
-      <a class="navbar-brand" href="/staff/staffdashboard">Staff</a>
-    </li>
+      {% if current_user.AdminAccess %}
+        <li class="nav-item">
+          <a class="navbar-brand" href="/admin/dashboard">Admin Dashboard</a>
+        </li>
+      {% endif %}
+
+      <li class="nav-item">
+        <a class="navbar-brand" href="/logout">Logout</a>
+      </li>     
 
     {% else %}
-    <li class="nav-item">
-      <a class="navbar-brand" href="/login">Login</a>
-    </li>
-    <li class="nav-item">
-      <a class="navbar-brand" href="/signup">Sign Up</a>
-    </li>
-    <li class="nav-item">
-      <a class="navbar-brand" href="/staff/login">Staff</a>
-    </li>
+      <li class="nav-item">
+        <a class="navbar-brand" href="/login">Login</a>
+      </li>
+      <li class="nav-item">
+        <a class="navbar-brand" href="/signup">Sign Up</a>
+      </li>
     {% endif %}
   </ul>
 </nav>
