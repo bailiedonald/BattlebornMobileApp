@@ -1,0 +1,63 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+
+{% for message in get_flashed_messages() %}
+	<div class="alert alert-warning alert-dismissible fade show" role="alert">
+	  {{ message }}
+	  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+	</div>
+{% endfor %}
+
+{% if current_user.is_authenticated %}
+
+<h1>Add A Pet</h1>
+	<br/>
+<div class="shadow p-3 mb-5 bg-body rounded">
+	<form method="POST">
+		{{ form.hidden_tag() }}
+
+		{{ form.pet_name.label(class="form-label") }}
+		{{ form.pet_name(class="form-control") }}
+		<br/>
+		
+		{{ form.pet_dob.label(class="form-label") }}
+		{{ form.pet_dob(class="form-control") }}
+		<br/>
+		
+		{{ form.pet_species.label(class="form-label") }}
+		{{ form.pet_species(class="form-control") }}
+		<br/>
+		
+		{{ form.pet_breed.label(class="form-label") }}
+		{{ form.pet_breed(class="form-control") }}
+		<br/>
+
+		{{ form.pet_color.label(class="form-label") }}
+		{{ form.pet_color(class="form-control") }}
+		<br/>
+		
+		{{ form.pet_height.label(class="form-label") }}
+		{{ form.pet_height(class="form-control") }}
+		<br/>
+		
+		{{ form.pet_weight.label(class="form-label") }}
+		{{ form.pet_weight(class="form-control") }}
+		<br/>
+
+		{{ form.submit(class="btn btn-secondary") }}
+
+
+	</form>
+
+</div>
+{% else %}
+<h2>Must Be Logged In...</h2>
+<p>Sorry, You must be logged in to access this page!</p>
+
+<a href="{{ url_for('login') }}">Login Here</a>
+
+{% endif %}
+
+
+{% endblock %}
