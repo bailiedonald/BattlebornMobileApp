@@ -24,20 +24,21 @@ class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(50), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
-    image_file = db.Column(db.String(20), nullable=False, default='default.jpg')
     password = db.Column(db.String(60), nullable=False)
-    FirstName = db.Column(db.String(30), nullable=True)
-    LastName = db.Column(db.String(30), nullable=True)
-    PhoneNumber = db.Column(db.Integer)
-    Address = db.Column(db.String(250))
+    firstName = db.Column(db.String(30), nullable=True)
+    lastName = db.Column(db.String(30), nullable=True)
+    phoneNumber = db.Column(db.String(20), nullable=True)
+    streetNumber = db.Column(db.String(50))
+    city = db.Column(db.String(25))
+    state = db.Column(db.String(15))
+    zipcode = db.Column(db.String(5))
+    image_file = db.Column(db.String(20), nullable=False, default='default.jpg')
     StaffAccess = db.Column(db.Boolean, default=False, nullable=False)
     AdminAccess = db.Column(db.Boolean, default=False, nullable=False)
     pets = db.relationship('Pet', backref= 'owner')
 
-
-    
     def __repr__(self):
-        return f"User('{self.id}','{self.username}', '{self.email}', '{self.image_file}')"
+        return f"User('{self.id}', '{self.username}', '{self.email}','{self.firstName}', '{self.lastName}', '{self.phoneNumber}', '{self.streetNumber}', '{self.city}', '{self.state}', '{self.zipcode}', '{self.image_file}')"
 
 
 class Pet(db.Model, UserMixin):
@@ -65,15 +66,6 @@ class Pet(db.Model, UserMixin):
 #     def __repr__(self):
 #         return f"Records('{self.RecordID}', '{self.RecordType}', '{self.DateEntered}')"
 
-# class Service(db.Model, UserMixin):
-#     ServiceID = db.Column(db.Integer, primary_key=True)
-#     ServiceType = db.Column(db.String(25), nullable=False)
-#     ServiceDatePerformed = db.Column(db.Date, nullable=False)
-#     ServiceCost = db.Column(db.Integer, nullable=False)
-#     ServicePaymentSatus = db.Column(db.Boolean, nullable=False)
-
-#     def __repr__(self):
-#         return f"Service('{self.ServiceID}', '{self.ServiceType}', '{self.ServiceDatePerformed}', '{self.ServiceCost}','{self.ServicePaymentSatus}')"
 
 
 # class InsuranceProviders(db.Model, UserMixin):
@@ -86,9 +78,10 @@ class Pet(db.Model, UserMixin):
 
 class Appointment(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
-    Status = db.Column(db.Boolean, nullable=False)
+    scheduled = db.Column(db.Boolean, nullable=False)
+
 
     def __repr__(self):
-        return f"Appointment('{self.AppointmentID}', '{self.Status}')"  
+        return f"Appointment('{self.id}', '{self.scheduled}')"  
 
 

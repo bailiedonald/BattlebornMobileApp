@@ -22,8 +22,10 @@
                 <div class="row">
                     <div class="col-8">
             
-                <strong>Name:</strong>
-                {{ current_user.FirstName }} {{ current_user.LaststName }}  <br/>
+                <strong>First Name:</strong>
+                {{ current_user.firstName }}
+                <strong>Last Name:</strong>
+                {{ current_user.laststName }}  <br/>
 
                 <strong>Username:</strong>
                 {{ current_user.username }}<br/>
@@ -32,10 +34,10 @@
                 {{ current_user.email }}<br/>
 
                 <strong>Contact Number:</strong>
-                {{ current_user.PhoneNumber }}<br/>
+                {{ current_user.phoneNumber }}<br/>
 
                 <strong>Address:</strong>
-                {{ current_user.Address }}<br/>
+                {{ current_user.streetNumber }}<br/>
 
             </p>
         </div>
