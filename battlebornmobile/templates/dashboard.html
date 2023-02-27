@@ -62,40 +62,33 @@
         <button type="button" class="btn btn-success">Add Your Pet</button>
     </a>
 </div>
+<h2>Your Pets</h2>
 <div class="card">
     <div class="card-body">
-        <div class="col-4">
-            {% if current_user.profile_pic %}
-
-            <img src="{{ url_for('static', filename='images/' + current_user.profile_pic)}}" width="200" align="left">
-            
-            {% else %}
-
-            <img src="{{ url_for('static', filename='images/cat-dog.jpg')}}" width="200" align="left">
-
-            {% endif %}
-        </div>
-        <p class="card-text">
-            <div class="container">
-            <div class="row">
-                <div class="col-8">
         
-            <strong>Pet Name:</strong>
-            {{ current_user.FirstName }}
-            <strong>     Date of Birth:</strong>
-            {{ current_user.DOB }}</br>
-            <strong>Species:</strong>
-            {{ current_user.username }}
-            <strong>     Breed:</strong>
-            {{ current_user.email }}
-            <br>
-            <strong>Hieght:</strong>
-            {{ current_user.PhoneNumber }}
-            <strong>     Wieght:</strong>
-            {{ current_user.PhoneNumber }}
-            <br>
-            <strong>Vaccine Records:</strong>
-            {{ current_user.Address }}
+        <p class="card-text">
+            <div class="container">                            
+                <ul style="list-style-type:none;">
+                    {% for pet in pets %}
+                        <div class="row">
+                            <div class="col-8">
+                                <li>
+                                    {% if pet.pet_pic %}
+                                    <img src="{{ url_for('static', filename='images/' + pet.pet_pic) }}" width="200" align="left">
+                                    {% else %}
+                                    <img src="{{ url_for('static', filename='images/animals.jpeg') }}" width="200" align="left">
+                                    {% endif %}
+                                </li>
+                                <li>.    {{ pet.pet_name }}</li>
+                                <li>.   {{ pet.pet_species }} Breed: {{ pet.pet_breed }} Color: {{ pet.pet_color }}</li>
+                                <li>.    {{ pet.pet_dob }}</li>
+                                <li>.    Height: {{ pet.pet_height }} ft Weight: {{ pet.pet_weight }} lbs</li>
+                            </div>
+                        </div>
+                        <br>
+                        <br>        
+                    {% endfor %}
+                </ul>
 
         </p>
     </div>
@@ -105,3 +98,6 @@
         
 
 {% endblock %}
+<!-- 
+
+pet_pic = db.Column(db.String(20), nullable=False, default='animals.jpeg') -->

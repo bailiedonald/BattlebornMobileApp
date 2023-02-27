@@ -1,8 +1,15 @@
 from flask import render_template, url_for, flash, redirect, request
 from battlebornmobile import app, db, bcrypt
-from battlebornmobile.forms import SignUpForm, LoginForm, PetForm
-from battlebornmobile.models import User, Pet
+from battlebornmobile.forms import SignUpForm, LoginForm, PetForm, AppointmentForm
+from battlebornmobile.models import User, Pet, Appointment, Role
 from flask_login import login_user, current_user, logout_user, login_required
+from flask_security import Security, SQLAlchemyUserDatastore, UserMixin, RoleMixin, roles_required
+
+#Admin Page
+@app.route('/admin')
+@roles_required('admin')
+def admin():
+    return 'This page is only accessible to users with the admin role.'
 
 
 #index Page
@@ -45,36 +52,27 @@ def signup():
         return redirect(url_for('login'))
     return render_template('signup.html', title='Sign Up', form=form)
 
-
-
-#Add Pet
+#Add Pet Page
 @app.route("/pet/add", methods=['GET', 'POST'])
+@login_required
 def add_pet():
     form = PetForm()
     if form.validate_on_submit():
-        pet = Pet(pet_name=form.pet_name.data, pet_dob=form.pet_dob.data, pet_species=form.pet_species.data, pet_breed=form.pet_breed.data, pet_color=form.pet_color.data, pet_height=form.pet_height.data, pet_weight=form.pet_weight.data)
-        #Clearing the form
-        form.pet_name.data = ' '
-        form.pet_dob.data = ' '
-        form.pet_species.data = ' '
-        form.pet_breed.data = ' '
-        form.pet_color.data = ' '
-        form.pet_height.data = ' '
-        form.pet_weight.data = ' '
-        
-        #Add Pet to Pet Database
+        pet = Pet(pet_name=form.pet_name.data, pet_dob=form.pet_dob.data, pet_species=form.pet_species.data, pet_breed=form.pet_breed.data, pet_color=form.pet_color.data, pet_height=form.pet_height.data, pet_weight=form.pet_weight.data, owner_id=current_user.id)
+
+        # Add Pet to Pet Database
         db.session.add(pet)
         db.session.commit()
-        flash('Your pet has been added!', 'success')
-    return render_template("add_pet.html", form=form)
-       
         
+        flash('Your pet has been added!', 'success')
+        return redirect(url_for('dashboard'))
 
+    return render_template('add_pet.html', form=form)
 
 #Login Page
 @app.route("/login", methods=['GET', 'POST'])
 def login():
-    if current_user.is_authenticated:
+    if current_user.is_authenticated: 
         return redirect(url_for('index'))
     form = LoginForm()
     if form.validate_on_submit():
@@ -93,17 +91,39 @@ def logout():
     logout_user()
     return redirect(url_for('index'))
 
-
 #Appointment Request Page
-@app.route("/appointment")
+@app.route("/appointment", methods=['GET', 'POST'])
 @login_required
 def appointment():
-    return render_template('appointment.html', title='AppointmentRequest')
+    form = AppointmentForm()
+    if form.validate_on_submit():
+        appointment = Appointment(firstName=form.firstName.data, lastName=form.lastName.data, phoneNumber=form.phoneNumber.data, email=form.email.data, pet_name=form.pet_name.data, pet_dob=form.pet_dob.data, pet_species=form.pet_species.data, pet_breed=form.pet_breed.data, streetNumber=form.streetNumber.data, city=form.city.data, state=form.state.data, zipcode=form.zipcode.data, Customer_id=current_user.id)
 
+        # Add Pet to Pet Database
+        db.session.add(appointment)
+        db.session.commit()
+        
+        flash('Your request has been received!', 'success')
+        return redirect(url_for('dashboard'))
+
+    return render_template('appointmentBooking.html', title='AppointmentRequest', form=form)
+# firstName 
+# lastName
+# email
+# phoneNumber
+# pet_name
+# pet_dob
+# pet_species
+# pet_breed
+# streetNumber
+# city
+# state
+# zipcode
 
 #Admin Dashboard
 @app.route('/admin/dashboard')
 @login_required
+# @roles_required('admin')
 def admindashboard():
     admin = current_user.AdminAccess
     if admin == True:
@@ -117,7 +137,10 @@ def admindashboard():
 @app.route('/dashboard')
 @login_required
 def dashboard():
-    return render_template("dashboard.html")
+    # Query all pets linked to the current user
+    pets = Pet.query.filter_by(owner_id=current_user.id).all()
+
+    return render_template("dashboard.html", pets=pets)
 
 
 #Staff Dashboard
@@ -160,14 +183,36 @@ appointmnet_requests = [
 def scheduler():
     return render_template("scheduler.html", appointmnet_requests = appointmnet_requests)
 
-#Customer List
-@app.route('/staff/records')
+#Staff View Customer Records
+@app.route('/staff/records', methods={"GET", "POST"})
 def records():
-    return render_template("records.html")
+    users = User.query.all()
+    return render_template('records.html', users=users)
+
+#Staff Search Customer Records
+@app.route('/staff/records/search')
+def search():
+    search_query = request.args.get('q')
+    if search_query:
+        users = User.query.filter(User.lastName.contains(search_query)).all()
+    else:
+        users = User.query.all()
+    return render_template('recordsSearch.html', users=users, search_query=search_query)
+
 
 #Confirm Appointments
 @app.route('/staff/appointments')
 def confirmappointments():
     return render_template("confirmappointment.html")
 
+#Update User Page
+@app.route('/update/<int:user_id>', methods=['GET', 'POST'])
+def update_user(user_id):
+    user = User.query.get(user_id)
+    if request.method == 'POST':
+        user.email = request.form['email']
+        db.session.commit()
+        return render_template('dashboard.html', user=user)
+    else:
+        return render_template('update.html', user=user)
 
