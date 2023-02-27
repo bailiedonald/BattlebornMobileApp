@@ -1,14 +1,23 @@
 {% extends 'layout.html' %}
 {% block content %}
 
+<br/>
 <h1>Customer Records</h1>
-<p>
-    display a list of all users from the database that staff can update.
-    <ol>
-        <li>Customer 1</li>
-        <li>Customer 2</li>
-        <li>Customer 3</li>
-    </ol>
-</p>
+<form action="/staff/records/search">
+    <input type="text" name="q" placeholder="Enter Last Name...">
+    <button type="submit">Search</button>
+</form>
+<br>
+<br>
+<table>
+    {% for user in users %}
+    <tr>
+        <td>{{ user.lastName }}, {{ user.firstName }}</td>
+        <td>    {{ user.email }}</td>
+        <td>    {{ user.phoneNumber }}</td>
+    </tr>
+
+    {% endfor %}
+</table>
 
 {% endblock %}
