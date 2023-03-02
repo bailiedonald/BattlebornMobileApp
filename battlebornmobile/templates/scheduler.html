@@ -1,7 +1,24 @@
 {% extends 'layout.html' %}
 {% block content %}
-<a class="ml-2" href="{{ url_for('staffdashboard') }}">Staff Dashboard</a>
-<a class="navbar-brand" href="/logout">Logout</a>
+<style>
+  * {
+    box-sizing: border-box;
+  }
+  
+  /* Create two equal columns that floats next to each other */
+  .column {
+    float: left;
+    width: 50%;
+    padding: 10px;
+  }
+  
+  /* Clear floats after the columns */
+  .row:after {
+    content: "";
+    display: table;
+    clear: both;
+  }
+  </style>
 <div class="container">
   <div class="row justify-content-start">
     
@@ -17,14 +34,20 @@
             <p class="article-content">Service needed:  {{ requests.service }}</p>
             <p class="article-content">Appointment requested on {{ requests.date_requested }}</p>
           </div>
-            <button type="button" class="btn btn-danger">Delete</button>
-            <button type="button" class="btn btn-success">Schedule</button>           
+            <a href="/staff/appointments">
+              <button type="button" class="btn btn-success">
+                Schedule
+              </button>
+            </a>          
         </article>
       {% endfor %}
       </div>
 
     <div class="col-8">
       <h2>Calendar</h2>
+
+
+      
     </div>
 
   </div> 
