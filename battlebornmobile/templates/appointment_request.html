@@ -32,11 +32,11 @@
 				<div class="form-group row">
 				<div class="col-md-6">			
 					{{ form.phoneNumber.label(class="form-label") }}
-					{{ form.phoneNumber(class="form-control") }}
+					{{ form.phoneNumber(value=current_user.phoneNumber, class="form-control") }}
 				</div>
 				<div class="col-md-6">
 					{{ form.email.label(class="form-label") }}
-					{{ form.email(class="form-control") }}
+					{{ form.email(value=current_user.email, class="form-control") }}
 				</div>
 				</div>
 						
@@ -81,19 +81,19 @@
 				</div>
 				</div>
 					{{ form.streetNumber.label(class="form-label") }}
-					{{ form.streetNumber(class="form-control") }}
+					{{ form.streetNumber(value=current_user.streetNumber, class="form-control") }}
 				<div class="form-group row">
 				<div class="col-md-4">			
 					{{ form.city.label(class="form-label") }}
-					{{ form.city(class="form-control") }}
+					{{ form.city(value=current_user.city, class="form-control") }}
 				</div>
 				<div class="col-md-4">
 					{{ form.state.label(class="form-label") }}
-					{{ form.state(class="form-control") }}
+					{{ form.state(value=current_user.state, class="form-control") }}
 				</div>
 				<div class="col-md-4">
 					{{ form.zipcode.label(class="form-label") }}
-					{{ form.zipcode(class="form-control") }}
+					{{ form.zipcode(value=current_user.zipcode, class="form-control") }}
 					</div>
 				</div>
 				<div class="text-center">
