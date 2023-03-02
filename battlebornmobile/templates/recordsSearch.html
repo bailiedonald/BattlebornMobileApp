@@ -1,0 +1,33 @@
+{% extends 'layout.html' %}
+{% block content %}
+
+<h1>Search Results for "{{ search_query }}"</h1>
+    <form action="/staff/records/search">
+        <input type="text" name="q" placeholder="Enter Last Name..." value="{{ search_query }}">
+        <button type="submit">Search</button>
+        <a href="/staff/records">
+            <button type="button" >All Customers</button>
+        </a>
+    </form>
+    <br>
+    <br>
+    <table>
+        {% for user in users %}
+        <tr>
+            <td>{{ user.lastName }}</td>
+            <td>{{ user.email }}</td>
+            <td>{{ user.phoneNumber }}</td>
+        </tr>
+
+        {% endfor %}
+    </table>
+
+</body>
+</html>
+
+
+
+
+
+
+{% endblock %}
