@@ -205,3 +205,7 @@ def update_user(user_id):
     else:
         return render_template('update.html', user=user)
 
+#index Page
+@app.route('/calendar')
+def calendar():
+    return render_template("calendar.html")
