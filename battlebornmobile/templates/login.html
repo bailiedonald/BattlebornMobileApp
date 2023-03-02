@@ -49,4 +49,11 @@
             Need An Account? <a class="ml-2" href="{{ url_for('signup') }}">Sign Up Now</a>
         </small>
     </div>
+    <!-- templates/send_notification_form.html -->
+<form action="{{ url_for('send_notification') }}" method="POST">
+    <label for="user_id">User ID:</label>
+    <input type="text" name="user_id" id="user_id">
+    <button type="submit">Send Notification</button>
+  </form>
+  
 {% endblock content %}

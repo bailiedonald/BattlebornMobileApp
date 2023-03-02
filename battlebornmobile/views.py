@@ -205,8 +205,8 @@ def update_user(user_id):
         db.session.commit()
         return render_template('dashboard.html', user=user)
     else:
-        return render_template('update.html', user=user)
-
+        return render_template('update.html', user=user
+        
 #Calendar Page
 @app.route('/calendar')
 def calendar():
@@ -225,3 +225,28 @@ def create_appointment():
         flash('Appointment created successfully!', 'success')
         return redirect(url_for('index'))
     return render_template('create_appointment.html', title='Create Appointment', form=form)
+
+#Send SMS Notifcation for Appointment Confirmation
+
+
+@app.route('/sms-notification', methods=['POST'])
+def sms_notification():
+    user_id = request.form.get('user_id')
+    user = User.query.get(user_id)
+    if user is None:
+        return 'User not found', 404
+    phone_number = user.phone_number
+    message = 'Hello, your appointment has been scheduled.'
+    try:
+        message = client.messages.create(
+            body=message,
+            from_='+17752405149',  
+            to=phone_number
+        )
+        return 'Notification sent successfully.'
+    except:
+        return 'Failed to send notification', 500
+
+@app.route('/send-notification-form')
+def send_notification_form():
+    return render_template('send_notification_form.html')
