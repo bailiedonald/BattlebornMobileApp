@@ -64,7 +64,7 @@ class Pet(db.Model, UserMixin):
 
 class Appointment(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
-    weekday = db.Column(db.DateTime, nullable=False)
+    weekday = db.Column(db.String(10), nullable=False)
     timeSlot = db.Column(db.String(20))
     dateSheduled= db.Column(db.String(20))
     timeSheduled = db.Column(db.String(20))

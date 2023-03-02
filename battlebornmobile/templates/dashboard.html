@@ -54,37 +54,32 @@
     </div>
 </div>
 </br>
-<div class="col-12 social padding">
-    <a href="/appointment">
-
-    <a href="/pet/add">
-        <button type="button" class="btn btn-success">Add Your Pet</button>
-    </a>
-</div>
-
 <div class="card">
     <h2>Your Upcoming Appointments</h2>
      <div class="card-body">     
          <p class="card-text">
-             <div class="container">                            
-                 <ul style="list-style-type:none;">
-                     {% for appoinment in appointments %}
-                         <div class="row">
-                             <div class="col-8">
-                                 <li>.    {{ pet.pet_name }}</li>
-                                 <li>.   {{ appoinment.weekday }} </li>
-                             </div>
-                         </div>
-                         <br>
-                         <br>        
-                     {% endfor %}
-                 </ul>
+             <div class="container">                           
+                <ul style="list-style-type:none;">
+                    {% for appoinment in appointments %}
+                        <div class="row">
+                            <div class="col-8">
+                                <li>.   {{ appoinment.weekday }} </li>
+                            </div>
+                        </div>
+                        <br>
+                        <br>        
+                    {% endfor %}
+                </ul>
              </div>
          </p>
      </div>
  </div>
 <div class="card">
+
    <h2>Your Pets</h2>
+    <a href="/pet/add">
+        <button type="button" class="btn btn-success">Add Your Pet</button>
+    </a>
     <div class="card-body">     
         <p class="card-text">
             <div class="container">                            
