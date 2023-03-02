@@ -61,23 +61,20 @@ class Pet(db.Model, UserMixin):
     def __repr__(self):
         return f"Pet('{self.id}', '{self.pet_name}', '{self.pet_dob}', '{self.Ppet_species}', '{self.pet_breed}', '{self.pet_color}','{self.pet_height}','{self.pet_weight}')"
 
-# class Records(db.Model, UserMixin):
-#     RecordID = db.Column(db.Integer, primary_key=True)
-#     RecordType = db.Column(db.String(25), nullable=False)
-#     DateEntered = db.Column(db.Date, nullable=False)
-
-#     def __repr__(self):
-#         return f"Records('{self.RecordID}', '{self.RecordType}', '{self.DateEntered}')"
-
 
 class Appointment(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
-    scheduled = db.Column(db.Boolean, nullable=False)
-    cancelled = db.Column(db.Boolean, nullable=False)
-    date_appoinement = db.Column(db.DateTime, nullable=False)
+    weekday = db.Column(db.String(10), nullable=False)
+    timeSlot = db.Column(db.String(20))
+    dateSheduled= db.Column(db.String(20))
+    timeSheduled = db.Column(db.String(20))
+    scheduled = db.Column(db.Boolean, default=False, nullable=False)
+    cancelled = db.Column(db.Boolean, default=False, nullable=False)
     #Link to Pet Owner in user Database
+    pet_id = db.Column(db.Integer, db.ForeignKey('pet.id'))
     owner_id = db.Column(db.Integer, db.ForeignKey('user.id'))
- 
+
+
 # firstName 
 # lastName
 # email

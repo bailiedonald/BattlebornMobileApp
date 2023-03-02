@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, BooleanField, DateField, TelField
+from wtforms import StringField, PasswordField, SubmitField, BooleanField, DateField, SelectField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
 from battlebornmobile.models import User, Pet, Appointment
 
@@ -47,20 +47,31 @@ class PetForm(FlaskForm):
     submit = SubmitField('Add Pet')
 
 class AppointmentForm(FlaskForm):
-    id = StringField()
-    email = StringField('Email', validators=[DataRequired(), Email()])
+    pet_name = StringField('Pet Name', validators=[DataRequired()])
     firstName = StringField('First Name', validators=[DataRequired()])
     lastName = StringField('Last Name', validators=[DataRequired()])
     phoneNumber = StringField('Phone Number')
-    pet_name = StringField("Pet Name", validators=[DataRequired()])
-    pet_dob = DateField("Pet Birthday", validators=[DataRequired()])
-    pet_species = StringField("Pet Species", validators=[DataRequired()])
-    pet_breed = StringField("Pet Breed", validators=[DataRequired()])
-    streetNumber = StringField('Address', validators=[DataRequired()])
-    city = StringField('City', validators=[DataRequired()])
-    state = StringField('State', validators=[DataRequired()])
-    zipcode = StringField('Zip Code', validators=[DataRequired()])
-    submit = SubmitField('Make Appoinment')
+    weekday = StringField('Weekday', validators=[DataRequired()])
+    timeSlot = SelectField('Time Slot', choices=[('9am - 10am', '9am - 10am'), ('10am - 11am', '10am - 11am'), ('11am - 12pm', '11am - 12pm'), ('12pm - 1pm', '12pm - 1pm'), ('2pm - 3pm', '2pm - 3pm'), ('3pm - 4pm', '3pm - 4pm'), ('4pm - 5pm', '4pm - 5pm'), ('5pm - 6pm', '5pm - 6pm'), ('6pm - 7pm', '6pm - 7pm')], validators=[DataRequired()])
+    
+    submit = SubmitField('Make Appointment')
+
+
+
+    def validate_pet_name(self, pet_name):
+        pet = Pet.query.filter_by(pet_name=pet_name.data).first()
+        if not pet:
+            raise ValidationError('Pet does not exist.')
+    
+    def validate_firstName(self, firstName):
+        user = User.query.filter_by(firstName=firstName.data).first()
+        if not user:
+            raise ValidationError('User does not exist.')
+    
+    def validate_lastName(self, lastName):
+        user = User.query.filter_by(lastName=lastName.data).first()
+        if not user:
+            raise ValidationError('User does not exist.')
 
 class RecordsForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired(), Email()])
