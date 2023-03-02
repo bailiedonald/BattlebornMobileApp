@@ -4,6 +4,8 @@ from battlebornmobile.forms import SignUpForm, LoginForm, PetForm, AppointmentFo
 from battlebornmobile.models import User, Pet, Appointment, Role
 from flask_login import login_user, current_user, logout_user, login_required
 from flask_security import Security, SQLAlchemyUserDatastore, UserMixin, RoleMixin, roles_required
+from datetime import datetime
+
 
 #Admin Page
 @app.route('/admin')
@@ -205,7 +207,21 @@ def update_user(user_id):
     else:
         return render_template('update.html', user=user)
 
-#index Page
+#Calendar Page
 @app.route('/calendar')
 def calendar():
     return render_template("calendar.html")
+
+@app.route('/appointment/new', methods=['GET', 'POST'])
+@login_required
+def create_appointment():
+    form = AppointmentForm()
+    if form.validate_on_submit():
+        pet = Pet.query.filter_by(pet_name=form.pet_name.data).first()
+        user = User.query.filter_by(firstName=form.firstName.data, lastName=form.lastName.data).first()
+        appointment = Appointment(weekday=form.weekday.data, timeSlot=form.timeSlot.data, dateSheduled=datetime.now().strftime('%Y-%m-%d'), timeSheduled=datetime.now().strftime('%H:%M:%S'), owner_id=current_user.id)
+        db.session.add(appointment)
+        db.session.commit()
+        flash('Appointment created successfully!', 'success')
+        return redirect(url_for('index'))
+    return render_template('create_appointment.html', title='Create Appointment', form=form)
