@@ -104,21 +104,27 @@ def appointment():
         db.session.commit()
         
         flash('Your request has been received!', 'success')
-        return redirect(url_for('dashboard'))
+        return redirect(url_for('dashboard'), title='MakeAppointment')
+    return render_template('appointmentBooking.html', form=form)
 
-    return render_template('appointmentBooking.html', title='AppointmentRequest', form=form)
-# firstName 
-# lastName
-# email
-# phoneNumber
-# pet_name
-# pet_dob
-# pet_species
-# pet_breed
-# streetNumber
-# city
-# state
-# zipcode
+
+@app.route('/appointment/request', methods=['GET', 'POST'])
+def appointment_request():
+    if request.method == 'POST':
+        weekday = request.form['weekday']
+        timeSlot = request.form['timeSlot']
+        pet_id = request.form['pet_id']
+        owner_id = request.form['owner_id']
+        appointment = Appointment(weekday=weekday, timeSlot=timeSlot, pet_id=pet_id, owner_id=owner_id)
+        db.session.add(appointment)
+        db.session.commit()
+        return 'Appointment Has Been Requested We Will Send You Conformation With A Date And Time'
+    else:
+        pets = Pet.query.all()
+        users = User.query.all()
+        return render_template('appointment_request.html', pets=pets, users=users, title='AppointmentRequest')
+
+    
 
 #Admin Dashboard
 @app.route('/admin/dashboard')
@@ -139,8 +145,9 @@ def admindashboard():
 def dashboard():
     # Query all pets linked to the current user
     pets = Pet.query.filter_by(owner_id=current_user.id).all()
+    appointments = Appointment.query.filter_by(owner_id=current_user.id).all()
 
-    return render_template("dashboard.html", pets=pets)
+    return render_template("dashboard.html", pets=pets, appointments=appointments)
 
 
 #Staff Dashboard
