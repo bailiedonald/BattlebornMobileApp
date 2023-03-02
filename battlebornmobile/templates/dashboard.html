@@ -11,8 +11,7 @@
 	
 {% endfor %}
 
-    <h1>Welcome to Your Dashboard {{ current_user.username | capitalize }} </h1>
-	<h2>{{ current_user.username | capitalize }} Dashboard</h2>
+	<h1>{{ current_user.username | capitalize }}'s Dashboard</h1>
 	<br/>
 
 <div class="card">
@@ -25,7 +24,7 @@
             <strong>First Name:</strong>
             {{ current_user.firstName }}
             <strong>Last Name:</strong>
-            {{ current_user.laststName }}  <br/>
+            {{ current_user.lastName }}  <br/>
 
             <strong>Username:</strong>
             {{ current_user.username }}<br/>

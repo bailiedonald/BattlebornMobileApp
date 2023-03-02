@@ -59,7 +59,6 @@ def add_pet():
     form = PetForm()
     if form.validate_on_submit():
         pet = Pet(pet_name=form.pet_name.data, pet_dob=form.pet_dob.data, pet_species=form.pet_species.data, pet_breed=form.pet_breed.data, pet_color=form.pet_color.data, pet_height=form.pet_height.data, pet_weight=form.pet_weight.data, owner_id=current_user.id)
-
         # Add Pet to Pet Database
         db.session.add(pet)
         db.session.commit()
@@ -92,7 +91,7 @@ def logout():
     return redirect(url_for('index'))
 
 #Appointment Request Page
-@app.route("/appointment", methods=['GET', 'POST'])
+@app.route("/appointment/request", methods=['GET', 'POST'])
 @login_required
 def appointment():
     form = AppointmentForm()
@@ -105,24 +104,7 @@ def appointment():
         
         flash('Your request has been received!', 'success')
         return redirect(url_for('dashboard'), title='MakeAppointment')
-    return render_template('appointmentBooking.html', form=form)
-
-
-@app.route('/appointment/request', methods=['GET', 'POST'])
-def appointment_request():
-    if request.method == 'POST':
-        weekday = request.form['weekday']
-        timeSlot = request.form['timeSlot']
-        pet_id = request.form['pet_id']
-        owner_id = request.form['owner_id']
-        appointment = Appointment(weekday=weekday, timeSlot=timeSlot, pet_id=pet_id, owner_id=owner_id)
-        db.session.add(appointment)
-        db.session.commit()
-        return 'Appointment Has Been Requested We Will Send You Conformation With A Date And Time'
-    else:
-        pets = Pet.query.all()
-        users = User.query.all()
-        return render_template('appointment_request.html', pets=pets, users=users, title='AppointmentRequest')
+    return render_template('appointment_request.html', form=form)
 
     
 
