@@ -47,7 +47,7 @@ class User(db.Model, UserMixin):
 class Pet(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     pet_name = db.Column(db.String(30), nullable=False)
-    pet_dob = db.Column(db.String(30), nullable=False)
+    pet_dob = db.Column(db.String(30), nullable=False) #db.Column(db.DateTime, nullable=False)
     pet_species = db.Column(db.String(20), nullable=False)
     pet_breed = db.Column(db.String(20))
     pet_color = db.Column(db.String(10))
@@ -74,6 +74,7 @@ class Appointment(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     scheduled = db.Column(db.Boolean, nullable=False)
     cancelled = db.Column(db.Boolean, nullable=False)
+    date_appoinement = db.Column(db.DateTime, nullable=False)
     #Link to Pet Owner in user Database
     owner_id = db.Column(db.Integer, db.ForeignKey('user.id'))
  
