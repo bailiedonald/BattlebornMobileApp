@@ -19,14 +19,14 @@
 		<div class="column" style="width:50%">
 			<form method="POST">
 				<div class="form-group row">
+				{{ form.hidden_tag() }}
 				<div class="col-md-6">
-					{{ form.hidden_tag() }}
 					{{ form.firstName.label(class="form-label") }}
-					{{ form.firstName(class="form-control") }}
-				</div>
+					{{ form.firstName(value=current_user.firstName, class="form-control") }}
+				</div>				
 				<div class="col-md-6">
 					{{ form.lastName.label(class="form-label") }}
-					{{ form.lastName(class="form-control") }}
+					{{ form.lastName(value=current_user.lastName, class="form-control") }}
 				</div>
 				</div>
 				<div class="form-group row">
@@ -39,6 +39,27 @@
 					{{ form.email(class="form-control") }}
 				</div>
 				</div>
+						
+						<label for="weekday">Preferred Day:</label>
+						<select id="weekday" name="weekday">
+						<option value=" "> </option>
+						<!-- <option value="volvo">Sunday</option> -->
+						<option value="Monday">Monday</option>
+						<!-- <option value="Tuesday">Tuesday</option> -->
+						<!-- <option value="Wednesday">Wednesday</option> -->
+						<!-- <option value="Thursday">Thursday</option> -->
+						<option value="Friday">Friday</option>
+						<option value="Saturday">Saturday</option>
+						</select>
+					<br>  
+					<label for="timeslot">Time:</label>
+						<select id="timeslot" name="timeslot">
+						<option value=" "> </option>
+						<option value="Morning">Morning</option>
+						<option value="Afternoon">Afternoon</option>
+						</select>
+					
+
 				<div class="form-group row">
 				<div class="col-md-6">			
 					{{ form.pet_name.label(class="form-label") }}
