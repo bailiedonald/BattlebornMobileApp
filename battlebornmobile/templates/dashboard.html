@@ -1,0 +1,119 @@
+{% extends 'layout.html' %}
+{% block content %}
+
+{% for message in get_flashed_messages() %}
+	
+	<div class="alert alert-warning alert-dismissible fade show" role="alert">
+	  {{ message }}
+	  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+	</div>
+
+	
+{% endfor %}
+
+	<h1>{{ current_user.username | capitalize }}'s Dashboard</h1>
+	<br/>
+
+<div class="card">
+    <div class="card-body">
+        <p class="card-text">
+            <div class="container">
+            <div class="row">
+                <div class="col-8">
+        
+            <strong>First Name:</strong>
+            {{ current_user.firstName }}
+            <strong>Last Name:</strong>
+            {{ current_user.lastName }}  <br/>
+
+            <strong>Username:</strong>
+            {{ current_user.username }}<br/>
+
+            <strong>Email:</strong>
+            {{ current_user.email }}<br/>
+
+            <strong>Contact Number:</strong>
+            {{ current_user.phoneNumber }}<br/>
+
+            <strong>Address:</strong>
+            {{ current_user.streetNumber }}<br/>
+
+        </p>
+    </div>
+    <div class="col-4">
+            {% if current_user.profile_pic %}
+
+            <img src="{{ url_for('static', filename='images/' + current_user.profile_pic)}}" width="200" align="right">
+            
+            {% else %}
+
+            <img src="{{ url_for('static', filename='images/matt.jpeg')}}" width="200" align="right">
+
+            {% endif %}
+        
+    </div>
+</div>
+</br>
+<div class="col-12 social padding">
+    <a href="/appointment">
+
+    <a href="/pet/add">
+        <button type="button" class="btn btn-success">Add Your Pet</button>
+    </a>
+</div>
+
+<div class="card">
+    <h2>Your Upcoming Appointments</h2>
+     <div class="card-body">     
+         <p class="card-text">
+             <div class="container">                            
+                 <ul style="list-style-type:none;">
+                     {% for appoinment in appointments %}
+                         <div class="row">
+                             <div class="col-8">
+                                 <li>.    {{ pet.pet_name }}</li>
+                                 <li>.   {{ appoinment.weekday }} </li>
+                             </div>
+                         </div>
+                         <br>
+                         <br>        
+                     {% endfor %}
+                 </ul>
+             </div>
+         </p>
+     </div>
+ </div>
+<div class="card">
+   <h2>Your Pets</h2>
+    <div class="card-body">     
+        <p class="card-text">
+            <div class="container">                            
+                <ul style="list-style-type:none;">
+                    {% for pet in pets %}
+                        <div class="row">
+                            <div class="col-8">
+                                <li>
+                                    {% if pet.pet_pic %}
+                                    <img src="{{ url_for('static', filename='images/' + pet.pet_pic) }}" width="200" align="left">
+                                    {% else %}
+                                    <img src="{{ url_for('static', filename='images/animals.jpeg') }}" width="200" align="left">
+                                    {% endif %}
+                                </li>
+                                <li>.    {{ pet.pet_name }}</li>
+                                <li>.   {{ pet.pet_species }} Breed: {{ pet.pet_breed }} Color: {{ pet.pet_color }}</li>
+                                <li>.    {{ pet.pet_dob }}</li>
+                                <li>.    Height: {{ pet.pet_height }} ft Weight: {{ pet.pet_weight }} lbs</li>
+                            </div>
+                        </div>
+                        <br>
+                        <br>        
+                    {% endfor %}
+                </ul>
+            </div>
+        </p>
+    </div>
+</div>
+</div>
+       
+    
+{% endblock %}
