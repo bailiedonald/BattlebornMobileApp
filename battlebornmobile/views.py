@@ -229,17 +229,13 @@ def create_appointment():
         zipcode = form.zipcode.data
         weekday = form.weekday.data
         timeSlot = form.timeSlot.data
-        dateSheduled = form.dateSheduled.data
-        timeSheduled = form.timeSheduled.data
-        scheduled = form.scheduled.data
-        cancelled = form.cancelled.data
         pet_owner = User.query.filter_by(user_id=current_user.id).first()
         pet = Pet.query.filter_by(pet_name=pet_name, owner_id=pet_owner.id).first()
-        appointment = Appointment(pet_name=pet_name, firstName=firstName, lastName=lastName, phoneNumber=phoneNumber, streetNumber=streetNumber, city=city, state=state, zipcode=zipcode, weekday=weekday, timeSlot=timeSlot, dateSheduled=dateSheduled, timeSheduled=timeSheduled, scheduled=s)
+        appointment = Appointment(pet_name=pet_name, firstName=firstName, lastName=lastName, phoneNumber=phoneNumber, streetNumber=streetNumber, city=city, state=state, zipcode=zipcode, weekday=weekday, timeSlot=timeSlot)
         db.session.add(appointment)
         db.session.commit()
         flash('Your appointment has been scheduled!', 'success')
-        return redirect(url_for('dashboard'))
+        return redirect(url_for('dashboard.html'))
     return render_template('create_appointment.html', form=form)    
 
 

@@ -51,9 +51,12 @@ class AppointmentForm(FlaskForm):
     firstName = StringField('First Name', validators=[DataRequired()])
     lastName = StringField('Last Name', validators=[DataRequired()])
     phoneNumber = StringField('Phone Number')
-    weekday = StringField('Weekday', validators=[DataRequired()])
-    timeSlot = SelectField('Time Slot', choices=[('9am - 10am', '9am - 10am'), ('10am - 11am', '10am - 11am'), ('11am - 12pm', '11am - 12pm'), ('12pm - 1pm', '12pm - 1pm'), ('2pm - 3pm', '2pm - 3pm'), ('3pm - 4pm', '3pm - 4pm'), ('4pm - 5pm', '4pm - 5pm'), ('5pm - 6pm', '5pm - 6pm'), ('6pm - 7pm', '6pm - 7pm')], validators=[DataRequired()])
-    
+    weekday = StringField('Weekday')
+    timeSlot = SelectField('Time Slot', choices=[('Morning', 'Afternoon')])
+    streetNumber = StringField('Address', validators=[DataRequired()])
+    city = StringField('City', validators=[DataRequired()])
+    state = StringField('State', validators=[DataRequired()])
+    zipcode = StringField('Zip Code', validators=[DataRequired()])
     submit = SubmitField('Make Appointment')
 
 
