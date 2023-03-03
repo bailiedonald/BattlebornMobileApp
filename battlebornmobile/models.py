@@ -64,6 +64,14 @@ class Pet(db.Model, UserMixin):
 
 class Appointment(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
+    firstName = db.Column(db.String(30), nullable=True)
+    lastName = db.Column(db.String(30), nullable=True)
+    phoneNumber = db.Column(db.String(20), nullable=True)
+    pet_name = db.Column(db.String(30), nullable=False)
+    streetNumber = db.Column(db.String(50))
+    city = db.Column(db.String(25))
+    state = db.Column(db.String(15))
+    zipcode = db.Column(db.String(5))
     weekday = db.Column(db.String(10), nullable=False)
     timeSlot = db.Column(db.String(20))
     dateSheduled= db.Column(db.String(20))
