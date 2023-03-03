@@ -62,11 +62,6 @@ class AppointmentForm(FlaskForm):
     zipcode = StringField('Zip Code', validators=[DataRequired()])
     submit = SubmitField('Make Appointment')
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        # dynamically generate choices for pet_name based on pets associated with current user
-        self.pet_name.choices = [(pet.id, pet.pet_name) for pet in Pet.query.filter_by(owner_id=current_user.id).all()]
-    
     def validate_firstName(self, firstName):
         user = User.query.filter_by(firstName=firstName.data).first()
         if not user:

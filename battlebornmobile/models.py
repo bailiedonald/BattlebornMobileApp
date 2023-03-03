@@ -83,18 +83,6 @@ class Appointment(db.Model, UserMixin):
     owner_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
 
-# firstName 
-# lastName
-# email
-# phoneNumber
-# pet_name
-# pet_dob
-# pet_species
-# pet_breed
-# streetNumber
-# city
-# state
-# zipcode
 
     def __repr__(self):
         return f"Pet('{self.id}', '{self.scheduled}', '{self.cancelled}', '{self.owner_id}')"

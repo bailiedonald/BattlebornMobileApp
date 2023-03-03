@@ -30,26 +30,36 @@
       <br><br>
       <label for="zipcode">Zipcode:</label>
       {{ form.zipcode(value=current_user.zipcode, class="form-control") }}
-      <br><br>
-      <label for="weekday">Preferred Day:</label>
-      <select id="weekday" name="weekday">
-      <option value=" "> </option>
-      <!-- <option value="volvo">Sunday</option> -->
-      <option value="Monday">Monday</option>
-      <!-- <option value="Tuesday">Tuesday</option> -->
-      <!-- <option value="Wednesday">Wednesday</option> -->
-      <!-- <option value="Thursday">Thursday</option> -->
-      <option value="Friday">Friday</option>
-      <option value="Saturday">Saturday</option>
-      </select>
-    <br>  
-    <label for="timeslot">Time:</label>
-      <select id="timeslot" name="timeslot">
-      <option value=" "> </option>
-      <option value="Morning">Morning</option>
-      <option value="Afternoon">Afternoon</option>
-      </select>
-      <br><br>
+      <br><br>				<div class="form-group row">
+        <div class="col-md-6">
+          <div>
+            {{ form.weekday.label(class="form-label") }}
+            <select id="weekday" name="weekday">
+            <option value=" "> </option>
+            <!-- <option value="volvo">Sunday</option> -->
+            <option value="Monday">Monday</option>
+            <!-- <option value="Tuesday">Tuesday</option> -->
+            <!-- <option value="Wednesday">Wednesday</option> -->
+            <!-- <option value="Thursday">Thursday</option> -->
+            <option value="Friday">Friday</option>
+            <option value="Saturday">Saturday</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <br>
+      <div class="form-group row">
+        <div class="col-md-6">
+          <div>
+            {{ form.timeSlot.label(class="form-label") }}
+            <select id="timeSlot" name="timeSlot">
+            <option value=" "> </option>
+            <option value="Morning">Morning</option>
+            <option value="Afternoon">Afternoon</option>
+            </select>
+          </div>
+        </div>
+      </div>
       {{ form.submit }}
     </form>
   </body>

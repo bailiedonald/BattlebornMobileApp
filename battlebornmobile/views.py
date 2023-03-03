@@ -99,8 +99,21 @@ def logout():
 def appointment():
     form = AppointmentForm()
     if form.validate_on_submit():
-        appointment = Appointment(firstName=form.firstName.data, lastName=form.lastName.data, phoneNumber=form.phoneNumber.data, email=form.email.data, pet_name=form.pet_name.data, pet_dob=form.pet_dob.data, pet_species=form.pet_species.data, pet_breed=form.pet_breed.data, streetNumber=form.streetNumber.data, city=form.city.data, state=form.state.data, zipcode=form.zipcode.data, Customer_id=current_user.id)
 
+        pet_name = form.pet_name.data
+        firstName = form.firstName.data
+        lastName = form.lastName.data
+        phoneNumber = form.phoneNumber.data
+        streetNumber = form.streetNumber.data
+        city = form.city.data
+        state = form.state.data
+        zipcode = form.zipcode.data
+        weekday = form.weekday.data
+        timeSlot = form.timeSlot.data
+        pet_owner = User.query.filter_by(user_id=current_user.id).first()
+        pet = Pet.query.filter_by(pet_name=pet_name, owner_id=pet_owner.id).first()
+        appointment = Appointment(pet_name=pet_name, firstName=firstName, lastName=lastName, phoneNumber=phoneNumber, streetNumber=streetNumber, city=city, state=state, zipcode=zipcode, weekday=weekday, timeSlot=timeSlot)
+        
         # Add Pet to Pet Database
         db.session.add(appointment)
         db.session.commit()
@@ -109,7 +122,32 @@ def appointment():
         return redirect(url_for('dashboard'), title='MakeAppointment')
     return render_template('appointment_request.html', form=form)
 
-    
+
+#Appoinment Request
+@app.route('/appointment/new', methods=['GET', 'POST'])
+@login_required
+def create_appointment():
+    form = AppointmentForm()
+    if form.validate_on_submit():
+        pet_name = form.pet_name.data
+        firstName = form.firstName.data
+        lastName = form.lastName.data
+        phoneNumber = form.phoneNumber.data
+        streetNumber = form.streetNumber.data
+        city = form.city.data
+        state = form.state.data
+        zipcode = form.zipcode.data
+        weekday = form.weekday.data
+        timeSlot = form.timeSlot.data
+        pet_owner = User.query.filter_by(user_id=current_user.id).first()
+        pet = Pet.query.filter_by(pet_name=pet_name, owner_id=pet_owner.id).first()
+        appointment = Appointment(pet_name=pet_name, firstName=firstName, lastName=lastName, phoneNumber=phoneNumber, streetNumber=streetNumber, city=city, state=state, zipcode=zipcode, weekday=weekday, timeSlot=timeSlot)
+        db.session.add(appointment) # Add the new Appointment object to the database
+        db.session.commit()
+        flash('Your appointment has been scheduled!', 'success')
+        return redirect(url_for('dashboard.html'))
+    return render_template('create_appointment.html', form=form)  
+
 
 #Admin Dashboard
 @app.route('/admin/dashboard')
@@ -212,32 +250,6 @@ def update_user(user_id):
 @app.route('/calendar')
 def calendar():
     return render_template("calendar.html")
-
-#Appoinment Request
-@app.route('/appointment/new', methods=['GET', 'POST'])
-@login_required
-def create_appointment():
-    form = AppointmentForm()
-    if form.validate_on_submit():
-        pet_name = form.pet_name.data
-        firstName = form.firstName.data
-        lastName = form.lastName.data
-        phoneNumber = form.phoneNumber.data
-        streetNumber = form.streetNumber.data
-        city = form.city.data
-        state = form.state.data
-        zipcode = form.zipcode.data
-        weekday = form.weekday.data
-        timeSlot = form.timeSlot.data
-        pet_owner = User.query.filter_by(user_id=current_user.id).first()
-        pet = Pet.query.filter_by(pet_name=pet_name, owner_id=pet_owner.id).first()
-        appointment = Appointment(pet_name=pet_name, firstName=firstName, lastName=lastName, phoneNumber=phoneNumber, streetNumber=streetNumber, city=city, state=state, zipcode=zipcode, weekday=weekday, timeSlot=timeSlot)
-        db.session.add(appointment)
-        db.session.commit()
-        flash('Your appointment has been scheduled!', 'success')
-        return redirect(url_for('dashboard.html'))
-    return render_template('create_appointment.html', form=form)    
-
 
 #SMS Notification Page
 @app.route('/sms-notification', methods=['POST'])
