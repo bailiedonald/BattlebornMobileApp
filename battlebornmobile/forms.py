@@ -50,7 +50,7 @@ class PetForm(FlaskForm):
     submit = SubmitField('Add Pet')
 
 class AppointmentForm(FlaskForm):
-    pet_name = StringField('Pet Name', validators=[DataRequired()])
+    pet_name = StringField('Pet Name')
     firstName = StringField('First Name', validators=[DataRequired()])
     lastName = StringField('Last Name', validators=[DataRequired()])
     phoneNumber = StringField('Phone Number')
@@ -61,6 +61,7 @@ class AppointmentForm(FlaskForm):
     state = StringField('State', validators=[DataRequired()])
     zipcode = StringField('Zip Code', validators=[DataRequired()])
     submit = SubmitField('Make Appointment')
+
 
     def validate_firstName(self, firstName):
         user = User.query.filter_by(firstName=firstName.data).first()
