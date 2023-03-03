@@ -2,6 +2,9 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, BooleanField, DateField, SelectField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
 from battlebornmobile.models import User, Pet, Appointment
+from flask_login import current_user
+
+
 
 class SignUpForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired(), Length(min=2, max=20)])
@@ -59,12 +62,10 @@ class AppointmentForm(FlaskForm):
     zipcode = StringField('Zip Code', validators=[DataRequired()])
     submit = SubmitField('Make Appointment')
 
-
-
-    def validate_pet_name(self, pet_name):
-        pet = Pet.query.filter_by(pet_name=pet_name.data).first()
-        if not pet:
-            raise ValidationError('Pet does not exist.')
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # dynamically generate choices for pet_name based on pets associated with current user
+        self.pet_name.choices = [(pet.id, pet.pet_name) for pet in Pet.query.filter_by(owner_id=current_user.id).all()]
     
     def validate_firstName(self, firstName):
         user = User.query.filter_by(firstName=firstName.data).first()
