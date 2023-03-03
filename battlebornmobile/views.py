@@ -5,6 +5,7 @@ from battlebornmobile.models import User, Pet, Appointment, Role
 from flask_login import login_user, current_user, logout_user, login_required
 from flask_security import Security, SQLAlchemyUserDatastore, UserMixin, RoleMixin, roles_required
 from datetime import datetime
+from twilio.rest import Client
 
 
 #Admin Page
@@ -229,6 +230,7 @@ def create_appointment():
 #Send SMS Notifcation for Appointment Confirmation
 
 
+#SMS Notification Page
 @app.route('/sms-notification', methods=['POST'])
 def sms_notification():
     user_id = request.form.get('user_id')
@@ -247,6 +249,63 @@ def sms_notification():
     except:
         return 'Failed to send notification', 500
 
-@app.route('/send-notification-form')
-def send_notification_form():
-    return render_template('send_notification_form.html')
+
+@app.route('/send_notification', methods=['GET', 'POST'])
+def send_notification():
+    if request.method == 'POST':
+        user_id = request.form['user_id']
+        # Do something with the user_id, such as send a notification
+        return 'Notification sent to user {}'.format(user_id)
+    else:
+        return render_template('send_notification_form.html')
+
+
+# Import the necessary modules and functions
+from twilio.rest import Client
+from flask import request, render_template
+
+# Initialize the Twilio client
+account_sid = 'your_account_sid_here'
+auth_token = 'your_auth_token_here'
+client = Client(account_sid, auth_token)
+
+# # Define the signup route
+# @app.route('/signup', methods=['GET', 'POST'])
+# def signup():
+#     if request.method == 'POST':
+#         # Get the form data
+#         username = request.form['username']
+#         email = request.form['email']
+#         password = request.form['password']
+#         firstName = request.form['firstName']
+#         lastName = request.form['lastName']
+#         phoneNumber = request.form['phoneNumber']
+#         streetNumber = request.form['streetNumber']
+#         city = request.form['city']
+#         state = request.form['state']
+#         zipcode = request.form['zipcode']
+#         image_file = 'default.jpg'
+#         active = True
+#         StaffAccess = False
+#         AdminAccess = False
+
+#         # Create a new user object and add it to the database
+#         user = User(username=username, email=email, password=password, firstName=firstName, lastName=lastName, phoneNumber=phoneNumber, streetNumber=streetNumber, city=city, state=state, zipcode=zipcode, image_file=image_file, active=active, StaffAccess=StaffAccess, AdminAccess=AdminAccess)
+#         db.session.add(user)
+#         db.session.commit()
+
+#         # Send an SMS notification to the user
+#         phone_number = user.phone_number
+#         message = 'Hello, you have successfully signed up for our service.'
+#         try:
+#             message = client.messages.create(
+#                 body=message,
+#                 from_='+17752405149',  
+#                 to=phone_number
+#             )
+#             return 'User created and notification sent successfully.'
+#         except:
+#             return 'Failed to send notification', 500
+
+#     else:
+#         return render_template('signup.html')
