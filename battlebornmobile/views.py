@@ -205,8 +205,8 @@ def update_user(user_id):
         db.session.commit()
         return render_template('dashboard.html', user=user)
     else:
-        return render_template('update.html', user=user
-        
+        return render_template('update.html', user=user)
+
 #Calendar Page
 @app.route('/calendar')
 def calendar():
