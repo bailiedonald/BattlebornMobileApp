@@ -259,13 +259,3 @@ def send_notification():
     else:
         return render_template('send_notification_form.html')
 
-
-# Import the necessary modules and functions
-from twilio.rest import Client
-from flask import request, render_template
-
-# Initialize the Twilio client
-account_sid = 'your_account_sid_here'
-auth_token = 'your_auth_token_here'
-client = Client(account_sid, auth_token)
-
