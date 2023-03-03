@@ -235,8 +235,12 @@ def create_appointment():
         cancelled = form.cancelled.data
         pet_owner = User.query.filter_by(user_id=current_user.id).first()
         pet = Pet.query.filter_by(pet_name=pet_name, owner_id=pet_owner.id).first()
-        appointment = Appointment(pet_name=pet_name, firstName=firstName, lastName=lastName, phoneNumber=phoneNumber, streetNumber=streetNumber, city=city, state=state, zipcode=zipcode, weekday=weekday, timeSlot=timeSlot, dateSheduled=dateSheduled, timeSheduled=timeSheduled, scheduled=s
-
+        appointment = Appointment(pet_name=pet_name, firstName=firstName, lastName=lastName, phoneNumber=phoneNumber, streetNumber=streetNumber, city=city, state=state, zipcode=zipcode, weekday=weekday, timeSlot=timeSlot, dateSheduled=dateSheduled, timeSheduled=timeSheduled, scheduled=s)
+        db.session.add(appointment)
+        db.session.commit()
+        flash('Your appointment has been scheduled!', 'success')
+        return redirect(url_for('dashboard'))
+    return render_template('create_appointment.html', form=form)    
 
 
 #SMS Notification Page
