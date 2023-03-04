@@ -6,11 +6,6 @@ from flask_security import Security, SQLAlchemyUserDatastore, UserMixin, RoleMix
 from twilio.rest import Client
 
 
-
-
-
-
-
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'Super Secret Password'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:@localhost:5432/battleborn'
