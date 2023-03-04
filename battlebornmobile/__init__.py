@@ -4,6 +4,10 @@ from flask_bcrypt import Bcrypt
 from flask_login import LoginManager
 from flask_security import Security, SQLAlchemyUserDatastore, UserMixin, RoleMixin, roles_required
 from twilio.rest import Client
+from flask_testing import TestCase
+from .unit_tests import unitTests
+
+
 
 
 
@@ -25,5 +29,11 @@ login_manager = LoginManager(app)
 login_manager.login_view = 'login'
 login_manager.login_message_category = 'info'
 
-
+class TestApp(unitTests, TestCase):
+    def create_app(self):
+        app.config['TESTING'] = True
+        app.config['DEBUG'] = False
+        app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:@localhost:5432/battleborn_test'
+        return app
+    
 from battlebornmobile import views
