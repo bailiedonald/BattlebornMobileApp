@@ -5,7 +5,6 @@ from flask_login import LoginManager
 from flask_security import Security, SQLAlchemyUserDatastore, UserMixin, RoleMixin, roles_required
 from twilio.rest import Client
 from flask_testing import TestCase
-from .unit_tests import unitTests
 
 
 
