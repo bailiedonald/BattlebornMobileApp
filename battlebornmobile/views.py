@@ -1,7 +1,7 @@
 from flask import render_template, url_for, flash, redirect, request
 from battlebornmobile import app, db, bcrypt
 from battlebornmobile.forms import SignUpForm, LoginForm, PetForm, AppointmentForm
-from battlebornmobile.models import User, Pet, Appointment, Role
+from battlebornmobile.models import User, Pet, Appointment
 from flask_login import login_user, current_user, logout_user, login_required
 from flask_security import Security, SQLAlchemyUserDatastore, UserMixin, RoleMixin, roles_required
 from datetime import datetime

@@ -8,19 +8,6 @@ from flask_security import Security, SQLAlchemyUserDatastore, UserMixin, RoleMix
 def load_user(user_id):
     return User.query.get(int(user_id))
 
-
-roles_users = db.Table('roles_users',
-            db.Column('user_id', db.Integer(), db.ForeignKey('user.id')),
-            db.Column('role_id', db.Integer(), db.ForeignKey('role.id')),
-            extend_existing=True)
-
-
-
-class Role(db.Model, RoleMixin):
-    id = db.Column(db.Integer(), primary_key=True)
-    name = db.Column(db.String(80), unique=True)
-    description = db.Column(db.String(255))
-
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(50), unique=True, nullable=False)
@@ -37,7 +24,6 @@ class User(db.Model, UserMixin):
     active = db.Column(db.Boolean, default=True, nullable=False)
     StaffAccess = db.Column(db.Boolean, default=False, nullable=False)
     AdminAccess = db.Column(db.Boolean, default=False, nullable=False)
-    roles = db.relationship('Role', secondary=roles_users, backref=db.backref('users', lazy='dynamic'))
     pets = db.relationship('Pet', backref= 'owner')
     appointments = db.relationship('Appointment', backref= 'owner')
 

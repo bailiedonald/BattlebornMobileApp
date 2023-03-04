@@ -28,11 +28,5 @@ login_manager = LoginManager(app)
 login_manager.login_view = 'login'
 login_manager.login_message_category = 'info'
 
-class TestApp(unitTests, TestCase):
-    def create_app(self):
-        app.config['TESTING'] = True
-        app.config['DEBUG'] = False
-        app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:@localhost:5432/battleborn_test'
-        return app
     
 from battlebornmobile import views
