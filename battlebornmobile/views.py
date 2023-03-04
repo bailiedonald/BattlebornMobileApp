@@ -8,12 +8,6 @@ from datetime import datetime
 from twilio.rest import Client
 
 
-#Admin Page
-@app.route('/admin')
-def admin():
-    return 'This page is only accessible to users with the admin role.'
-
-
 #index Page
 @app.route('/')
 def index():
@@ -86,6 +80,18 @@ def login():
             flash('Login Unsuccessful. Please check email and password', 'danger')
     return render_template('login.html', title='Login', form=form)
 
+
+#Main Dashboard
+@app.route('/dashboard')
+@login_required
+def dashboard():
+    # Query all pets linked to the current user
+    pets = Pet.query.filter_by(owner_id=current_user.id).all()
+    # Query all appoinments linked to the current user
+    appointments = Appointment.query.filter_by(owner_id=current_user.id).all()
+
+    return render_template("dashboard.html", pets=pets, appointments=appointments)
+
 #Logout Page
 @app.route("/logout")
 def logout():
@@ -98,17 +104,15 @@ def logout():
 def appointment():
     form = AppointmentForm()
     if form.validate_on_submit():
-        appointment = Appointment(firstName=form.firstName.data, lastName=form.lastName.data, phoneNumber=form.phoneNumber.data, email=form.email.data, pet_name=form.pet_name.data, pet_dob=form.pet_dob.data, pet_species=form.pet_species.data, pet_breed=form.pet_breed.data, streetNumber=form.streetNumber.data, city=form.city.data, state=form.state.data, zipcode=form.zipcode.data, Customer_id=current_user.id)
+        appointment = Appointment(firstName=form.firstName.data, lastName=form.lastName.data, phoneNumber=form.phoneNumber.data, pet_name=form.pet_name.data, service=form.service.data, streetNumber=form.streetNumber.data, city=form.city.data, state=form.state.data, zipcode=form.zipcode.data)
 
         # Add Pet to Pet Database
         db.session.add(appointment)
         db.session.commit()
         
         flash('Your request has been received!', 'success')
-        return redirect(url_for('dashboard'), title='MakeAppointment')
-    return render_template('appointment_request.html', form=form)
-
-    
+        return redirect(url_for('dashboard'))
+    return render_template('appointment_request.html', title='MakeAppointment', form=form)
 
 #Admin Dashboard
 @app.route('/admin/dashboard')
@@ -121,17 +125,6 @@ def admindashboard():
     else:
         flash ("Access Denied Admin Only.")
         return render_template("dashboard.html")
-
-
-#Main Dashboard
-@app.route('/dashboard')
-@login_required
-def dashboard():
-    # Query all pets linked to the current user
-    pets = Pet.query.filter_by(owner_id=current_user.id).all()
-    appointments = Appointment.query.filter_by(owner_id=current_user.id).all()
-
-    return render_template("dashboard.html", pets=pets, appointments=appointments)
 
 
 #Staff Dashboard
@@ -171,17 +164,20 @@ appointmnet_requests = [
 
 #Scheduler
 @app.route('/staff/scheduler')
+@login_required
 def scheduler():
     return render_template("scheduler.html", appointmnet_requests = appointmnet_requests)
 
 #Staff View Customer Records
 @app.route('/staff/records', methods={"GET", "POST"})
+@login_required
 def records():
     users = User.query.all()
     return render_template('records.html', users=users)
 
 #Staff Search Customer Records
 @app.route('/staff/records/search')
+@login_required
 def search():
     search_query = request.args.get('q')
     if search_query:
@@ -193,6 +189,7 @@ def search():
 
 #Confirm Appointments
 @app.route('/staff/appointments')
+@login_required
 def confirmappointments():
     return render_template("confirmappointment.html")
 
@@ -209,24 +206,10 @@ def update_user(user_id):
 
 #Calendar Page
 @app.route('/calendar')
+@login_required
 def calendar():
     return render_template("calendar.html")
 
-@app.route('/appointment/new', methods=['GET', 'POST'])
-@login_required
-def create_appointment():
-    form = AppointmentForm()
-    if form.validate_on_submit():
-        pet = Pet.query.filter_by(pet_name=form.pet_name.data).first()
-        user = User.query.filter_by(firstName=form.firstName.data, lastName=form.lastName.data).first()
-        appointment = Appointment(weekday=form.weekday.data, timeSlot=form.timeSlot.data, dateSheduled=datetime.now().strftime('%Y-%m-%d'), timeSheduled=datetime.now().strftime('%H:%M:%S'), owner_id=current_user.id)
-        db.session.add(appointment)
-        db.session.commit()
-        flash('Appointment created successfully!', 'success')
-        return redirect(url_for('index'))
-    return render_template('create_appointment.html', title='Create Appointment', form=form)
-
-#Send SMS Notifcation for Appointment Confirmation
 
 
 #SMS Notification Page
@@ -249,6 +232,9 @@ def sms_notification():
         return 'Failed to send notification', 500
 
 
+
+
+#Send SMS Notifcation for Appointment Confirmation
 @app.route('/send_notification', methods=['GET', 'POST'])
 def send_notification():
     if request.method == 'POST':
