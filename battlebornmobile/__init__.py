@@ -4,7 +4,6 @@ from flask_bcrypt import Bcrypt
 from flask_login import LoginManager
 from flask_security import Security, SQLAlchemyUserDatastore, UserMixin, RoleMixin, roles_required
 from twilio.rest import Client
-from flask_testing import TestCase
 
 
 
@@ -30,3 +29,21 @@ login_manager.login_message_category = 'info'
 
     
 from battlebornmobile import views
+
+
+#for testing
+def create_app(config_name):
+    app = Flask(__name__)
+    SECRET_KEY="default_secret_key",
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data.db',
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    db = SQLAlchemy(app)
+        
+    # rest of the function
+    # ...
+
+    return app
+
+
+
+

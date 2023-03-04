@@ -10,7 +10,6 @@ from twilio.rest import Client
 
 #Admin Page
 @app.route('/admin')
-@roles_required('admin')
 def admin():
     return 'This page is only accessible to users with the admin role.'
 
@@ -18,7 +17,7 @@ def admin():
 #index Page
 @app.route('/')
 def index():
-    return render_template("index.html")
+    return render_template("index.html",title='Home')
 
 #About Us Page
 @app.route('/about')
