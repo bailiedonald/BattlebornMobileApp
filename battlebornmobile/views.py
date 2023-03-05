@@ -50,12 +50,11 @@ def signup():
         db.session.add(user)
         db.session.commit()
         flash('Your account has been created! You are now able to log in', 'success')
-        return redirect(url_for('login'))
+        return redirect(url_for('confirmemail'))
     return render_template('signup.html', title='Sign Up', form=form)
 
 #Confirm Email Page
 @app.route('/signup/Confirmation')
-
 def confirmemail():
     return render_template("confirmEmail.html")
 
