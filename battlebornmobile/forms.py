@@ -6,6 +6,7 @@ from battlebornmobile.models import User, Pet, Appointment
 class SignUpForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired(), Length(min=2, max=20)])
     email = StringField('Email', validators=[DataRequired(), Email()])
+    confirm_email = StringField('Confirm Email', validators=[DataRequired(), Email()])
     firstName = StringField('First Name', validators=[DataRequired()])
     lastName = StringField('Last Name', validators=[DataRequired()])
     phoneNumber = StringField('Phone Number')
