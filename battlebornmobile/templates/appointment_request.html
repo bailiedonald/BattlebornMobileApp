@@ -32,68 +32,68 @@
 				<div class="form-group row">
 				<div class="col-md-6">			
 					{{ form.phoneNumber.label(class="form-label") }}
-					{{ form.phoneNumber(class="form-control") }}
+					{{ form.phoneNumber(value=current_user.phoneNumber, class="form-control") }}
 				</div>
-				<div class="col-md-6">
-					{{ form.email.label(class="form-label") }}
-					{{ form.email(class="form-control") }}
+				<div class="form-group row">
+					<div class="col-md-6">			
+						{{ form.pet_name.label(class="form-label") }}
+						{{ form.pet_name(class="form-control") }}
+					</div>
 				</div>
+				<div class="form-group row">
+					<div class="col-md-6">			
+						{{ form.service.label(class="form-label") }}
+						{{ form.service(class="form-control") }}
+					</div>
+					</div>
 				</div>
-						
-						<label for="weekday">Preferred Day:</label>
-						<select id="weekday" name="weekday">
-						<option value=" "> </option>
-						<!-- <option value="volvo">Sunday</option> -->
-						<option value="Monday">Monday</option>
-						<!-- <option value="Tuesday">Tuesday</option> -->
-						<!-- <option value="Wednesday">Wednesday</option> -->
-						<!-- <option value="Thursday">Thursday</option> -->
-						<option value="Friday">Friday</option>
-						<option value="Saturday">Saturday</option>
-						</select>
-					<br>  
-					<label for="timeslot">Time:</label>
-						<select id="timeslot" name="timeslot">
-						<option value=" "> </option>
-						<option value="Morning">Morning</option>
-						<option value="Afternoon">Afternoon</option>
-						</select>
-					
+				<div class="form-group row">
+					<div class="col-md-6">
+						<div>
+							{{ form.weekday.label(class="form-label") }}
+							<select id="weekday" name="weekday">
+							<option value=" "> </option>
+							<!-- <option value="volvo">Sunday</option> -->
+							<option value="Monday">Monday</option>
+							<!-- <option value="Tuesday">Tuesday</option> -->
+							<!-- <option value="Wednesday">Wednesday</option> -->
+							<!-- <option value="Thursday">Thursday</option> -->
+							<option value="Friday">Friday</option>
+							<option value="Saturday">Saturday</option>
+							</select>
+						</div>
+					</div>
+				</div>
+				<br>
+				<div class="form-group row">
+					<div class="col-md-6">
+						<div>
+							{{ form.timeSlot.label(class="form-label") }}
+							<select id="timeSlot" name="timeSlot">
+							<option value=" "> </option>
+							<option value="Morning">Morning</option>
+							<option value="Afternoon">Afternoon</option>
+							</select>
+						</div>
+					</div>
+				</div>
+				<br>
 
-				<div class="form-group row">
-				<div class="col-md-6">			
-					{{ form.pet_name.label(class="form-label") }}
-					{{ form.pet_name(class="form-control") }}
-				</div>
-				<div class="col-md-6">
-					{{ form.pet_dob.label(class="form-label") }}
-					{{ form.pet_dob(class="form-control") }}
-				</div>
-				</div>
-				<div class="form-group row">
-				<div class="col-md-6">			
-					{{ form.pet_species.label(class="form-label") }}
-					{{ form.pet_species(class="form-control") }}
-				</div>
-				<div class="col-md-6">
-					{{ form.pet_breed.label(class="form-label") }}
-					{{ form.pet_breed(class="form-control") }}
-				</div>
 				</div>
 					{{ form.streetNumber.label(class="form-label") }}
-					{{ form.streetNumber(class="form-control") }}
+					{{ form.streetNumber(value=current_user.streetNumber, class="form-control") }}
 				<div class="form-group row">
 				<div class="col-md-4">			
 					{{ form.city.label(class="form-label") }}
-					{{ form.city(class="form-control") }}
+					{{ form.city(value=current_user.city, class="form-control") }}
 				</div>
 				<div class="col-md-4">
 					{{ form.state.label(class="form-label") }}
-					{{ form.state(class="form-control") }}
+					{{ form.state(value=current_user.state, class="form-control") }}
 				</div>
 				<div class="col-md-4">
 					{{ form.zipcode.label(class="form-label") }}
-					{{ form.zipcode(class="form-control") }}
+					{{ form.zipcode(value=current_user.zipcode, class="form-control") }}
 					</div>
 				</div>
 				<div class="text-center">
