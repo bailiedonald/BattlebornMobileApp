@@ -1,38 +1,56 @@
-from flask import Flask, request, url_for
+from flask import Flask, render_template, request
 from flask_mail import Mail, Message
-from itsdangerous import URLSafeTimedSerializer, SignatureExpired
+import secrets
+from google.oauth2.credentials import Credentials
+from googleapiclient.discovery import build
+
+
+
 
 app = Flask(__name__)
-app.config.from_pyfile('config.cfg')
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 465
+app.config['MAIL_USE_SSL'] = True
+app.config['MAIL_USE_TLS'] = False
+app.config['MAIL_USERNAME'] = 'spencer@alsetdsgd.com'
+app.config['MAIL_PASSWORD'] = 'Spring22'
 
 mail = Mail(app)
 
-s = URLSafeTimedSerializer('Thisisasecret!')
+@app.route('/signup', methods=['GET', 'POST'])
+def signup():
+    if request.method == 'POST':
+        # Process the user's sign-up information and generate a verification token
+        email = request.form['email']
+        token = secrets.token_urlsafe(16)
 
-@app.route('/', methods=['GET', 'POST'])
-def index():
-    if request.method == 'GET':
-        return '<form action="/" method="POST"><input name="email"><input type="submit"></form>'
+        # Send the verification email to the user's email address
+        msg = Message('Verify your email address', sender='spencer@alsetdsgd.com', recipients=[email])
+        msg.body = render_template('verification_email.txt', token=token)
+        mail.send(msg)
 
-    email = request.form['email']
-    token = s.dumps(email, salt='email-confirm')
-    msg = Message('Confirm Email', sender='anthony@prettyprinted.com', recipients=[email])
+        # Update the user's account information to indicate that the email address is not yet verified
+        # You can use a database or other storage mechanism to track this information
+        user = {'email': email, 'token': token, 'verified': False}
 
-    link = url_for('confirm_email', token=token, _external=True)
+        return 'Thank you for signing up! Please check your email to verify your email address.'
 
-    msg.body = 'Your link is {}'.format(link)
+    return render_template('signup.html')
 
-    mail.send(msg)
+@app.route('/verify/<token>')
+def verify(token):
+    # Retrieve the user's account information based on the token provided in the link
+    # You can use a database or other storage mechanism to retrieve this information
+    user = {'email': 'user@example.com', 'token': 'AbCdEf123456', 'verified': False}
 
-    return '<h1>The email you entered is {}. The token is {}</h1>'.format(email, token)
+    # Compare the token in the link to the one generated earlier
+    if token == user['token']:
+        # Update the user's account information to indicate that the email address is now verified
+        user['verified'] = True
 
-@app.route('/confirm_email/<token>')
-def confirm_email(token):
-    try:
-        email = s.loads(token, salt='email-confirm', max_age=3600)
-    except SignatureExpired:
-        return '<h1>The token is expired!</h1>'
-    return '<h1>The token works!</h1>'
+        return 'Your email address has been verified!'
+
+    return 'Invalid verification link.'
 
 if __name__ == '__main__':
     app.run(debug=True)
