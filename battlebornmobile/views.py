@@ -53,6 +53,42 @@ def signup():
         return redirect(url_for('confirmemail'))
     return render_template('signup.html', title='Sign Up', form=form)
 
+
+@app.route('/signup/spencer', methods=['GET', 'POST'])
+def signupspencer():
+    if request.method == 'POST':
+        # Process the user's sign-up information and generate a verification token
+        email = request.form['email']
+        token = secrets.token_urlsafe(16)
+
+        # Send the verification email to the user's email address
+        msg = Message('Verify your email address', sender='spencer@alsetdsgd.com', recipients=[email])
+        msg.body = render_template('verification_email.txt', token=token)
+        mail.send(msg)
+
+        # Update the user's account information to indicate that the email address is not yet verified
+        # You can use a database or other storage mechanism to track this information
+        user = {'email': email, 'token': token, 'verified': False}
+
+        return render_template('confirmEmail.html'), 'Thank you for signing up! Please check your email to verify your email address.'
+
+    return render_template('signup.html')
+
+@app.route('/verify/<token>')
+def verify(token):
+    # Retrieve the user's account information based on the token provided in the link
+    # You can use a database or other storage mechanism to retrieve this information
+    user = {'email': 'user@example.com', 'token': 'AbCdEf123456', 'verified': False}
+
+    # Compare the token in the link to the one generated earlier
+    if token == user['token']:
+        # Update the user's account information to indicate that the email address is now verified
+        user['verified'] = True
+
+        return 'Your email address has been verified!'
+
+    return 'Invalid verification link.'
+
 #Confirm Email Page
 @app.route('/signup/Confirmation')
 def confirmemail():
@@ -260,38 +296,3 @@ account_sid = 'your_account_sid_here'
 auth_token = 'your_auth_token_here'
 client = Client(account_sid, auth_token)
 
-
-# @app.route('/signup/spencer', methods=['GET', 'POST'])
-# def signupspencer():
-#     if request.method == 'POST':
-#         # Process the user's sign-up information and generate a verification token
-#         email = request.form['email']
-#         token = secrets.token_urlsafe(16)
-
-#         # Send the verification email to the user's email address
-#         msg = Message('Verify your email address', sender='spencer@alsetdsgd.com', recipients=[email])
-#         msg.body = render_template('verification_email.txt', token=token)
-#         mail.send(msg)
-
-#         # Update the user's account information to indicate that the email address is not yet verified
-#         # You can use a database or other storage mechanism to track this information
-#         user = {'email': email, 'token': token, 'verified': False}
-
-#         return render_template('confirmEmail.html'), 'Thank you for signing up! Please check your email to verify your email address.'
-
-#     return render_template('signup.html')
-
-# @app.route('/verify/<token>')
-# def verify(token):
-#     # Retrieve the user's account information based on the token provided in the link
-#     # You can use a database or other storage mechanism to retrieve this information
-#     user = {'email': 'user@example.com', 'token': 'AbCdEf123456', 'verified': False}
-
-#     # Compare the token in the link to the one generated earlier
-#     if token == user['token']:
-#         # Update the user's account information to indicate that the email address is now verified
-#         user['verified'] = True
-
-#         return 'Your email address has been verified!'
-
-#     return 'Invalid verification link.'
