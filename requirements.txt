@@ -49,3 +49,5 @@ Werkzeug==2.2.2
 wtf==0.1
 WTForms==3.0.1
 zipp==3.11.0
+google-api-python-client==2.26.0
+
