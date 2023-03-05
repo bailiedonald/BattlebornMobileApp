@@ -1,0 +1,10 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<h1>Confirm Email to Complete Account Registration</h1>
+<form method="post">
+  <label for="email">Email:</label>
+  <input type="email" id="email" name="email" value="{{ user.email }}" required><br><br>
+  <input type="submit" value="Update User">
+</form>
+{% endblock %}

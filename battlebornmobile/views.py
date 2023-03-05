@@ -6,6 +6,11 @@ from flask_login import login_user, current_user, logout_user, login_required
 from flask_security import Security, SQLAlchemyUserDatastore, UserMixin, RoleMixin, roles_required
 from datetime import datetime
 from twilio.rest import Client
+from flask_mail import Mail, Message
+import secrets
+from google.oauth2.credentials import Credentials
+from googleapiclient.discovery import build
+
 
 
 #index Page
@@ -47,6 +52,12 @@ def signup():
         flash('Your account has been created! You are now able to log in', 'success')
         return redirect(url_for('login'))
     return render_template('signup.html', title='Sign Up', form=form)
+
+#Confirm Email Page
+@app.route('/signup/Confirmation')
+
+def confirmemail():
+    return render_template("confirmEmail.html")
 
 #Add Pet Page
 @app.route("/pet/add", methods=['GET', 'POST'])
@@ -249,3 +260,39 @@ def send_notification():
 account_sid = 'your_account_sid_here'
 auth_token = 'your_auth_token_here'
 client = Client(account_sid, auth_token)
+
+
+# @app.route('/signup/spencer', methods=['GET', 'POST'])
+# def signupspencer():
+#     if request.method == 'POST':
+#         # Process the user's sign-up information and generate a verification token
+#         email = request.form['email']
+#         token = secrets.token_urlsafe(16)
+
+#         # Send the verification email to the user's email address
+#         msg = Message('Verify your email address', sender='spencer@alsetdsgd.com', recipients=[email])
+#         msg.body = render_template('verification_email.txt', token=token)
+#         mail.send(msg)
+
+#         # Update the user's account information to indicate that the email address is not yet verified
+#         # You can use a database or other storage mechanism to track this information
+#         user = {'email': email, 'token': token, 'verified': False}
+
+#         return render_template('confirmEmail.html'), 'Thank you for signing up! Please check your email to verify your email address.'
+
+#     return render_template('signup.html')
+
+# @app.route('/verify/<token>')
+# def verify(token):
+#     # Retrieve the user's account information based on the token provided in the link
+#     # You can use a database or other storage mechanism to retrieve this information
+#     user = {'email': 'user@example.com', 'token': 'AbCdEf123456', 'verified': False}
+
+#     # Compare the token in the link to the one generated earlier
+#     if token == user['token']:
+#         # Update the user's account information to indicate that the email address is now verified
+#         user['verified'] = True
+
+#         return 'Your email address has been verified!'
+
+#     return 'Invalid verification link.'

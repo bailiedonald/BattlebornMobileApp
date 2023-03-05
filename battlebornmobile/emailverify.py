@@ -17,7 +17,7 @@ app.config['MAIL_PASSWORD'] = 'Spring22'
 
 mail = Mail(app)
 
-@app.route('/signup', methods=['GET', 'POST'])
+@app.route('/signup/spencer', methods=['GET', 'POST'])
 def signup():
     if request.method == 'POST':
         # Process the user's sign-up information and generate a verification token
@@ -33,7 +33,7 @@ def signup():
         # You can use a database or other storage mechanism to track this information
         user = {'email': email, 'token': token, 'verified': False}
 
-        return 'Thank you for signing up! Please check your email to verify your email address.'
+        return render_template('confirmEmail.html'), 'Thank you for signing up! Please check your email to verify your email address.'
 
     return render_template('signup.html')
 
