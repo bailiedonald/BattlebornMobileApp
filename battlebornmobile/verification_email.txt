@@ -5,7 +5,9 @@ Thank you for signing up for Battleborn Mobile Application!
 
 To verify your email address, please click on the following link:
 
-http://localhost:5000/verify/{{ token }}
+http://127.0.0.1:5000/verify/{{ token }}
+
+http://127.0.0.1:5000/login
 
 If you did not sign up for our website, please ignore this email.
 

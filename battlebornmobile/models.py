@@ -21,7 +21,7 @@ class User(db.Model, UserMixin):
     state = db.Column(db.String(15))
     zipcode = db.Column(db.String(5))
     image_file = db.Column(db.String(20), nullable=False, default='default.jpg')
-    active = db.Column(db.Boolean, default=True, nullable=False)
+    active = db.Column(db.Boolean, default=False, nullable=False)
     StaffAccess = db.Column(db.Boolean, default=False, nullable=False)
     AdminAccess = db.Column(db.Boolean, default=False, nullable=False)
     pets = db.relationship('Pet', backref= 'owner')
