@@ -8,7 +8,7 @@ from flask_mail import Mail, Message
 import secrets
 from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
-
+from itsdangerous import SignatureExpired, URLSafeTimedSerializer
 
 
 app = Flask(__name__)
@@ -36,6 +36,9 @@ db = SQLAlchemy(app)
 mail = Mail(app)
 bcrypt = Bcrypt(app)
 login_manager = LoginManager(app)
+s = URLSafeTimedSerializer(app.config['SECRET_KEY'])
+
+
 
 login_manager.login_view = 'login'
 login_manager.login_message_category = 'info'

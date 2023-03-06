@@ -1,15 +1,10 @@
 Dear {{ email }},
 
-Thank you for signing up for Battleborn Mobile Application! 
+Thanks for signing up for our service! To verify your email address, please click the following link:
 
+{{url_for('verify_email', token=token, _external=True)}}
 
-To verify your email address, please click on the following link:
+If you did not sign up for our service, please ignore this email.
 
-http://127.0.0.1:5000/verify/{{ token }}
-
-http://127.0.0.1:5000/login
-
-If you did not sign up for our website, please ignore this email.
-
-Thank you,
-The garbage dude who made this
+Thanks,
+The Battleborn Team
