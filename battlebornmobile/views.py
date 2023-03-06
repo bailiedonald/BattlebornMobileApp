@@ -49,8 +49,8 @@ def signup():
         user = User(username=form.username.data, email=form.email.data, password=hashed_password, firstName=form.firstName.data, lastName=form.lastName.data, phoneNumber=form.phoneNumber.data, streetNumber=form.streetNumber.data, city=form.city.data, state=form.state.data, zipcode=form.zipcode.data)
         db.session.add(user)
         db.session.commit()
-        flash('Your account has been created! You are now able to log in', 'success')
-        return redirect(url_for('confirmemail'))
+        flash('Please check your email to verify your new account')
+        return render_template('confirmEmail.html')
     return render_template('signup.html', title='Sign Up', form=form)
 
 
@@ -85,7 +85,7 @@ def verify(token):
         # Update the user's account information to indicate that the email address is now verified
         user['verified'] = True
 
-        return 'Your email address has been verified!'
+        return render_template('login.html'), 'Your account has been created! You are now able to log in'
 
     return 'Invalid verification link.'
 
