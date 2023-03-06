@@ -68,22 +68,22 @@ def signupspencer():
 
         # Update the user's account information to indicate that the email address is not yet verified
         # You can use a database or other storage mechanism to track this information
-        user = {'email': email, 'token': token, 'verified': False}
+        user = {'email': email, 'token': token, 'active': False}
 
         return render_template('confirmEmail.html'), 'Thank you for signing up! Please check your email to verify your email address.'
 
-    return render_template('signup.html')
+    return render_template('signupS.html')
 
 @app.route('/verify/<token>')
 def verify(token):
     # Retrieve the user's account information based on the token provided in the link
     # You can use a database or other storage mechanism to retrieve this information
-    user = {'email': 'user@example.com', 'token': 'AbCdEf123456', 'verified': False}
+    user = {'email': 'user@example.com', 'token': 'AbCdEf123456', 'active': False}
 
     # Compare the token in the link to the one generated earlier
     if token == user['token']:
         # Update the user's account information to indicate that the email address is now verified
-        user['verified'] = True
+        user['active'] = True
 
         return render_template('login.html'), 'Your account has been created! You are now able to log in'
 
@@ -93,6 +93,11 @@ def verify(token):
 @app.route('/signup/Confirmation')
 def confirmemail():
     return render_template("confirmEmail.html")
+
+#signupS Page
+@app.route('/signupS')
+def signupS():
+    return render_template("signupS.html")
 
 #Add Pet Page
 @app.route("/pet/add", methods=['GET', 'POST'])
