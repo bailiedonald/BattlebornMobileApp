@@ -24,10 +24,10 @@
     
     <div class="col-5">
       {% for appointment in appointments %}     
-        <article class="container p-3 my-3 border">
+      <article class="container p-3 my-3 border">
           <div class="media-body">
             <div class="article-metadata">
-             <h3 class="article-title" >{{ appointment.firstName }} {{ appointment.lastName }}</h3>
+              <h3 class="article-title" >{{ appointment.firstName }} {{ appointment.lastName }}</h3>
             </div>
             <h3 class="article-title" >Pets name: {{ appointment.pet_name }}</a></h3>
             <p class="article-content">Service needed:  {{ appointment.service }}</p>
@@ -43,18 +43,15 @@
               <label for="timeScheduled">Time scheduled:</label>
               <input type="time" class="form-control" id="timeScheduled" name="timeScheduled" value="">
             </div>
-            <button type="submit" class="btn btn-success">Schedule</button>
+            
+            <button type="submit" class="btn btn-success" onclick="return confirm('Are you sure you want to schedule this appointment?')">Schedule</button>
           </form>          
         </article>
       {% endfor %}
     </div>
     <div class="col-7">
       {% include 'calendar.html' %}
-
-
-      
     </div>
-
   </div> 
 </div>
 {% endblock %}

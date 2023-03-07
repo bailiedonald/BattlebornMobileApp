@@ -31,29 +31,22 @@
         }
     </script>
     
-    <div class="container">
-      <div class="row">
-        <div class="column">
-          <img src="/static/images/bmvhlogo.jpeg" style="width:100%">
-        </div>
-        <div class="column">
-          <form action="/sms/send" method="POST">
-            <input type="hidden" name="user_id" value="{{ user_id }}">
-            <label for="fname">Customer Name</label></br>
-            <label for="lname">Pet Name</label></br>
-            <label for="country">Address</label></br>
-            <label for="country">Service Needed</label></br>
-            <label for="subject">Discription</label></br>
-            <textarea id="subject" name="subject" placeholder="Write something.." style="height:50px"></textarea>
-            <button type="submit" class="btn btn-success">Submit</button>
-          </form>
-        </div>
-      </div>
-    </div>
-    <td>
+
+          <article class="media content-section">
+            <div class="media-body">
+              <div class="article-metadata">
+                <h3 class="article-title" >{{ appointment.firstName }} {{ appointment.lastName }}</h3>
+              </div>
+              <h3 class="article-title" >Pets name: {{ appointment.pet_name }}</a></h3>
+              <p class="article-content">Service needed:  {{ appointment.service }}</p>
+              <p class="article-content">Preffered Day Week: {{ appointment.weekday }}</p>
+              <p class="article-content">Preffered Day Week: {{ appointment.timeSlot }}</p>
+        
+            </div>
       <form action="{{ url_for('smsSend') }}" method="POST">
         <input type="hidden" name="phoneNumber" value="{{ appointment.phoneNumber }}">
         <button type="submit">Send SMS</button>
       </form>
-    </td>
+
 {% endblock %}
+
