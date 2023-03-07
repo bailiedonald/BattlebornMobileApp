@@ -1,16 +1,9 @@
 from flask import render_template, url_for, flash, redirect, request
-from battlebornmobile import app, db, bcrypt, mail
+from battlebornmobile import app, db, bcrypt, mail, client
 from battlebornmobile.forms import SignUpForm, LoginForm, PetForm, AppointmentForm
 from battlebornmobile.models import User, Pet, Appointment
 from flask_login import login_user, current_user, logout_user, login_required
-from flask_security import Security, SQLAlchemyUserDatastore, UserMixin, RoleMixin, roles_required
-from datetime import datetime
-from twilio.rest import Client
-from flask_mail import Mail, Message
-import secrets
-from google.oauth2.credentials import Credentials
-from googleapiclient.discovery import build
-from itsdangerous import SignatureExpired, URLSafeTimedSerializer
+from flask_mail import Message
 
 
 
@@ -120,7 +113,6 @@ def login():
         else:
             flash('Login Unsuccessful. Please check email and password', 'danger')
     return render_template('login.html', title='Login', form=form)
-
 
 #Main Dashboard
 @app.route('/dashboard')
@@ -272,9 +264,6 @@ def sms_notification():
     except:
         return 'Failed to send notification', 500
 
-
-
-
 #Send SMS Notifcation for Appointment Confirmation
 @app.route('/send_notification', methods=['GET', 'POST'])
 def send_notification():
@@ -285,8 +274,12 @@ def send_notification():
     else:
         return render_template('send_notification_form.html')
 
-
-# Initialize the Twilio client
-account_sid = 'TWILIO_ACCOUNT_SID'
-auth_token = 'TWILIO_AUTH_TOKEN'
-client = Client(account_sid, auth_token)
+# Example view function that sends a SMS message
+@app.route('/sendtext')
+def send_sms():
+    message = client.messages.create(
+        body='Hello, World!',
+        from_='+7752405149',
+        to='+7753763523'
+    )
+    return 'SMS sent!'
