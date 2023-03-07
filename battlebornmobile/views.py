@@ -54,7 +54,7 @@ def signup():
 
         # Send the verification email to the user's email address
         msg = Message('Verify your email address', sender='spencer@alsetdsgd.com', recipients=[email])
-        msg.body = render_template('verify_email.txt', username=form.username.data)
+        msg.body = render_template('verification_email.txt', username=form.username.data)
         mail.send(msg)
 
         # Update the user's account information to indicate that the email address is not yet verified
