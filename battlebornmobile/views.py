@@ -308,5 +308,7 @@ def send_sms():
         body='Good Bye, World!',
         from_='+15674323893',
         to='+17753763523')
-    return 'SMS sent!'
+    flash('Notification sent successfully.', 'success')
+
+    return render_template("dashboardadmin.html"), 'SMS sent!'
 

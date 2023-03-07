@@ -15,7 +15,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:@localhost:5432/b
 app.config['SECURITY_PASSWORD_SALT'] = 'your_password_salt'
 app.config['SECURITY_ROLES'] = {'admin': 'Administrator', 'staff': 'Staff', 'user': 'User'}
 
-#Spencer email verification Setup
+#Email verification Setup
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 465
 app.config['MAIL_USE_SSL'] = True

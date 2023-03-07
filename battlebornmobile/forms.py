@@ -64,9 +64,6 @@ class AppointmentForm(FlaskForm):
     state = StringField('State', validators=[DataRequired()])
     zipcode = StringField('Zip Code', validators=[DataRequired()])
     submit = SubmitField('Make Appointment')
-    dateScheduled = DateField("Date Scheduled", validators=[DataRequired()])
-    timeScheduled = DateTimeField('Time Scheduled', validators=[DataRequired()])
- 
 
 
     def __init__(self, *args, **kwargs):
