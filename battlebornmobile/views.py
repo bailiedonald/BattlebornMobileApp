@@ -32,7 +32,6 @@ def contact():
 def layout():
     return render_template("layout.html")
 
-
 #SignUp Page
 @app.route("/signup", methods=['GET', 'POST'])
 def signup():
@@ -71,27 +70,10 @@ def verify_email(username):
     flash('Your email has been confirmed! You can now login.', 'success')
     return redirect(url_for('login'))
 
-
 #Confirm Email Page
 @app.route('/signup/Confirmation')
 def confirmemail():
     return render_template("confirmEmail.html")
-
-#Add Pet Page
-@app.route("/pet/add", methods=['GET', 'POST'])
-@login_required
-def add_pet():
-    form = PetForm()
-    if form.validate_on_submit():
-        pet = Pet(pet_name=form.pet_name.data, pet_dob=form.pet_dob.data, pet_species=form.pet_species.data, pet_breed=form.pet_breed.data, pet_color=form.pet_color.data, pet_height=form.pet_height.data, pet_weight=form.pet_weight.data, owner_id=current_user.id)
-        # Add Pet to Pet Database
-        db.session.add(pet)
-        db.session.commit()
-        
-        flash('Your pet has been added!', 'success')
-        return redirect(url_for('dashboard'))
-
-    return render_template('add_pet.html', form=form)
 
 #Login Page
 @app.route("/login", methods=['GET', 'POST'])
@@ -108,6 +90,22 @@ def login():
         else:
             flash('Login Unsuccessful. Please check email and password', 'danger')
     return render_template('login.html', title='Login', form=form)
+
+#Add Pet Page
+@app.route("/pet/add", methods=['GET', 'POST'])
+@login_required
+def add_pet():
+    form = PetForm()
+    if form.validate_on_submit():
+        pet = Pet(pet_name=form.pet_name.data, pet_dob=form.pet_dob.data, pet_species=form.pet_species.data, pet_breed=form.pet_breed.data, pet_color=form.pet_color.data, pet_height=form.pet_height.data, pet_weight=form.pet_weight.data, owner_id=current_user.id)
+        # Add Pet to Pet Database
+        db.session.add(pet)
+        db.session.commit()
+        
+        flash('Your pet has been added!', 'success')
+        return redirect(url_for('dashboard'))
+
+    return render_template('add_pet.html', form=form)
 
 #Main Dashboard
 @app.route('/dashboard')
@@ -154,6 +152,38 @@ def admindashboard():
         flash ("Access Denied Admin Only.")
         return render_template("dashboard.html")
 
+#Admin User Access Table
+@app.route('/admin/useraccess')
+@login_required
+def userAccess():
+    admin = current_user.AdminAccess
+    if admin:
+        search_query = request.args.get('q')
+        if search_query:
+            users = User.query.filter(User.lastName.contains(search_query)).all()
+        else:
+            users = User.query.all()
+        return render_template('userAccess.html', users=users, search_query=search_query)
+    else:
+        flash("Access Denied: Admin Only")
+        return render_template("dashboard.html")
+
+#Admin Edit User Access Table
+@app.route('/admin/useraccess/<int:user_id>', methods=['POST'])
+@login_required
+def updateAccess(user_id):
+    admin = current_user.AdminAccess
+    if admin == True:
+        user = User.query.get_or_404(user_id)
+        user.active = bool(request.form.get('active'))
+        user.StaffAccess = bool(request.form.get('staff_access'))
+        user.AdminAccess = bool(request.form.get('admin_access'))
+        db.session.commit()
+        flash('User access updated successfully.')
+        return redirect(url_for('userAccess'))
+    else:
+        flash ("Access Denied Admin Only.")
+        return render_template("dashboard.html")
 
 #Staff Dashboard
 @app.route('/staff/dashboard')

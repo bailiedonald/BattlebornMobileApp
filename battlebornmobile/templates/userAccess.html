@@ -1,27 +1,58 @@
 {% extends 'layout.html' %}
 
 {% block content %}
+<style>
+    table, td, th {border: 1px solid #ddd; text-align: left;}
+    table {border-collapse: collapse; width: 100%;}
+    th, td {padding: 15px;}
+</style>
+    
 <h1>Update User Access</h1>
 
-
-<br/>
-<h1>Customer Records</h1>
-<form action="/staff/records/search">
-    <input type="text" name="q" placeholder="Enter Last Name...">
+<h1>Search Results for "{{ search_query }}"</h1>
+<form action="/admin/useraccess">
+    <input type="text" name="q" placeholder="Enter Last Name..." value="{{ search_query }}">
     <button type="submit">Search</button>
+    {% if search_query %}
+        <a href="/admin/useraccess">
+            <button type="button">Clear</button>
+        </a>
+    {% endif %}
 </form>
-<br>
-<br>
-<table>
-    {% for user in users %}
-    <tr>
-        <td>{{ user.lastName }}, {{ user.firstName }}</td>
-        <td>    {{ user.email }}</td>
-        <td>    {{ user.phoneNumber }}</td>
-        
-    </tr>
 
-    {% endfor %}
+    <br>
+    <br>
+    <table>
+        {% for user in users %}
+        <tr>
+            <td> {{ user.id }} </td>
+            <td> {{ user.lastName }} </td>
+            <td> {{ user.firstName }} </td>
+            <td> {{ user.email }} </td>
+            <td> {{ user.phoneNumber }} </td>
+            <td><form action="{{ url_for('updateAccess', user_id=user.id) }}" method="POST">
+                <label>
+                    <input type="checkbox" name="active" {% if user.active %}checked{% endif %}>
+                    Active
+                </label>
+                <br>
+                <label>
+                    <input type="checkbox" name="staff_access" {% if user.StaffAccess %}checked{% endif %}>
+                    Staff Access
+                </label>
+                <br>
+                <label>
+                    <input type="checkbox" name="admin_access" {% if user.AdminAccess %}checked{% endif %}>
+                    Admin Access
+                </label>
+                <br>
+                <button type="submit">Save</button>
+            </form></td>
+        </tr>
+        <br>
+
+        {% endfor %}
+    </table>
 </table>
 
 
