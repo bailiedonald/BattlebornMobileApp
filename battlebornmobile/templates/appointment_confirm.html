@@ -1,7 +1,6 @@
 {% extends 'layout.html' %}
 {% block content %}
 
-<!-- 
 <a class="ml-2" href="{{ url_for('staffdashboard') }}">Staff Dashboard</a>
 
 <a class="navbar-brand" href="/logout">Logout</a>
@@ -51,38 +50,10 @@
         </div>
       </div>
     </div>
-    
-  -->
-  <h1>Appointments to Schedule</h1>
-  <table>
-    <thead>
-      <tr>
-        <th>ID</th>
-        <th>Owner</th>
-        <th>Pet Name</th>
-        <th>Service</th>
-        <th>Date</th>
-        <th>Time</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for appointment in appointments %}
-        <tr>
-          <td>{{ appointment.id }}</td>
-          <td>{{ appointment.owner_id }}</td>
-          <td>{{ appointment.pet_name }}</td>
-          <td>{{ appointment.service }}</td>
-          <td>{{ appointment.weekday }} {{ appointment.dateSheduled }}</td>
-          <td>{{ appointment.timeSlot }}</td>
-          <td>
-            <form action="{{ url_for('smsSend') }}" method="POST">
-              <input type="hidden" name="phoneNumber" value="{{ appointment.phoneNumber }}">
-              <button type="submit">Send SMS</button>
-            </form>
-          </td>
-        </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+    <td>
+      <form action="{{ url_for('smsSend') }}" method="POST">
+        <input type="hidden" name="phoneNumber" value="{{ appointment.phoneNumber }}">
+        <button type="submit">Send SMS</button>
+      </form>
+    </td>
 {% endblock %}

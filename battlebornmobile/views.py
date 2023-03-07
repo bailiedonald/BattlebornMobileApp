@@ -125,7 +125,7 @@ def add_pet():
     return render_template('add_pet.html', form=form)
 
 #Appointment Request Page
-@app.route("/appointment/request", methods=['GET', 'POST'])
+@app.route("/appointments/request", methods=['GET', 'POST'])
 @login_required
 def appointment():
     form = AppointmentForm()
@@ -140,17 +140,29 @@ def appointment():
         return redirect(url_for('dashboard'))
     return render_template('appointment_request.html', title='MakeAppointment', form=form)
 
+#All Unscheduled Appointments
+@app.route('/appointments')
+# @login_required
+def confirm_appointments():
+    return render_template("appointment_confirm.html")
+
+
 #Schedule Each Appointment
-@app.route('/appointment/schedule/<int:appointment_id>', methods=['POST'])
+@app.route('/appointments/schedule/<int:appointment_id>', methods=['POST'])
 @login_required
 def schedule_appointment(appointment_id):
-    appointment = Appointment.query.get_or_404(appointment_id)
+    appointment = Appointment.query.get_or_404(id)
     appointment.scheduled = True
     db.session.commit()
     flash('Appointment scheduled successfully!', 'success')
     return redirect(url_for('appointments'))
 
 
+#Confirm Appointments
+@app.route('/appointments/confirm')
+# @login_required
+def confirm_appointments():
+    return render_template("appointment_confirm.html")
 
 #Admin Dashboard
 @app.route('/admin/dashboard')
@@ -257,11 +269,6 @@ def search():
     return render_template('recordsSearch.html', users=users, search_query=search_query)
 
 
-#Confirm Appointments
-@app.route('/staff/appointments')
-@login_required
-def confirmappointments():
-    return render_template("confirmappointment.html")
 
 #Update User Page
 @app.route('/update/<int:user_id>', methods=['GET', 'POST'])
