@@ -276,11 +276,11 @@ def send_notification():
         return render_template('send_notification_form.html')
 
 # Example view function that sends a SMS message
-@app.route('/send_sms')
+@app.route('/sendtext')
 def send_sms():
     message = client.messages.create(
         body='Hello, World!',
-        from_='+1234567890',
-        to='+1234567890'
+        from_='+17752405149',
+        to='+17753763523'
     )
     return 'SMS sent!'
