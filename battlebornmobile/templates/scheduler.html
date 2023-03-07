@@ -23,29 +23,31 @@
   <div class="row justify-content-start">
     
     <div class="col-5">
-      {% for appointment in appointments %}
-      
-      <article class="media content-section" >
-        <div class="media-body">
-          <div class="article-metadata">
-            <h3 class="article-title" >{{ appointment.firstName }} {{ appointment.lastName }}</h3>
+      {% for appointment in appointments %}     
+        <article class="container p-3 my-3 border">
+          <div class="media-body">
+            <div class="article-metadata">
+             <h3 class="article-title" >{{ appointment.firstName }} {{ appointment.lastName }}</h3>
+            </div>
+            <h3 class="article-title" >Pets name: {{ appointment.pet_name }}</a></h3>
+            <p class="article-content">Service needed:  {{ appointment.service }}</p>
+            <p class="article-content">Preferred Day Week: {{ appointment.weekday }}</p>
+            <p class="article-content">Preferred Time Slot: {{ appointment.timeSlot }}</p>
           </div>
-          <h3 class="article-title" >Pets name: {{ appointment.pet_name }}</a></h3>
-          <p class="article-content">Service needed:  {{ appointment.service }}</p>
-          <p class="article-content">Preffered Day Week: {{ appointment.weekday }}</p>
-          <p class="article-content">Preffered Day Week: {{ appointment.timeSlot }}</p>
-    
-        </div>
-          <a href="/appointments/schedule/<int:appointment_id>">
-            <button type="button" class="btn btn-success">
-              Schedule
-            </button>
-          </a>          
-      </article>
-    
-    {% endfor %}
-      </div>
-
+          <form method="POST" action="{{ url_for('schedule_appointment', id=appointment.id) }}">
+            <div class="form-group">
+              <label for="dateScheduled">Date scheduled:</label>
+              <input type="date" class="form-control" id="dateScheduled" name="dateScheduled" value="">
+            </div>
+            <div class="form-group">
+              <label for="timeScheduled">Time scheduled:</label>
+              <input type="time" class="form-control" id="timeScheduled" name="timeScheduled" value="">
+            </div>
+            <button type="submit" class="btn btn-success">Schedule</button>
+          </form>          
+        </article>
+      {% endfor %}
+    </div>
     <div class="col-7">
       {% include 'calendar.html' %}
 

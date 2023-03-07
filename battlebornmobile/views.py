@@ -140,24 +140,25 @@ def appointment():
         return redirect(url_for('dashboard'))
     return render_template('appointment_request.html', title='MakeAppointment', form=form)
 
-#All Unscheduled Appointments
+# All Unscheduled Appointments
 @app.route('/appointments/unscheduled')
 @login_required
 def unscheduled_appointments():
     appointments = Appointment.query.filter_by(scheduled=False).all()
     return render_template('appointment_unscheduled.html', appointments=appointments)
 
-
-#Schedule Each Appointment
-@app.route('/appointments/schedule/<int:appointment_id>', methods=['POST'])
+# Schedule Each Appointment
+@app.route('/appointments/schedule/<int:id>', methods=['POST'])
 @login_required
-def schedule_appointment(appointment_id):
+def schedule_appointment(id):
     appointment = Appointment.query.get_or_404(id)
     appointment.scheduled = True
+    appointment.dateScheduled = request.form.get('dateScheduled')
+    appointment.timeScheduled = request.form.get('timeScheduled')
+    appointment.cancelled = False
     db.session.commit()
     flash('Appointment scheduled successfully!', 'success')
     return redirect(url_for('appointments'))
-
 
 #Confirm Appointments
 @app.route('/appointments/confirm')
