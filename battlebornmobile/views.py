@@ -144,70 +144,42 @@ def appointment():
 @app.route('/appointments/unscheduled')
 @login_required
 def unscheduled_appointments():
-    staff = current_user.StaffAccess
-    if staff == True:
-        appointments = Appointment.query.filter_by(scheduled=False).all()
-        return render_template('appointment_unscheduled.html', appointments=appointments)
-    else:
-        flash ("Access Denied Staff Only.")
-        appointments = Appointment.query.filter_by(scheduled=False).all()
-        return render_template("dashboard.html", appointments=appointments)
+    appointments = Appointment.query.filter_by(scheduled=False).all()
+    return render_template('appointment_unscheduled.html', appointments=appointments)
+
 
 # Schedule Each Appointment
 @app.route('/appointments/schedule/<int:id>', methods=['POST'])
 @login_required
 def schedule_appointment(id):
-    staff = current_user.StaffAccess
-    if staff == True:
-        appointment = Appointment.query.get_or_404(id)
-        appointment.scheduled = True
-        appointment.dateScheduled = request.form.get('dateScheduled')
-        appointment.timeScheduled = request.form.get('timeScheduled')
-        appointment.cancelled = False
-        db.session.add(appointment)
-        db.session.commit()
-        flash('Appointment scheduled successfully!', 'success')
-        return redirect(url_for('confirm_appointment'))
-    else:
-        flash ("Access Denied Staff Only.")
-        appointments = Appointment.query.filter_by(scheduled=False).all()
-        return render_template("dashboard.html", appointments=appointments)
+    appointment = Appointment.query.get_or_404(id)
+    appointment.scheduled = True
+    appointment.dateScheduled = request.form.get('dateScheduled')
+    appointment.timeScheduled = request.form.get('timeScheduled')
+    appointment.cancelled = False
+    db.session.commit()
+    flash('Appointment scheduled successfully!', 'success')
+    return redirect(url_for('scheduler'))
 
 #Confirm appointment
 @app.route('/appointment/confirm')
 # @login_required
 def confirm_appointment():
-    staff = current_user.StaffAccess
-    if staff == True:
-        return render_template("appointment_confirm.html")
-    else:
-        flash ("Access Denied Staff Only.")
-        appointments = Appointment.query.filter_by(scheduled=False).all()
-        return render_template("dashboard.html", appointments=appointments)
+    return render_template("appointment_confirm.html")
 
 #All Appointments
 @app.route('/appointments')
-@login_required
-def appointments():    
-    staff = current_user.StaffAccess
-    if staff == True:
-        return render_template("appointments.html")
-    else:
-        flash ("Access Denied Staff Only.")
-        appointments = Appointment.query.filter_by(scheduled=False).all()
-        return render_template("dashboard.html", appointments=appointments)
+# @login_required
+def appointments():
+    return render_template("appointments.html")
 
 #Scheduler
 @app.route('/staff/scheduler')
 @login_required
 def scheduler():
-    staff = current_user.StaffAccess
-    if staff == True:
-        return render_template("scheduler.html")
-    else:
-        flash ("Access Denied Staff Only.")
-        appointments = Appointment.query.filter_by(scheduled=False).all()
-        return render_template("dashboard.html", appointments=appointments)
+    appointments = Appointment.query.filter_by(scheduled=False).all()
+
+    return render_template("scheduler.html", appointments=appointments)
 
 #Admin Dashboard
 @app.route('/admin/dashboard')
