@@ -91,6 +91,23 @@ def login():
             flash('Login Unsuccessful. Please check email and password', 'danger')
     return render_template('login.html', title='Login', form=form)
 
+#Logout Page
+@app.route("/logout")
+def logout():
+    logout_user()
+    return redirect(url_for('index'))
+
+#Main Dashboard
+@app.route('/dashboard')
+@login_required
+def dashboard():
+    # Query all pets linked to the current user
+    pets = Pet.query.filter_by(owner_id=current_user.id).all()
+    # Query all appoinments linked to the current user
+    appointments = Appointment.query.filter_by(owner_id=current_user.id).all()
+
+    return render_template("dashboard.html", pets=pets, appointments=appointments)
+
 #Add Pet Page
 @app.route("/pet/add", methods=['GET', 'POST'])
 @login_required
@@ -107,23 +124,6 @@ def add_pet():
 
     return render_template('add_pet.html', form=form)
 
-#Main Dashboard
-@app.route('/dashboard')
-@login_required
-def dashboard():
-    # Query all pets linked to the current user
-    pets = Pet.query.filter_by(owner_id=current_user.id).all()
-    # Query all appoinments linked to the current user
-    appointments = Appointment.query.filter_by(owner_id=current_user.id).all()
-
-    return render_template("dashboard.html", pets=pets, appointments=appointments)
-
-#Logout Page
-@app.route("/logout")
-def logout():
-    logout_user()
-    return redirect(url_for('index'))
-
 #Appointment Request Page
 @app.route("/appointment/request", methods=['GET', 'POST'])
 @login_required
@@ -139,6 +139,18 @@ def appointment():
         flash('Your request has been received!', 'success')
         return redirect(url_for('dashboard'))
     return render_template('appointment_request.html', title='MakeAppointment', form=form)
+
+#Schedule Each Appointment
+@app.route('/appointment/schedule/<int:appointment_id>', methods=['POST'])
+@login_required
+def schedule_appointment(appointment_id):
+    appointment = Appointment.query.get_or_404(appointment_id)
+    appointment.scheduled = True
+    db.session.commit()
+    flash('Appointment scheduled successfully!', 'success')
+    return redirect(url_for('appointments'))
+
+
 
 #Admin Dashboard
 @app.route('/admin/dashboard')
@@ -270,8 +282,8 @@ def calendar():
 
 
 #SMS Notification Page
-@app.route('/sms_notification', methods=['GET', 'POST'])
-def sms_notification():
+@app.route('/sms/send', methods=['GET', 'POST'])
+def smsSend():
     if request.method == 'POST':
         phone_number = request.form.get('phoneNumber')
         message = 'Hello, your appointment has been scheduled.'

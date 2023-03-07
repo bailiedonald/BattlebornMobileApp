@@ -21,7 +21,6 @@
 </form>
 
     <br>
-    <br>
     <table>
         {% for user in users %}
         <tr>
@@ -34,14 +33,14 @@
                 <label>
                     <input type="checkbox" name="active" {% if user.active %}checked{% endif %}>
                     Active
-                </label>
+             
                 <br>
-                <label>
+             
                     <input type="checkbox" name="staff_access" {% if user.StaffAccess %}checked{% endif %}>
                     Staff Access
-                </label>
+             
                 <br>
-                <label>
+         
                     <input type="checkbox" name="admin_access" {% if user.AdminAccess %}checked{% endif %}>
                     Admin Access
                 </label>
@@ -49,7 +48,7 @@
                 <button type="submit">Save</button>
             </form></td>
         </tr>
-        <br>
+     
 
         {% endfor %}
     </table>

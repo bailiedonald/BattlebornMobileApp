@@ -1,0 +1,123 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+
+{% for message in get_flashed_messages() %}
+	<div class="alert alert-warning alert-dismissible fade show" role="alert">
+	  {{ message }}
+	  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+	</div>
+{% endfor %}
+
+{% if current_user.is_authenticated %}
+
+<div class="container">
+	<div class="row">
+		<div class="column" style="width:50%">
+			<img src="/static/images/bmvhlogo.jpeg" style="width:100%">
+		  </div>
+		<div class="column" style="width:50%">		
+			<form method="POST">
+					<input type="hidden" name="user_id" value="{{ user_id }}">
+				<div class="form-group row">
+				{{ form.hidden_tag() }}
+				<div class="col-md-6">
+					{{ form.id.label(class="form-label") }}
+					{{ form.id(value=current_user.id, class="form-control") }}
+				</div>	
+				<div class="col-md-6">
+					{{ form.firstName.label(class="form-label") }}
+					{{ form.firstName(value=current_user.firstName, class="form-control") }}
+				</div>				
+				<div class="col-md-6">
+					{{ form.lastName.label(class="form-label") }}
+					{{ form.lastName(value=current_user.lastName, class="form-control") }}
+				</div>
+				</div>
+				<div class="form-group row">
+				<div class="col-md-6">			
+					{{ form.phoneNumber.label(class="form-label") }}
+					{{ form.phoneNumber(value=current_user.phoneNumber, class="form-control") }}
+				</div>
+				<div class="form-group row">
+					<div class="col-md-6">
+						{{ form.pet_name.label(class="form-label") }}
+						{{ form.pet_name(class="form-select") }}
+					</div>
+				</div>
+				<div class="form-group row">
+					<div class="col-md-6">			
+						{{ form.service.label(class="form-label") }}
+						{{ form.service(class="form-control") }}
+					</div>
+					</div>
+				</div>
+				<div class="form-group row">
+					<div class="col-md-6">
+						<div>
+							{{ form.weekday.label(class="form-label") }}
+							<select id="weekday" name="weekday">
+							<option value=" "> </option>
+							<!-- <option value="volvo">Sunday</option> -->
+							<option value="Monday">Monday</option>
+							<!-- <option value="Tuesday">Tuesday</option> -->
+							<!-- <option value="Wednesday">Wednesday</option> -->
+							<!-- <option value="Thursday">Thursday</option> -->
+							<option value="Friday">Friday</option>
+							<option value="Saturday">Saturday</option>
+							</select>
+						</div>
+					</div>
+				</div>
+				<br>
+				<div class="form-group row">
+					<div class="col-md-6">
+						<div>
+							{{ form.timeSlot.label(class="form-label") }}
+							<select id="timeSlot" name="timeSlot">
+							<option value=" "> </option>
+							<option value="Morning">Morning</option>
+							<option value="Afternoon">Afternoon</option>
+							</select>
+						</div>
+					</div>
+				</div>
+				<br>
+
+				</div>
+					{{ form.streetNumber.label(class="form-label") }}
+					{{ form.streetNumber(value=current_user.streetNumber, class="form-control") }}
+				<div class="form-group row">
+				<div class="col-md-4">			
+					{{ form.city.label(class="form-label") }}
+					{{ form.city(value=current_user.city, class="form-control") }}
+				</div>
+				<div class="col-md-4">
+					{{ form.state.label(class="form-label") }}
+					{{ form.state(value=current_user.state, class="form-control") }}
+				</div>
+				<div class="col-md-4">
+					{{ form.zipcode.label(class="form-label") }}
+					{{ form.zipcode(value=current_user.zipcode, class="form-control") }}
+					</div>
+				</div>
+				<div class="text-center">
+					{{ form.submit(class="btn btn-secondary") }}
+				</div>		
+			</form>
+	  </div>
+	</div>
+  </div>
+<div class="shadow p-3 mb-5 bg-body rounded">
+	
+
+</div>
+{% else %}
+<h2>Must Be Logged In...</h2>
+<p>Sorry, You must be logged in to access this page!</p>
+
+<a href="{{ url_for('login') }}">Login Here</a>
+
+{% endif %}
+{% endblock %}
+
