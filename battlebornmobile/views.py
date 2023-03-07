@@ -265,9 +265,6 @@ def sms_notification():
     except:
         return 'Failed to send notification', 500
 
-
-
-
 #Send SMS Notifcation for Appointment Confirmation
 @app.route('/send_notification', methods=['GET', 'POST'])
 def send_notification():
@@ -278,8 +275,12 @@ def send_notification():
     else:
         return render_template('send_notification_form.html')
 
-
-# Initialize the Twilio client
-account_sid = 'TWILIO_ACCOUNT_SID'
-auth_token = 'TWILIO_AUTH_TOKEN'
-client = Client(account_sid, auth_token)
+# Example view function that sends a SMS message
+@app.route('/send_sms')
+def send_sms():
+    message = client.messages.create(
+        body='Hello, World!',
+        from_='+1234567890',
+        to='+1234567890'
+    )
+    return 'SMS sent!'
