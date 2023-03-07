@@ -25,11 +25,9 @@ app.config['MAIL_PASSWORD'] = 'Spring22'
 
 
 #Davis Push Notifications Setup
-TWILIO_ACCOUNT_SID='AC003773b4742a681273555f869fe8c6d1'
-TWILIO_AUTH_TOKEN='O6406c4546b69b0c05ddd4904ca160eb4'
 # Twilio credentials
-account_sid = 'YOUR_ACCOUNT_SID'
-auth_token = 'YOUR_AUTH_TOKEN'
+account_sid = 'AC003773b4742a681273555f869fe8c6d1'
+auth_token = '0b57f20b3db3982301d34480e5af5077'
 
 # Initialize the Twilio client
 client = Client(account_sid, auth_token)
