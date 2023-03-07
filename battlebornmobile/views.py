@@ -39,6 +39,8 @@ def contact():
 def layout():
     return render_template("layout.html")
 
+
+#SignUp Page
 @app.route("/signup", methods=['GET', 'POST'])
 def signup():
     if current_user.is_authenticated:
@@ -48,11 +50,11 @@ def signup():
     if form.validate_on_submit():
         # Process the user's sign-up information and generate a verification token
         email = form.email.data
-        token = secrets.token_urlsafe(16)
+        username = form.username.data
 
         # Send the verification email to the user's email address
         msg = Message('Verify your email address', sender='spencer@alsetdsgd.com', recipients=[email])
-        msg.body = render_template('verification_email.txt', token=token)
+        msg.body = render_template('verify_email.txt', username=form.username.data)
         mail.send(msg)
 
         # Update the user's account information to indicate that the email address is not yet verified
@@ -67,24 +69,15 @@ def signup():
 
     return render_template('signup.html', title='Sign Up', form=form)
 
-
-#Confirm Email Page
-
-@app.route('/verify_email/<token>', methods=['GET'])
-def verify_email(token):
-    try:
-        email = s.loads(token, salt='email-confirm', max_age=3600)
-    except SignatureExpired:
-        flash('The email confirmation link has expired.', 'danger')
-        return redirect(url_for('register'))
-    user = User.query.filter_by(email=email).first()
-    if user is None:
-        flash('The email confirmation link is invalid.', 'danger')
-        return redirect(url_for('register'))
+#Verify Email Page
+@app.route('/verify_email/<string:username>', methods=['GET'])
+def verify_email(username):
+    user = User.query.filter_by(username=username).first_or_404()
     user.active = True
     db.session.commit()
     flash('Your email has been confirmed! You can now login.', 'success')
     return redirect(url_for('login'))
+
 
 #Confirm Email Page
 @app.route('/signup/Confirmation')
