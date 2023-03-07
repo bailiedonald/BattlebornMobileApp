@@ -132,7 +132,7 @@ def logout():
 def appointment():
     form = AppointmentForm()
     if form.validate_on_submit():
-        appointment = Appointment(id=form.id.data, firstName=form.firstName.data, lastName=form.lastName.data, phoneNumber=form.phoneNumber.data, pet_name=form.pet_name.data, service=form.service.data, streetNumber=form.streetNumber.data, city=form.city.data, state=form.state.data, zipcode=form.zipcode.data)
+        appointment = Appointment(owner_id=current_user.id, firstName=form.firstName.data, lastName=form.lastName.data, phoneNumber=form.phoneNumber.data, pet_name=form.pet_name.data, service=form.service.data,  weekday=form.weekday.data, timeSlot=form.timeSlot.data, streetNumber=form.streetNumber.data, city=form.city.data, state=form.state.data, zipcode=form.zipcode.data)
 
         # Add Pet to Pet Database
         db.session.add(appointment)
@@ -240,7 +240,7 @@ def calendar():
 
 
 #SMS Notification Page
-@app.route('/sms-notification', methods=['GET', 'POST'])
+@app.route('/sms_notification', methods=['GET', 'POST'])
 def sms_notification():
     if request.method == 'POST':
         phone_number = request.form.get('phoneNumber')
@@ -251,9 +251,11 @@ def sms_notification():
                 from_='+15674323893',  
                 to=phone_number
             )
-            return 'Notification sent successfully.'
+            flash('Notification sent successfully.', 'success')
+            return redirect(url_for('dashboard'))
         except:
-            return 'Failed to send notification', 500
+            flash('Failed to send notification', 'error')
+            return redirect(url_for('dashboard'))
     else:
         return 'Method not allowed', 405
 

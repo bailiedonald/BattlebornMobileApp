@@ -52,19 +52,29 @@ class PetForm(FlaskForm):
 
 class AppointmentForm(FlaskForm):
     id = IntegerField('User ID')
-    pet_name = StringField('Pet Name')
+    pet_name = SelectField('Pet', coerce=int, validators=[DataRequired()])
     firstName = StringField('First Name', validators=[DataRequired()])
     lastName = StringField('Last Name', validators=[DataRequired()])
     phoneNumber = StringField('Phone Number')
     service = StringField('Service')
-    weekday = StringField('Weekday')
-    timeSlot = SelectField('Time Slot', choices=[('Morning', 'Afternoon')])
+    weekday = StringField('Weekday', validators=[DataRequired()])
+    timeSlot = StringField('Time Slot', validators=[DataRequired()])
     streetNumber = StringField('Address', validators=[DataRequired()])
     city = StringField('City', validators=[DataRequired()])
     state = StringField('State', validators=[DataRequired()])
     zipcode = StringField('Zip Code', validators=[DataRequired()])
     submit = SubmitField('Make Appointment')
-
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Get all pets for the current user
+        pets = Pet.query.filter_by(owner_id=current_user.id).all()
+        # Create a list of tuples with the pet ID and name
+        pet_choices = [(pet.id, pet.pet_name) for pet in pets]
+        # Add an option for no pet selected
+        pet_choices.insert(0, (0, 'Select a pet'))
+        # Set the pet field's choices
+        self.pet_name.choices = pet_choices
 
     def validate_firstName(self, firstName):
         user = User.query.filter_by(firstName=firstName.data).first()
@@ -75,6 +85,8 @@ class AppointmentForm(FlaskForm):
         user = User.query.filter_by(lastName=lastName.data).first()
         if not user:
             raise ValidationError('User does not exist.')
+
+
 
 class RecordsForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired(), Email()])
