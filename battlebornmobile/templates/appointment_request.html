@@ -16,10 +16,15 @@
 		<div class="column" style="width:50%">
 			<img src="/static/images/bmvhlogo.jpeg" style="width:100%">
 		  </div>
-		<div class="column" style="width:50%">
-			<form method="POST">
+		<div class="column" style="width:50%">		
+			<form action="/send_notification" method="POST">
+					<input type="hidden" name="user_id" value="{{ user_id }}">
 				<div class="form-group row">
 				{{ form.hidden_tag() }}
+				<div class="col-md-6">
+					{{ form.id.label(class="form-label") }}
+					{{ form.id(value=current_user.id, class="form-control") }}
+				</div>	
 				<div class="col-md-6">
 					{{ form.firstName.label(class="form-label") }}
 					{{ form.firstName(value=current_user.firstName, class="form-control") }}
@@ -95,10 +100,8 @@
 					{{ form.zipcode.label(class="form-label") }}
 					{{ form.zipcode(value=current_user.zipcode, class="form-control") }}
 					</div>
-				</div>
-				<div class="text-center">
-					{{ form.submit(class="btn btn-secondary") }}
-				</div>		
+				</div>	
+				<button type="submit" class="btn btn-success">Submit</button>
 			</form>
 	  </div>
 	</div>

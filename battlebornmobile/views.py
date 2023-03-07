@@ -77,11 +77,6 @@ def verify_email(username):
 def confirmemail():
     return render_template("confirmEmail.html")
 
-#signupS Page
-@app.route('/signupS')
-def signupS():
-    return render_template("signupS.html")
-
 #Add Pet Page
 @app.route("/pet/add", methods=['GET', 'POST'])
 @login_required
@@ -137,7 +132,7 @@ def logout():
 def appointment():
     form = AppointmentForm()
     if form.validate_on_submit():
-        appointment = Appointment(firstName=form.firstName.data, lastName=form.lastName.data, phoneNumber=form.phoneNumber.data, pet_name=form.pet_name.data, service=form.service.data, streetNumber=form.streetNumber.data, city=form.city.data, state=form.state.data, zipcode=form.zipcode.data)
+        appointment = Appointment(id=form.id.data, firstName=form.firstName.data, lastName=form.lastName.data, phoneNumber=form.phoneNumber.data, pet_name=form.pet_name.data, service=form.service.data, streetNumber=form.streetNumber.data, city=form.city.data, state=form.state.data, zipcode=form.zipcode.data)
 
         # Add Pet to Pet Database
         db.session.add(appointment)
@@ -244,35 +239,25 @@ def calendar():
     return render_template("calendar.html")
 
 
-
 #SMS Notification Page
 @app.route('/sms-notification', methods=['GET', 'POST'])
 def sms_notification():
-    user_id = request.form.get('user_id')
-    user = User.query.get(user_id)
-    if user is None:
-        return 'User not found', 404
-    phone_number = user.phone_number
-    message = 'Hello, your appointment has been scheduled.'
-    try:
-        message = client.messages.create(
-            body=message,
-            from_='+15674323893',  
-            to=phone_number
-        )
-        return 'Notification sent successfully.'
-    except:
-        return 'Failed to send notification', 500
-
-#Send SMS Notifcation for Appointment Confirmation
-@app.route('/send_notification', methods=['GET', 'POST'])
-def send_notification():
     if request.method == 'POST':
-        user_id = request.form['user_id']
-        # Do something with the user_id, such as send a notification
-        return 'Notification sent to user {}'.format(user_id)
+        phone_number = request.form.get('phoneNumber')
+        message = 'Hello, your appointment has been scheduled.'
+        try:
+            message = client.messages.create(
+                body=message,
+                from_='+15674323893',  
+                to=phone_number
+            )
+            return 'Notification sent successfully.'
+        except:
+            return 'Failed to send notification', 500
     else:
-        return render_template('send_notification_form.html')
+        return 'Method not allowed', 405
+
+
 
 # Example view function that sends a SMS message
 @app.route('/sendtext', methods=['GET', 'POST'])

@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, BooleanField, DateField, SelectField
+from wtforms import StringField, PasswordField, SubmitField, BooleanField, DateField, SelectField, IntegerField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
 from battlebornmobile.models import User, Pet, Appointment
 from flask_login import current_user
@@ -51,6 +51,7 @@ class PetForm(FlaskForm):
     submit = SubmitField('Add Pet')
 
 class AppointmentForm(FlaskForm):
+    id = IntegerField('User ID')
     pet_name = StringField('Pet Name')
     firstName = StringField('First Name', validators=[DataRequired()])
     lastName = StringField('Last Name', validators=[DataRequired()])
