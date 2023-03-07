@@ -11,7 +11,7 @@
 	
 {% endfor %}
 
-	<h1>{{ current_user.username | capitalize }}'s Dashboard</h1>
+	<h1>{{ current_user.firstName | capitalize }} {{ current_user.lastName | capitalize }}'s Dashboard</h1>
 	<br/>
 
 <div class="card">
@@ -54,37 +54,33 @@
     </div>
 </div>
 </br>
-<div class="col-12 social padding">
-    <a href="/appointment">
-
-    <a href="/pet/add">
-        <button type="button" class="btn btn-success">Add Your Pet</button>
-    </a>
-</div>
-
 <div class="card">
     <h2>Your Upcoming Appointments</h2>
      <div class="card-body">     
          <p class="card-text">
-             <div class="container">                            
-                 <ul style="list-style-type:none;">
-                     {% for appoinment in appointments %}
-                         <div class="row">
-                             <div class="col-8">
-                                 <li>.    {{ pet.pet_name }}</li>
-                                 <li>.   {{ appoinment.weekday }} </li>
-                             </div>
-                         </div>
-                         <br>
-                         <br>        
-                     {% endfor %}
-                 </ul>
+             <div class="container">                           
+                <ul style="list-style-type:none;">
+                    {% for appointment in appointments %}
+                    <div class="row">
+                        <div class="col-8">
+                            <li>{{ appointment.dateSheduled }} - {{ appointment.timeSheduled }} - {{ appointment.pet_name }} - {{ appointment.service }} - <button type="button">Edit</button> - <button type="button">Remove</button>  </li>
+                            <li>==========================================================</li>
+                        </div>
+                    </div>       
+                {% endfor %}
+                </ul>
              </div>
          </p>
      </div>
  </div>
 <div class="card">
+
+
+
    <h2>Your Pets</h2>
+    <a href="/pet/add">
+        <button type="button" class="btn btn-success">Add Your Pet</button>
+    </a>
     <div class="card-body">     
         <p class="card-text">
             <div class="container">                            
@@ -99,14 +95,12 @@
                                     <img src="{{ url_for('static', filename='images/animals.jpeg') }}" width="200" align="left">
                                     {% endif %}
                                 </li>
-                                <li>.    {{ pet.pet_name }}</li>
-                                <li>.   {{ pet.pet_species }} Breed: {{ pet.pet_breed }} Color: {{ pet.pet_color }}</li>
-                                <li>.    {{ pet.pet_dob }}</li>
-                                <li>.    Height: {{ pet.pet_height }} ft Weight: {{ pet.pet_weight }} lbs</li>
+                                <li>    Name: {{ pet.pet_name }}</li>
+                                <li>   Species: {{ pet.pet_species }} Breed: {{ pet.pet_breed }} Color: {{ pet.pet_color }}</li>
+                                <li>    {{ pet.pet_dob }}</li>
+                                <li>    Height: {{ pet.pet_height }} ft Weight: {{ pet.pet_weight }} lbs</li>
                             </div>
                         </div>
-                        <br>
-                        <br>        
                     {% endfor %}
                 </ul>
             </div>

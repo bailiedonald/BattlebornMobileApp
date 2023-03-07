@@ -22,34 +22,36 @@
 <div class="container">
   <div class="row justify-content-start">
     
-    <div class="col-4">
-      <h3>Appointment Requests</h3>
-      {% for requests in appointmnet_requests %}
-        <article class="media content-section">
+    <div class="col-5">
+      {% for appointment in appointments %}     
+      <article class="container p-3 my-3 border">
           <div class="media-body">
             <div class="article-metadata">
-              <h3 class="article-title" >{{ requests.customer }}</h3>
+              <h3 class="article-title" >{{ appointment.firstName }} {{ appointment.lastName }}</h3>
             </div>
-            <h3 class="article-title" >Pets name: {{ requests.pet_name }}</a></h3>
-            <p class="article-content">Service needed:  {{ requests.service }}</p>
-            <p class="article-content">Appointment requested on {{ requests.date_requested }}</p>
+            <h3 class="article-title" >Pets name: {{ appointment.pet_name }}</a></h3>
+            <p class="article-content">Service needed:  {{ appointment.service }}</p>
+            <p class="article-content">Preferred Day Week: {{ appointment.weekday }}</p>
+            <p class="article-content">Preferred Time Slot: {{ appointment.timeSlot }}</p>
           </div>
-            <a href="/staff/appointments">
-              <button type="button" class="btn btn-success">
-                Schedule
-              </button>
-            </a>          
+          <form method="POST" action="{{ url_for('schedule_appointment', id=appointment.id) }}">
+            <div class="form-group">
+              <label for="dateScheduled">Date scheduled:</label>
+              <input type="date" class="form-control" id="dateScheduled" name="dateScheduled" value="">
+            </div>
+            <div class="form-group">
+              <label for="timeScheduled">Time scheduled:</label>
+              <input type="time" class="form-control" id="timeScheduled" name="timeScheduled" value="">
+            </div>
+            
+            <button type="submit" class="btn btn-success" onclick="return confirm('Are you sure you want to schedule this appointment?')">Schedule</button>
+          </form>          
         </article>
       {% endfor %}
-      </div>
-
-    <div class="col-8">
-      <h2>Calendar</h2>
-
-
-      
     </div>
-
+    <div class="col-7">
+      {% include 'calendar.html' %}
+    </div>
   </div> 
 </div>
 {% endblock %}
