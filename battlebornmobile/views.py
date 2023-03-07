@@ -165,6 +165,14 @@ def schedule_appointment(appointment_id):
 def confirm_appointments():
     return render_template("appointment_confirm.html")
 
+#Scheduler
+@app.route('/staff/scheduler')
+@login_required
+def scheduler():
+    appointments = Appointment.query.filter_by(scheduled=False).all()
+
+    return render_template("scheduler.html", appointments=appointments)
+
 #Admin Dashboard
 @app.route('/admin/dashboard')
 @login_required
@@ -221,35 +229,6 @@ def staffdashboard():
         flash ("Access Denied Staff Only.")
         return render_template("dashboard.html")
 
-
-
-appointmnet_requests = [
-    {
-        'customer': 'Hagrid',
-        'service': 'Neutering and Vaccines',
-        'pet_name': 'Fluffy',
-        'date_requested': 'December 20, 2022'
-    },
-    {
-        'customer': 'Harry',
-        'service': 'Wings clipped',
-        'pet_name': 'Hedwig',
-        'date_requested': 'December 15, 2018'
-    },
-    {
-        'customer': 'Ron',
-        'service': 'Rabbies Vacine',
-        'pet_name': 'Scabbers',
-        'date_requested': 'December 17, 2022'
-    }
-
-]
-
-#Scheduler
-@app.route('/staff/scheduler')
-@login_required
-def scheduler():
-    return render_template("scheduler.html", appointmnet_requests = appointmnet_requests)
 
 #Staff View Customer Records
 @app.route('/staff/records', methods={"GET", "POST"})

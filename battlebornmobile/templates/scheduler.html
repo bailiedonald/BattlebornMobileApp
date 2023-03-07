@@ -22,28 +22,31 @@
 <div class="container">
   <div class="row justify-content-start">
     
-    <div class="col-4">
-      <h3>Appointment Requests</h3>
-      {% for requests in appointmnet_requests %}
-        <article class="media content-section">
-          <div class="media-body">
-            <div class="article-metadata">
-              <h3 class="article-title" >{{ requests.customer }}</h3>
-            </div>
-            <h3 class="article-title" >Pets name: {{ requests.pet_name }}</a></h3>
-            <p class="article-content">Service needed:  {{ requests.service }}</p>
-            <p class="article-content">Appointment requested on {{ requests.date_requested }}</p>
+    <div class="col-5">
+      {% for appointment in appointments %}
+      
+      <article class="media content-section" >
+        <div class="media-body">
+          <div class="article-metadata">
+            <h3 class="article-title" >{{ appointment.firstName }} {{ appointment.lastName }}</h3>
           </div>
-            <a href="/staff/appointments">
-              <button type="button" class="btn btn-success">
-                Schedule
-              </button>
-            </a>          
-        </article>
-      {% endfor %}
+          <h3 class="article-title" >Pets name: {{ appointment.pet_name }}</a></h3>
+          <p class="article-content">Service needed:  {{ appointment.service }}</p>
+          <p class="article-content">Preffered Day Week: {{ appointment.weekday }}</p>
+          <p class="article-content">Preffered Day Week: {{ appointment.timeSlot }}</p>
+    
+        </div>
+          <a href="/appointments/schedule/<int:appointment_id>">
+            <button type="button" class="btn btn-success">
+              Schedule
+            </button>
+          </a>          
+      </article>
+    
+    {% endfor %}
       </div>
 
-    <div class="col-8">
+    <div class="col-7">
       {% include 'calendar.html' %}
 
 

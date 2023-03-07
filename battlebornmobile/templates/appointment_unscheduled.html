@@ -1,27 +1,24 @@
-{% extends 'layout.html' %}
 {% block content %}
-  <h1>Unscheduled Appointments</h1>
-  <table>
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Pet</th>
-        <th>Service</th>
-        <th>Date</th>
-        <th>Time</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for appointment in appointments %}
-        <tr>
-          <td>{{ appointment.firstName }} {{ appointment.lastName }}</td>
-          <td>{{ appointment.pet_name }}</td>
-          <td>{{ appointment.service }}</td>
-          <td>{{ appointment.weekday }}, {{ appointment.dateSheduled }}</td>
-          <td>{{ appointment.timeSlot }}</td>
-        </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+{% for appointment in appointments %}
+      
+  <article class="media content-section">
+    <div class="media-body">
+      <div class="article-metadata">
+        <h3 class="article-title" >{{ appointment.firstName }} {{ appointment.lastName }}</h3>
+      </div>
+      <h3 class="article-title" >Pets name: {{ appointment.pet_name }}</a></h3>
+      <p class="article-content">Service needed:  {{ appointment.service }}</p>
+      <p class="article-content">Preffered Day Week: {{ appointment.weekday }}</p>
+      <p class="article-content">Preffered Day Week: {{ appointment.timeSlot }}</p>
+
+    </div>
+      <a href="/appointments/schedule/<int:appointment_id>">
+        <button type="button" class="btn btn-success">
+          Schedule
+        </button>
+      </a>          
+  </article>
+
+{% endfor %}
 {% endblock %}
 
