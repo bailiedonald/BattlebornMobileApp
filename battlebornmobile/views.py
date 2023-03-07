@@ -114,7 +114,6 @@ def login():
             flash('Login Unsuccessful. Please check email and password', 'danger')
     return render_template('login.html', title='Login', form=form)
 
-
 #Main Dashboard
 @app.route('/dashboard')
 @login_required
