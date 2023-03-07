@@ -279,8 +279,8 @@ def send_notification():
 def send_sms():
     message = client.messages.create(
         messaging_service_sid='MGdc049f1edc574951803c83a97cd37602',
-        body='Hello, World!',
+        body='Good Bye, World!',
         from_='+15674323893',
-        to='+17754625306')
+        to='+17753763523')
     return 'SMS sent!'
 
