@@ -246,7 +246,7 @@ def calendar():
 
 
 #SMS Notification Page
-@app.route('/sms-notification', methods=['POST'])
+@app.route('/sms-notification', methods=['GET', 'POST'])
 def sms_notification():
     user_id = request.form.get('user_id')
     user = User.query.get(user_id)
@@ -257,7 +257,7 @@ def sms_notification():
     try:
         message = client.messages.create(
             body=message,
-            from_='+17752405149',  
+            from_='+15674323893',  
             to=phone_number
         )
         return 'Notification sent successfully.'
@@ -275,11 +275,12 @@ def send_notification():
         return render_template('send_notification_form.html')
 
 # Example view function that sends a SMS message
-@app.route('/sendtext')
+@app.route('/sendtext', methods=['GET', 'POST'])
 def send_sms():
     message = client.messages.create(
+        messaging_service_sid='MGdc049f1edc574951803c83a97cd37602',
         body='Hello, World!',
-        from_='+7752405149',
-        to='+7753763523'
-    )
+        from_='+15674323893',
+        to='+17754625306')
     return 'SMS sent!'
+
