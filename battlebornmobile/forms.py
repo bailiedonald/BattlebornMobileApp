@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, BooleanField, DateField, SelectField, IntegerField
+from wtforms import StringField, PasswordField, SubmitField, BooleanField, DateField, SelectField, IntegerField, DateTimeField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
 from battlebornmobile.models import User, Pet, Appointment
 from flask_login import current_user
@@ -64,7 +64,11 @@ class AppointmentForm(FlaskForm):
     state = StringField('State', validators=[DataRequired()])
     zipcode = StringField('Zip Code', validators=[DataRequired()])
     submit = SubmitField('Make Appointment')
-    
+    dateScheduled = DateField("Date Scheduled", validators=[DataRequired()])
+    timeScheduled = DateTimeField('Time Scheduled', validators=[DataRequired()])
+ 
+
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         # Get all pets for the current user

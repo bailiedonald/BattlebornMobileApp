@@ -132,7 +132,7 @@ def appointment():
     if form.validate_on_submit():
         appointment = Appointment(owner_id=current_user.id, firstName=form.firstName.data, lastName=form.lastName.data, phoneNumber=form.phoneNumber.data, pet_name=form.pet_name.data, service=form.service.data,  weekday=form.weekday.data, timeSlot=form.timeSlot.data, streetNumber=form.streetNumber.data, city=form.city.data, state=form.state.data, zipcode=form.zipcode.data)
 
-        # Add Pet to Pet Database
+        # Add Appointment to the Appointment Database
         db.session.add(appointment)
         db.session.commit()
         
@@ -156,7 +156,9 @@ def schedule_appointment(id):
     appointment.scheduled = True
     appointment.dateScheduled = request.form.get('dateScheduled')
     appointment.timeScheduled = request.form.get('timeScheduled')
-    appointment.cancelled = False
+    
+    #Update An Appointment in the Appointment Database
+    db.session.add(appointment)
     db.session.commit()
     flash('Appointment scheduled successfully!', 'success')
     return redirect(url_for('scheduler'))
