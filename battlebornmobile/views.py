@@ -1,16 +1,9 @@
 from flask import render_template, url_for, flash, redirect, request
-from battlebornmobile import app, db, bcrypt, mail
+from battlebornmobile import app, db, bcrypt, mail, client
 from battlebornmobile.forms import SignUpForm, LoginForm, PetForm, AppointmentForm
 from battlebornmobile.models import User, Pet, Appointment
 from flask_login import login_user, current_user, logout_user, login_required
-from flask_security import Security, SQLAlchemyUserDatastore, UserMixin, RoleMixin, roles_required
-from flask_mail import Mail, Message
-from datetime import datetime
-from twilio.rest import Client
-from google.oauth2.credentials import Credentials
-from googleapiclient.discovery import build
-from itsdangerous import SignatureExpired, URLSafeTimedSerializer
-import secrets
+from flask_mail import Message
 
 
 

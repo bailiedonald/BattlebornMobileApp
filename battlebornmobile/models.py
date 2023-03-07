@@ -1,7 +1,6 @@
 from datetime import datetime
 from battlebornmobile import db, login_manager
 from flask_login import UserMixin
-from flask_security import Security, SQLAlchemyUserDatastore, UserMixin, RoleMixin, roles_required
 
 
 @login_manager.user_loader

@@ -2,13 +2,9 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager
-from flask_security import Security, SQLAlchemyUserDatastore, UserMixin, RoleMixin, roles_required
 from twilio.rest import Client
-from flask_mail import Mail, Message
-import secrets
-from google.oauth2.credentials import Credentials
-from googleapiclient.discovery import build
-from itsdangerous import SignatureExpired, URLSafeTimedSerializer
+from flask_mail import Mail
+from itsdangerous import URLSafeTimedSerializer
 
 
 app = Flask(__name__)
@@ -31,6 +27,14 @@ app.config['MAIL_PASSWORD'] = 'Spring22'
 #Davis Push Notifications Setup
 TWILIO_ACCOUNT_SID='AC003773b4742a681273555f869fe8c6d1'
 TWILIO_AUTH_TOKEN='O6406c4546b69b0c05ddd4904ca160eb4'
+# Twilio credentials
+account_sid = 'YOUR_ACCOUNT_SID'
+auth_token = 'YOUR_AUTH_TOKEN'
+
+# Initialize the Twilio client
+client = Client(account_sid, auth_token)
+
+
 
 db = SQLAlchemy(app)
 mail = Mail(app)
