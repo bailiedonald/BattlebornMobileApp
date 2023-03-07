@@ -1,23 +1,23 @@
 from flask import render_template, url_for, flash, redirect, request
-from battlebornmobile import app, db, bcrypt
+from battlebornmobile import app, db, bcrypt, mail
 from battlebornmobile.forms import SignUpForm, LoginForm, PetForm, AppointmentForm
-from battlebornmobile.models import User, Pet, Appointment, Role
+from battlebornmobile.models import User, Pet, Appointment
 from flask_login import login_user, current_user, logout_user, login_required
 from flask_security import Security, SQLAlchemyUserDatastore, UserMixin, RoleMixin, roles_required
 from datetime import datetime
+from twilio.rest import Client
+from flask_mail import Mail, Message
+import secrets
+from google.oauth2.credentials import Credentials
+from googleapiclient.discovery import build
+from itsdangerous import SignatureExpired, URLSafeTimedSerializer
 
-
-#Admin Page
-@app.route('/admin')
-@roles_required('admin')
-def admin():
-    return 'This page is only accessible to users with the admin role.'
 
 
 #index Page
 @app.route('/')
 def index():
-    return render_template("index.html")
+    return render_template("index.html",title='Home')
 
 #About Us Page
 @app.route('/about')
@@ -39,20 +39,55 @@ def contact():
 def layout():
     return render_template("layout.html")
 
-#Sign Up Page
+
+#SignUp Page
 @app.route("/signup", methods=['GET', 'POST'])
 def signup():
     if current_user.is_authenticated:
         return redirect(url_for('index'))
+
     form = SignUpForm()
     if form.validate_on_submit():
+        # Process the user's sign-up information and generate a verification token
+        email = form.email.data
+        username = form.username.data
+
+        # Send the verification email to the user's email address
+        msg = Message('Verify your email address', sender='spencer@alsetdsgd.com', recipients=[email])
+        msg.body = render_template('verification_email.txt', username=form.username.data)
+        mail.send(msg)
+
+        # Update the user's account information to indicate that the email address is not yet verified
+        # You can use a database or other storage mechanism to track this information
         hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
-        user = User(username=form.username.data, email=form.email.data, password=hashed_password, firstName=form.firstName.data, lastName=form.lastName.data, phoneNumber=form.phoneNumber.data, streetNumber=form.streetNumber.data, city=form.city.data, state=form.state.data, zipcode=form.zipcode.data)
+        user = User(username=form.username.data, email=email, password=hashed_password, firstName=form.firstName.data, lastName=form.lastName.data, phoneNumber=form.phoneNumber.data, streetNumber=form.streetNumber.data, city=form.city.data, state=form.state.data, zipcode=form.zipcode.data)
         db.session.add(user)
         db.session.commit()
-        flash('Your account has been created! You are now able to log in', 'success')
-        return redirect(url_for('login'))
+
+        flash('Please check your email to verify your new account')
+        return render_template('confirmEmail.html')
+
     return render_template('signup.html', title='Sign Up', form=form)
+
+#Verify Email Page
+@app.route('/verify_email/<string:username>', methods=['GET'])
+def verify_email(username):
+    user = User.query.filter_by(username=username).first_or_404()
+    user.active = True
+    db.session.commit()
+    flash('Your email has been confirmed! You can now login.', 'success')
+    return redirect(url_for('login'))
+
+
+#Confirm Email Page
+@app.route('/signup/Confirmation')
+def confirmemail():
+    return render_template("confirmEmail.html")
+
+#signupS Page
+@app.route('/signupS')
+def signupS():
+    return render_template("signupS.html")
 
 #Add Pet Page
 @app.route("/pet/add", methods=['GET', 'POST'])
@@ -86,6 +121,18 @@ def login():
             flash('Login Unsuccessful. Please check email and password', 'danger')
     return render_template('login.html', title='Login', form=form)
 
+
+#Main Dashboard
+@app.route('/dashboard')
+@login_required
+def dashboard():
+    # Query all pets linked to the current user
+    pets = Pet.query.filter_by(owner_id=current_user.id).all()
+    # Query all appoinments linked to the current user
+    appointments = Appointment.query.filter_by(owner_id=current_user.id).all()
+
+    return render_template("dashboard.html", pets=pets, appointments=appointments)
+
 #Logout Page
 @app.route("/logout")
 def logout():
@@ -98,17 +145,15 @@ def logout():
 def appointment():
     form = AppointmentForm()
     if form.validate_on_submit():
-        appointment = Appointment(firstName=form.firstName.data, lastName=form.lastName.data, phoneNumber=form.phoneNumber.data, email=form.email.data, pet_name=form.pet_name.data, pet_dob=form.pet_dob.data, pet_species=form.pet_species.data, pet_breed=form.pet_breed.data, streetNumber=form.streetNumber.data, city=form.city.data, state=form.state.data, zipcode=form.zipcode.data, Customer_id=current_user.id)
+        appointment = Appointment(firstName=form.firstName.data, lastName=form.lastName.data, phoneNumber=form.phoneNumber.data, pet_name=form.pet_name.data, service=form.service.data, streetNumber=form.streetNumber.data, city=form.city.data, state=form.state.data, zipcode=form.zipcode.data)
 
         # Add Pet to Pet Database
         db.session.add(appointment)
         db.session.commit()
         
         flash('Your request has been received!', 'success')
-        return redirect(url_for('dashboard'), title='MakeAppointment')
-    return render_template('appointment_request.html', form=form)
-
-    
+        return redirect(url_for('dashboard'))
+    return render_template('appointment_request.html', title='MakeAppointment', form=form)
 
 #Admin Dashboard
 @app.route('/admin/dashboard')
@@ -121,17 +166,6 @@ def admindashboard():
     else:
         flash ("Access Denied Admin Only.")
         return render_template("dashboard.html")
-
-
-#Main Dashboard
-@app.route('/dashboard')
-@login_required
-def dashboard():
-    # Query all pets linked to the current user
-    pets = Pet.query.filter_by(owner_id=current_user.id).all()
-    appointments = Appointment.query.filter_by(owner_id=current_user.id).all()
-
-    return render_template("dashboard.html", pets=pets, appointments=appointments)
 
 
 #Staff Dashboard
@@ -171,17 +205,20 @@ appointmnet_requests = [
 
 #Scheduler
 @app.route('/staff/scheduler')
+@login_required
 def scheduler():
     return render_template("scheduler.html", appointmnet_requests = appointmnet_requests)
 
 #Staff View Customer Records
 @app.route('/staff/records', methods={"GET", "POST"})
+@login_required
 def records():
     users = User.query.all()
     return render_template('records.html', users=users)
 
 #Staff Search Customer Records
 @app.route('/staff/records/search')
+@login_required
 def search():
     search_query = request.args.get('q')
     if search_query:
@@ -193,6 +230,7 @@ def search():
 
 #Confirm Appointments
 @app.route('/staff/appointments')
+@login_required
 def confirmappointments():
     return render_template("confirmappointment.html")
 
@@ -205,30 +243,17 @@ def update_user(user_id):
         db.session.commit()
         return render_template('dashboard.html', user=user)
     else:
-        return render_template('update.html', user=user
-        
+        return render_template('update.html', user=user)
+
 #Calendar Page
 @app.route('/calendar')
+@login_required
 def calendar():
     return render_template("calendar.html")
 
-@app.route('/appointment/new', methods=['GET', 'POST'])
-@login_required
-def create_appointment():
-    form = AppointmentForm()
-    if form.validate_on_submit():
-        pet = Pet.query.filter_by(pet_name=form.pet_name.data).first()
-        user = User.query.filter_by(firstName=form.firstName.data, lastName=form.lastName.data).first()
-        appointment = Appointment(weekday=form.weekday.data, timeSlot=form.timeSlot.data, dateSheduled=datetime.now().strftime('%Y-%m-%d'), timeSheduled=datetime.now().strftime('%H:%M:%S'), owner_id=current_user.id)
-        db.session.add(appointment)
-        db.session.commit()
-        flash('Appointment created successfully!', 'success')
-        return redirect(url_for('index'))
-    return render_template('create_appointment.html', title='Create Appointment', form=form)
-
-#Send SMS Notifcation for Appointment Confirmation
 
 
+#SMS Notification Page
 @app.route('/sms-notification', methods=['POST'])
 def sms_notification():
     user_id = request.form.get('user_id')
@@ -247,6 +272,21 @@ def sms_notification():
     except:
         return 'Failed to send notification', 500
 
-@app.route('/send-notification-form')
-def send_notification_form():
-    return render_template('send_notification_form.html')
+
+
+
+#Send SMS Notifcation for Appointment Confirmation
+@app.route('/send_notification', methods=['GET', 'POST'])
+def send_notification():
+    if request.method == 'POST':
+        user_id = request.form['user_id']
+        # Do something with the user_id, such as send a notification
+        return 'Notification sent to user {}'.format(user_id)
+    else:
+        return render_template('send_notification_form.html')
+
+
+# Initialize the Twilio client
+account_sid = 'TWILIO_ACCOUNT_SID'
+auth_token = 'TWILIO_AUTH_TOKEN'
+client = Client(account_sid, auth_token)

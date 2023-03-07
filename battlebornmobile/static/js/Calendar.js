@@ -10,7 +10,6 @@ var cal = {
     sFD : 0, 
     sLD : 0, 
     ready : 0, 
-  
     
     hMth : null, hYear : null, 
     hCD : null, hCB : null, 
@@ -76,7 +75,8 @@ var cal = {
       // (C4) DRAW DAY NAMES
       let days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
       if (cal.mon) { days.push("Sun"); } else { days.unshift("Sun"); }
-      for (let d of days) {
+      for (let d of days) { 
+
         let cell = document.createElement("div");
         cell.className = "calCell";
         cell.innerHTML = d;
