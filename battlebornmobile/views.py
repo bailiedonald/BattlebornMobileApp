@@ -141,10 +141,11 @@ def appointment():
     return render_template('appointment_request.html', title='MakeAppointment', form=form)
 
 #All Unscheduled Appointments
-@app.route('/appointments')
-# @login_required
-def confirm_appointments():
-    return render_template("appointment_confirm.html")
+@app.route('/appointments/unscheduled')
+@login_required
+def unscheduled_appointments():
+    appointments = Appointment.query.filter_by(scheduled=False).all()
+    return render_template('appointment_unscheduled.html', appointments=appointments)
 
 
 #Schedule Each Appointment
