@@ -2,9 +2,27 @@
 
 {% block content %}
 <h1>Update User</h1>
-<form method="post">
-  <label for="email">Email:</label>
-  <input type="email" id="email" name="email" value="{{ user.email }}" required><br><br>
-  <input type="submit" value="Update User">
+
+
+<br/>
+<h1>Customer Records</h1>
+<form action="/staff/records/search">
+    <input type="text" name="q" placeholder="Enter Last Name...">
+    <button type="submit">Search</button>
 </form>
+<br>
+<br>
+<table>
+    {% for user in users %}
+    <tr>
+        <td>{{ user.lastName }}, {{ user.firstName }}</td>
+        <td>    {{ user.email }}</td>
+        <td>    {{ user.phoneNumber }}</td>
+        
+    </tr>
+
+    {% endfor %}
+</table>
+
+
 {% endblock %}
