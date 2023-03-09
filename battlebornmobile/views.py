@@ -307,7 +307,7 @@ def send_sms():
         messaging_service_sid='MGdc049f1edc574951803c83a97cd37602',
         body='Good Bye, World!',
         from_='+15674323893',
-        to='+17754536765')
+        to='+17753763523')
     flash('Notification sent successfully.', 'success')
 
     return render_template("dashboardadmin.html"), 'SMS sent!'
