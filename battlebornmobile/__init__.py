@@ -5,13 +5,14 @@ from flask_login import LoginManager
 from twilio.rest import Client
 from flask_mail import Mail
 from itsdangerous import URLSafeTimedSerializer
-
+import os
 
 app = Flask(__name__)
 
 #Donny Databsae Setup
 app.config['SECRET_KEY'] = 'Super Secret Password'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:@localhost:5432/battleborn'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
+# postgres://battlebornmobile_user:cnaZi2wlEj9GSs8MxWKOuaQWquvhfwD7@dpg-cghhue02qv23kcr6c6a0-a.oregon-postgres.render.com/battlebornmobile
 app.config['SECURITY_PASSWORD_SALT'] = 'your_password_salt'
 app.config['SECURITY_ROLES'] = {'admin': 'Administrator', 'staff': 'Staff', 'user': 'User'}
 
