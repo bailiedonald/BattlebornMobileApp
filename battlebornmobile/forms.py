@@ -66,7 +66,6 @@ class AppointmentForm(FlaskForm):
     submit = SubmitField('Make Appointment')
 
 
-
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         # Get all pets for the current user
