@@ -49,7 +49,7 @@ class PetForm(FlaskForm):
     pet_height = StringField("Pet Hieght")
     pet_weight = StringField("Pet Weight")
     submit = SubmitField('Add Pet')
-
+    
 class AppointmentForm(FlaskForm):
     id = IntegerField('User ID')
     pet_name = SelectField('Pet', coerce=int, validators=[DataRequired()])
@@ -64,6 +64,36 @@ class AppointmentForm(FlaskForm):
     state = StringField('State', validators=[DataRequired()])
     zipcode = StringField('Zip Code', validators=[DataRequired()])
     submit = SubmitField('Make Appointment')
+
+    def set_pet_choices(self):
+        self.pet_name.choices = [(pet.id, pet.pet_name) for pet in Pet.query.all()]
+
+    def validate_pet_name(self, field):
+        if not Pet.query.filter_by(id=field.data).first():
+            raise ValidationError('Invalid pet selected')
+
+    def create_appointment(self, owner_id):
+        pet_id = self.pet_name.data
+        pet = Pet.query.get(pet_id)
+        appointment = Appointment(
+            pet_id=pet_id,
+            owner_id=owner_id,
+            pet_name=pet.pet_name,
+            firstName=self.firstName.data,
+            lastName=self.lastName.data,
+            phoneNumber=self.phoneNumber.data,
+            service=self.service.data,
+            weekday=self.weekday.data,
+            timeSlot=self.timeSlot.data,
+            streetNumber=self.streetNumber.data,
+            city=self.city.data,
+            state=self.state.data,
+            zipcode=self.zipcode.data,
+        )
+        db.session.add(appointment)
+        db.session.commit()
+        return appointment
+
 
 
 
