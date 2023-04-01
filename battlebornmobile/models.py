@@ -42,6 +42,7 @@ class Pet(db.Model, UserMixin):
     pet_pic = db.Column(db.String(20), nullable=False, default='animals.jpeg')
     #Link to Pet Owner in user Database
     owner_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    appointments = db.relationship('Appointment', backref= 'pet')
 
 
     def __repr__(self):
