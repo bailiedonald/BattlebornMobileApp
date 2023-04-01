@@ -3,7 +3,6 @@ from battlebornmobile import db, login_manager
 from flask_login import UserMixin
 
 
-
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
@@ -54,7 +53,7 @@ class Appointment(db.Model, UserMixin):
     firstName = db.Column(db.String(30), nullable=True)
     lastName = db.Column(db.String(30), nullable=True)
     phoneNumber = db.Column(db.String(20), nullable=True)
-    pet_name =nQuerySelectField('Pet', query_factory=lambda: Pet.query.filter_by(owner_id=current_user.id))
+    pet_name =db.Column(db.String(30))
     service =db.Column(db.String(250))
     streetNumber = db.Column(db.String(50))
     city = db.Column(db.String(25))
@@ -74,4 +73,3 @@ class Appointment(db.Model, UserMixin):
 
     def __repr__(self):
         return f"Pet('{self.id}', '{self.scheduled}', '{self.cancelled}', '{self.owner_id}')"
-
