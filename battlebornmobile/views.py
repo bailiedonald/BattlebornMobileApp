@@ -202,6 +202,26 @@ def appointment():
         return redirect(url_for('dashboard'))
     return render_template('appointment_request.html', title='MakeAppointment', form=form)
 
+#Appointment Edit Page
+@app.route("/appointment/edit/<int:id>", methods=["GET", "POST"])
+@login_required
+def edit_appointment(id):
+    appointment = Appointment.query.get_or_404(id)
+    form = AppointmentForm(obj=appointment)
+
+    if form.validate_on_submit():
+        # Update the appointment with the form data
+        appointment.pet_name = form.pet_name.data
+        appointment.service = form.service.data
+        appointment.dateScheduled = form.dateScheduled.data
+        appointment.timeScheduled = form.timeScheduled.data
+        db.session.commit()
+
+        flash("Appointment updated successfully!", "success")
+        return redirect(url_for("dashboard"))
+
+    return render_template("appointment_edit.html", form=form)
+
 # All Unscheduled Appointments
 @app.route('/appointments/unscheduled')
 @login_required

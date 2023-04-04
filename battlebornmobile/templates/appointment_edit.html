@@ -1,0 +1,57 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+
+{% for message in get_flashed_messages() %}
+	<div class="alert alert-warning alert-dismissible fade show" role="alert">
+	  {{ message }}
+	  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+	</div>
+{% endfor %}
+
+{% if current_user.is_authenticated %}
+
+<div class="container">
+	<div class="row">
+		<div class="column" style="width:50%">
+			<img src="/static/images/bmvhlogo.jpeg" style="width:100%">
+		  </div>
+		<div class="column" style="width:50%">		
+			<form method="POST">
+				<div class="form-group row">
+				{{ form.hidden_tag() }}
+				<div class="col-md-6">
+					{{ form.pet_name.label(class="form-label") }}
+					{{ form.pet_name(class="form-control") }}
+				</div>				
+				<div class="col-md-6">
+					{{ form.service.label(class="form-label") }}
+					{{ form.service(class="form-control") }}
+				</div>
+				</div>
+				<div class="form-group row">
+				<div class="col-md-6">
+					{{ form.dateSheduled.label(class="form-label") }}
+					{{ form.dateSheduled(class="form-control") }}
+				</div>				
+				<div class="col-md-6">
+					{{ form.timeSheduled.label(class="form-label") }}
+					{{ form.timeSheduled(class="form-control") }}
+				</div>
+				</div>
+				<div class="form-group row">
+				<div class="col-md-6">
+					<button type="submit" class="btn btn-primary">Save Changes</button>
+				</div>
+				<div class="col-md-6">
+					<a href="{{ url_for('dashboard') }}" class="btn btn-secondary">Cancel</a>
+				</div>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+
+{% endif %}
+
+{% endblock %}
