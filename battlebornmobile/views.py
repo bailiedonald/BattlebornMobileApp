@@ -107,24 +107,52 @@ def logout():
     logout_user()
     return redirect(url_for('index'))
 
+
+# forgot password route
 @app.route('/forgot_password', methods=['GET', 'POST'])
 def forgot_password():
     if request.method == 'POST':
-        email = request.form['email']
-        user = users.get(email)
-        if not user:
-            return 'Email address not registered'
-        else:
+        email = request.form.get('email')
+        user = User.query.filter_by(email=email).first()
+        if user:
+            # generate a new password and update user's password
             new_password = ''.join(random.choices(string.ascii_uppercase + string.ascii_lowercase + string.digits, k=8))
             user.password = new_password
-            msg = Message('Password Reset', sender='spencer@alsetdsgd.com', recipients=[email])
-            msg.body = f'Your new password is: {new_password}'
+            db.session.commit()
+
+            # send email with password reset instructions
+            token = user.get_reset_token()
+            msg = Message('Password Reset Request', sender='noreply@example.com', recipients=[user.email])
+            msg.body = f'''To reset your password, visit the following link:
+{url_for('reset_password', token=token, _external=True)}
+
+Your new temporary password is: {new_password}
+
+If you did not make this request then simply ignore this email and no changes will be made.
+'''
             mail.send(msg)
-            return 'Password reset email sent'
+            flash('An email has been sent with instructions to reset your password.', 'success')
+            return redirect(url_for('login'))
+        else:
+            flash('There is no account with that email. You must register first.', 'warning')
     return render_template('forgot_password.html')
 
-if __name__ == '__main__':
-    app.run(debug=True)
+# reset password route
+@app.route('/reset_password/<token>', methods=['GET', 'POST'])
+def reset_password(token):
+    user = User.verify_reset_token(token)
+    if not user:
+        flash('That is an invalid or expired token.', 'warning')
+        return redirect(url_for('forgot_password'))
+
+    if request.method == 'POST':
+        new_password = request.form.get('new_password')
+        user.password = new_password
+        db.session.commit()
+        flash('Your password has been updated!', 'success')
+        return redirect(url_for('login'))
+
+    return render_template('reset_password.html', token=token)
 
 #Main Dashboard
 @app.route('/dashboard')
