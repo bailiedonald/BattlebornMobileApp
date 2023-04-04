@@ -1,0 +1,24 @@
+{% block content %}
+{% for appointment in appointments %}
+      
+  <article class="media content-section">
+    <div class="media-body">
+      <div class="article-metadata">
+        <h3 class="article-title" >{{ appointment.firstName }} {{ appointment.lastName }}</h3>
+      </div>
+      <h3 class="article-title" >Pets name: {{ appointment.pet_name }}</a></h3>
+      <p class="article-content">Service needed:  {{ appointment.service }}</p>
+      <p class="article-content">Preffered Day Week: {{ appointment.weekday }}</p>
+      <p class="article-content">Preffered Day Week: {{ appointment.timeSlot }}</p>
+
+    </div>
+      <a href="/staff/appointments">
+        <button type="button" class="btn btn-success">
+          Schedule
+        </button>
+      </a>          
+  </article>
+  
+{% endfor %}
+{% endblock %}
+
