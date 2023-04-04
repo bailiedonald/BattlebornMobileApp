@@ -1,13 +1,13 @@
 from datetime import datetime
 from battlebornmobile import db, login_manager
 from flask_login import UserMixin
-from flask_security import Security, SQLAlchemyUserDatastore, UserMixin, RoleMixin, roles_required
 
 
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
 
+#User Database Table
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(50), unique=True, nullable=False)
@@ -21,7 +21,7 @@ class User(db.Model, UserMixin):
     state = db.Column(db.String(15))
     zipcode = db.Column(db.String(5))
     image_file = db.Column(db.String(20), nullable=False, default='default.jpg')
-    active = db.Column(db.Boolean, default=True, nullable=False)
+    active = db.Column(db.Boolean, default=False, nullable=False)
     StaffAccess = db.Column(db.Boolean, default=False, nullable=False)
     AdminAccess = db.Column(db.Boolean, default=False, nullable=False)
     pets = db.relationship('Pet', backref= 'owner')
@@ -29,6 +29,21 @@ class User(db.Model, UserMixin):
 
     def __repr__(self):
         return f"User('{self.id}', '{self.username}', '{self.email}','{self.firstName}', '{self.lastName}', '{self.phoneNumber}', '{self.streetNumber}', '{self.city}', '{self.state}', '{self.zipcode}', '{self.image_file}')"
+    
+    def get_reset_token(self, expires_sec=1800):
+        s = Serializer(app.config['SECRET_KEY'], expires_sec)
+        return s.dumps({'user_id': self.id}).decode('utf-8')
+
+    @staticmethod
+    def verify_reset_token(token):
+        s = Serializer(app.config['SECRET_KEY'])
+        try:
+            user_id = s.loads(token)['user_id']
+        except:
+            return None
+        return User.query.get(user_id)
+
+
 
 class Pet(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)

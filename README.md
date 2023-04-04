@@ -2,7 +2,7 @@
 
 ## Setup & Installtion
 
-Make sure you have the latest version of Python installed.
+Make sure you have this version of Python "python-3.9.15" installed.
 
 ```bash
 git clone <repo-url>
