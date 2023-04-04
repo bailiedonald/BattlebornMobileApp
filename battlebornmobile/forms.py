@@ -39,11 +39,12 @@ class LoginForm(FlaskForm):
     submit = SubmitField('Login')
 
 
-class PasswordResetForm(FlaskForm):
-    email = StringField('Email', validators=[DataRequired(), Email()])
+class ResetPasswordForm(FlaskForm):
+    reset_password = StringField('Password Sent in Email', validators=[DataRequired(), Email()])
     new_password = PasswordField('New Password', validators=[DataRequired()])
     confirm_password = PasswordField('Confirm New Password', validators=[DataRequired(), EqualTo('new_password')])
     submit = SubmitField('Reset Password')
+
 
 
 class PetForm(FlaskForm):

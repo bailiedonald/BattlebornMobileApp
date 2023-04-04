@@ -1,12 +1,12 @@
 from flask import render_template, url_for, flash, redirect, request
 from battlebornmobile import app, db, bcrypt, mail, client
-from battlebornmobile.forms import SignUpForm, LoginForm, PetForm, AppointmentForm
+from battlebornmobile.forms import SignUpForm, LoginForm, PetForm, AppointmentForm, ResetPasswordForm
 from battlebornmobile.models import User, Pet, Appointment
 from flask_login import login_user, current_user, logout_user, login_required
 from flask_mail import Mail, Message
 import random
 import string
-
+from passlib.hash import bcrypt
 
 #index Page
 @app.route('/')
@@ -34,6 +34,7 @@ def layout():
     return render_template("layout.html")
 
 #SignUp Page
+
 @app.route("/signup", methods=['GET', 'POST'])
 def signup():
     if current_user.is_authenticated:
@@ -41,10 +42,14 @@ def signup():
 
     form = SignUpForm()
     if form.validate_on_submit():
+        try:
+            hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+        except ValueError:
+            flash('Invalid password. Please choose a password with a valid length.', 'error')
+            return redirect(url_for('signup'))
 
         # Update the user's account information to indicate that the email address is not yet verified
         # You can use a database or other storage mechanism to track this information
-        hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
         user = User(username=form.username.data, email=form.email.data.lower(), password=hashed_password, firstName=form.firstName.data, lastName=form.lastName.data, phoneNumber=form.phoneNumber.data, streetNumber=form.streetNumber.data, city=form.city.data, state=form.state.data, zipcode=form.zipcode.data)
         db.session.add(user)
         db.session.commit()
@@ -53,6 +58,8 @@ def signup():
         return render_template('confirmEmail.html')
 
     return render_template('signup.html', title='Sign Up', form=form)
+
+
 
 #Verify Email Page
 @app.route('/verify_email/<string:username>', methods=['GET'])
@@ -137,7 +144,6 @@ If you did not make this request then simply ignore this email and no changes wi
             flash('There is no account with that email. You must register first.', 'warning')
     return render_template('forgot_password.html')
 
-# reset password route
 @app.route('/reset_password/<token>', methods=['GET', 'POST'])
 def reset_password(token):
     user = User.verify_reset_token(token)
@@ -145,14 +151,18 @@ def reset_password(token):
         flash('That is an invalid or expired token.', 'warning')
         return redirect(url_for('forgot_password'))
 
-    if request.method == 'POST':
-        new_password = request.form.get('new_password')
-        user.password = new_password
-        db.session.commit()
-        flash('Your password has been updated!', 'success')
-        return redirect(url_for('login'))
+    form = ResetPasswordForm()
+    if form.validate_on_submit():
+        if bcrypt.check_password_hash(user.password, form.current_password.data):
+            user.password = bcrypt.generate_password_hash(form.new_password.data).decode('utf-8')
+            db.session.commit()
+            flash('Your password has been updated!', 'success')
+            return redirect(url_for('login'))
+        else:
+            flash('The current password is incorrect.', 'danger')
 
-    return render_template('reset_password.html', token=token)
+    return render_template('reset_password.html', title='Reset Password', form=form)
+
 
 #Main Dashboard
 @app.route('/dashboard')
