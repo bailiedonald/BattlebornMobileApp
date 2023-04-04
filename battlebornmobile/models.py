@@ -1,6 +1,9 @@
 from datetime import datetime
-from battlebornmobile import db, login_manager
+from battlebornmobile import db, login_manager, mail
 from flask_login import UserMixin
+from flask_mail import Mail, Message
+import random
+import string
 
 
 @login_manager.user_loader

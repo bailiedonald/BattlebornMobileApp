@@ -3,7 +3,8 @@ from wtforms import StringField, PasswordField, SubmitField, BooleanField, DateF
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
 from battlebornmobile.models import User, Pet, Appointment
 from flask_login import current_user
-
+import random
+import string
 
 
 class SignUpForm(FlaskForm):

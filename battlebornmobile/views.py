@@ -3,8 +3,9 @@ from battlebornmobile import app, db, bcrypt, mail, client
 from battlebornmobile.forms import SignUpForm, LoginForm, PetForm, AppointmentForm
 from battlebornmobile.models import User, Pet, Appointment
 from flask_login import login_user, current_user, logout_user, login_required
-from flask_mail import Message
-
+from flask_mail import Mail, Message
+import random
+import string
 
 
 #index Page
