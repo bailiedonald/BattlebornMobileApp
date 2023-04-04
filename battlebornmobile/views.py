@@ -107,8 +107,8 @@ def logout():
 
 
 #Forgot password
-@app.route('/forgot_password', methods=['GET', 'POST'])
-def forgot_password():
+@app.route('/password/forgot', methods=['GET', 'POST'])
+def password_forgot():
     if request.method == 'POST':
         email = request.form.get('email')
         user = User.query.filter_by(email=email).first()
@@ -122,7 +122,7 @@ def forgot_password():
             token = user.get_reset_token()
             msg = Message('Password Reset Request', sender='noreply@example.com', recipients=[user.email])
             msg.body = f'''To reset your password, visit the following link:
-{url_for('reset_password', token=token, _external=True)}
+{url_for('password_change', token=token, _external=True)}
 
 Your new temporary password is: {new_password}
 
@@ -133,10 +133,10 @@ If you did not make this request then simply ignore this email and no changes wi
             return redirect(url_for('login'))
         else:
             flash('There is no account with that email. You must register first.', 'warning')
-    return render_template('forgot_password.html')
+    return render_template('password_forgot.html')
 
-#Reset password 
-@app.route('/reset_password/<token>', methods=['GET', 'POST'])
+#Change password 
+@app.route('/password/change', methods=['GET', 'POST'])
 def reset_password(token):
     user = User.verify_reset_token(token)
     if not user:
