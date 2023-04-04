@@ -349,7 +349,7 @@ def smsSend():
         try:
             message = client.messages.create(
                 body=message,
-                from_='+15674323893',  
+                from_='+17752405149',  
                 to=phone_number
             )
             flash('Notification sent successfully.', 'success')
@@ -368,8 +368,8 @@ def send_sms():
     message = client.messages.create(
         messaging_service_sid='MGdc049f1edc574951803c83a97cd37602',
         body='Good Bye, World!',
-        from_='+17758675309',
-        to='+17758675309')
+        from_='+17752405149',
+        to='+17753763523')
     flash('Notification sent successfully.', 'success')
 
     return render_template("dashboardadmin.html"), 'SMS sent!'
