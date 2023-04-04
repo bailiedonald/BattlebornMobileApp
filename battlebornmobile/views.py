@@ -6,7 +6,6 @@ from flask_login import login_user, current_user, logout_user, login_required
 from flask_mail import Mail, Message
 import random, string
 
-
 #index Page
 @app.route('/')
 def index():
@@ -107,7 +106,7 @@ def logout():
     return redirect(url_for('index'))
 
 
-# forgot password route
+#Forgot password
 @app.route('/forgot_password', methods=['GET', 'POST'])
 def forgot_password():
     if request.method == 'POST':
@@ -136,6 +135,7 @@ If you did not make this request then simply ignore this email and no changes wi
             flash('There is no account with that email. You must register first.', 'warning')
     return render_template('forgot_password.html')
 
+#Reset password 
 @app.route('/reset_password/<token>', methods=['GET', 'POST'])
 def reset_password(token):
     user = User.verify_reset_token(token)
@@ -152,6 +152,9 @@ def reset_password(token):
             return redirect(url_for('login'))
         else:
             flash('The current password is incorrect.', 'danger')
+    else:
+        flash('The form was not valid.', 'danger')
+        print(form.errors)
 
     return render_template('reset_password.html', title='Reset Password', form=form)
 

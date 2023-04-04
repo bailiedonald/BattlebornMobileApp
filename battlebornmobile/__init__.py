@@ -7,6 +7,7 @@ from flask_mail import Mail
 from itsdangerous import URLSafeTimedSerializer
 import os
 
+
 app = Flask(__name__)
 
 #Donny Databsae Setup
