@@ -40,19 +40,11 @@ def signup():
 
     form = SignUpForm()
     if form.validate_on_submit():
-        # Process the user's sign-up information and generate a verification token
-        email = form.email.data
-        username = form.username.data
-
-        # Send the verification email to the user's email address
-        msg = Message('Verify your email address', sender='spencer@alsetdsgd.com', recipients=[email])
-        msg.body = render_template('verification_email.txt', username=form.username.data)
-        mail.send(msg)
 
         # Update the user's account information to indicate that the email address is not yet verified
         # You can use a database or other storage mechanism to track this information
         hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
-        user = User(username=form.username.data, email=email, password=hashed_password, firstName=form.firstName.data, lastName=form.lastName.data, phoneNumber=form.phoneNumber.data, streetNumber=form.streetNumber.data, city=form.city.data, state=form.state.data, zipcode=form.zipcode.data)
+        user = User(username=form.username.data, email=form.email.data.lower(), password=hashed_password, firstName=form.firstName.data, lastName=form.lastName.data, phoneNumber=form.phoneNumber.data, streetNumber=form.streetNumber.data, city=form.city.data, state=form.state.data, zipcode=form.zipcode.data)
         db.session.add(user)
         db.session.commit()
 
@@ -69,6 +61,27 @@ def verify_email(username):
     db.session.commit()
     flash('Your email has been confirmed! You can now login.', 'success')
     return redirect(url_for('login'))
+    # if form.validate_on_submit():
+    #     # Process the user's sign-up information and generate a verification token
+    #     email = form.email.data
+    #     username = form.username.data
+
+    #     # Send the verification email to the user's email address
+    #     msg = Message('Verify your email address', sender='spencer@alsetdsgd.com', recipients=[email])
+    #     msg.body = render_template('verification_email.txt', username=form.username.data)
+    #     mail.send(msg)
+
+    #     # Update the user's account information to indicate that the email address is not yet verified
+    #     # You can use a database or other storage mechanism to track this information
+    #     hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+    #     user = User(username=form.username.data, email=email, password=hashed_password, firstName=form.firstName.data, lastName=form.lastName.data, phoneNumber=form.phoneNumber.data, streetNumber=form.streetNumber.data, city=form.city.data, state=form.state.data, zipcode=form.zipcode.data)
+    #     db.session.add(user)
+    #     db.session.commit()
+
+    #     flash('Please check your email to verify your new account')
+    #     return render_template('confirmEmail.html')
+
+    # return render_template('signup.html', title='Sign Up', form=form)
 
 #Confirm Email Page
 @app.route('/signup/Confirmation')
@@ -82,7 +95,7 @@ def login():
         return redirect(url_for('index'))
     form = LoginForm()
     if form.validate_on_submit():
-        user = User.query.filter_by(email=form.email.data).first()
+        user = User.query.filter_by(email=form.email.data.lower()).first()
         if user and bcrypt.check_password_hash(user.password, form.password.data):
             login_user(user, remember=form.remember.data)
             next_page = request.args.get('next')
@@ -96,6 +109,42 @@ def login():
 def logout():
     logout_user()
     return redirect(url_for('index'))
+
+#Reset Password
+@app.route('/reset_password', methods=['GET', 'POST'])
+def password_reset():
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
+    form = RequestResetForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data.lower()).first()
+        if user:
+            token = user.get_reset_token()
+            send_reset_email(user, token)
+            flash('An email has been sent with instructions to reset your password.', 'info')
+            return redirect(url_for('login'))
+        else:
+            flash('Email does not exist. Please create an account.', 'danger')
+    return render_template('password_reset.html', title='Reset Password', form=form)
+
+#New Password
+@app.route('/reset_password/<token>', methods=['GET', 'POST'])
+def password_new(token):
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
+    user = User.verify_reset_token(token)
+    if not user:
+        flash('That is an invalid or expired token.', 'warning')
+        return redirect(url_for('reset_request'))
+    form = ResetPasswordForm()
+    if form.validate_on_submit():
+        hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+        user.password = hashed_password
+        db.session.commit()
+        flash('Your password has been updated! You are now able to log in.', 'success')
+        return redirect(url_for('login'))
+    return render_template('password_new.html', title='Reset Password', form=form)
+
 
 #Main Dashboard
 @app.route('/dashboard')

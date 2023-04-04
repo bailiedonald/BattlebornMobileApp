@@ -11,8 +11,17 @@ app = Flask(__name__)
 
 #Donny Databsae Setup
 app.config['SECRET_KEY'] = 'Super Secret Password'
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
-# postgres://battlebornmobile_user:cnaZi2wlEj9GSs8MxWKOuaQWquvhfwD7@dpg-cghhue02qv23kcr6c6a0-a.oregon-postgres.render.com/battlebornmobile
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False # Add this line to disable track modifications
+
+# local hard code
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://battlebornmobile_user:cnaZi2wlEj9GSs8MxWKOuaQWquvhfwD7@dpg-cghhue02qv23kcr6c6a0-a.oregon-postgres.render.com/battlebornmobile'
+
+# app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
+# postgresql://battlebornmobile_user:cnaZi2wlEj9GSs8MxWKOuaQWquvhfwD7@dpg-cghhue02qv23kcr6c6a0-a.oregon-postgres.render.com/battlebornmobile
+
+
+
+
 app.config['SECURITY_PASSWORD_SALT'] = 'your_password_salt'
 app.config['SECURITY_ROLES'] = {'admin': 'Administrator', 'staff': 'Staff', 'user': 'User'}
 
@@ -46,7 +55,7 @@ s = URLSafeTimedSerializer(app.config['SECRET_KEY'])
 login_manager.login_view = 'login'
 login_manager.login_message_category = 'info'
 
-    
+
 from battlebornmobile import views
 
 
