@@ -83,10 +83,6 @@ def verify_email(username):
 
     # return render_template('signup.html', title='Sign Up', form=form)
 
-#Confirm Email Page
-@app.route('/signup/Confirmation')
-def confirmemail():
-    return render_template("confirmEmail.html")
 
 #Login Page
 @app.route("/login", methods=['GET', 'POST'])
@@ -355,8 +351,8 @@ def send_sms():
     message = client.messages.create(
         messaging_service_sid='MGdc049f1edc574951803c83a97cd37602',
         body='Good Bye, World!',
-        from_='+15674323893',
-        to='+17753763523')
+        from_='+17758675309',
+        to='+17758675309')
     flash('Notification sent successfully.', 'success')
 
     return render_template("dashboardadmin.html"), 'SMS sent!'
