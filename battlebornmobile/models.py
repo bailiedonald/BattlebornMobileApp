@@ -1,5 +1,5 @@
 from datetime import datetime
-from battlebornmobile import db, login_manager, mail
+from battlebornmobile import db, login_manager, mail, app
 from flask_login import UserMixin
 from flask_mail import Mail, Message
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
