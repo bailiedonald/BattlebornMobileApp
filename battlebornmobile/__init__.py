@@ -22,7 +22,6 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://battlebornmobile_user:cnaZ
 
 
 
-app.config['SECURITY_PASSWORD_SALT'] = 'your_password_salt'
 app.config['SECURITY_ROLES'] = {'admin': 'Administrator', 'staff': 'Staff', 'user': 'User'}
 
 #Email verification Setup
