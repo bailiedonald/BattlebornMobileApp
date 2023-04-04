@@ -106,41 +106,24 @@ def logout():
     logout_user()
     return redirect(url_for('index'))
 
-#Reset Password
-@app.route('/reset_password', methods=['GET', 'POST'])
-def password_reset():
-    if current_user.is_authenticated:
-        return redirect(url_for('index'))
-    form = RequestResetForm()
-    if form.validate_on_submit():
-        user = User.query.filter_by(email=form.email.data.lower()).first()
-        if user:
-            token = user.get_reset_token()
-            send_reset_email(user, token)
-            flash('An email has been sent with instructions to reset your password.', 'info')
-            return redirect(url_for('login'))
+@app.route('/forgot_password', methods=['GET', 'POST'])
+def forgot_password():
+    if request.method == 'POST':
+        email = request.form['email']
+        user = users.get(email)
+        if not user:
+            return 'Email address not registered'
         else:
-            flash('Email does not exist. Please create an account.', 'danger')
-    return render_template('password_reset.html', title='Reset Password', form=form)
+            new_password = ''.join(random.choices(string.ascii_uppercase + string.ascii_lowercase + string.digits, k=8))
+            user.password = new_password
+            msg = Message('Password Reset', sender='spencer@alsetdsgd.com', recipients=[email])
+            msg.body = f'Your new password is: {new_password}'
+            mail.send(msg)
+            return 'Password reset email sent'
+    return render_template('forgot_password.html')
 
-#New Password
-@app.route('/reset_password/<token>', methods=['GET', 'POST'])
-def password_new(token):
-    if current_user.is_authenticated:
-        return redirect(url_for('index'))
-    user = User.verify_reset_token(token)
-    if not user:
-        flash('That is an invalid or expired token.', 'warning')
-        return redirect(url_for('reset_request'))
-    form = ResetPasswordForm()
-    if form.validate_on_submit():
-        hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
-        user.password = hashed_password
-        db.session.commit()
-        flash('Your password has been updated! You are now able to log in.', 'success')
-        return redirect(url_for('login'))
-    return render_template('password_new.html', title='Reset Password', form=form)
-
+if __name__ == '__main__':
+    app.run(debug=True)
 
 #Main Dashboard
 @app.route('/dashboard')

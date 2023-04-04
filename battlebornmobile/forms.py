@@ -38,6 +38,13 @@ class LoginForm(FlaskForm):
     submit = SubmitField('Login')
 
 
+class PasswordResetForm(FlaskForm):
+    email = StringField('Email', validators=[DataRequired(), Email()])
+    new_password = PasswordField('New Password', validators=[DataRequired()])
+    confirm_password = PasswordField('Confirm New Password', validators=[DataRequired(), EqualTo('new_password')])
+    submit = SubmitField('Reset Password')
+
+
 class PetForm(FlaskForm):
     id = StringField()
     pet_name = StringField("Pet Name", validators=[DataRequired()])

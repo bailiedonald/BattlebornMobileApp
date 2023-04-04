@@ -50,6 +50,10 @@ bcrypt = Bcrypt(app)
 login_manager = LoginManager(app)
 s = URLSafeTimedSerializer(app.config['SECRET_KEY'])
 
+# Login manager loader function
+@login_manager.user_loader
+def load_user(user_id):
+    return users.get(user_id)
 
 
 login_manager.login_view = 'login'
