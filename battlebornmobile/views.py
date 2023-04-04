@@ -4,9 +4,8 @@ from battlebornmobile.forms import SignUpForm, LoginForm, PetForm, AppointmentFo
 from battlebornmobile.models import User, Pet, Appointment
 from flask_login import login_user, current_user, logout_user, login_required
 from flask_mail import Mail, Message
-import random
-import string
 from passlib.hash import bcrypt
+import random, string
 
 #index Page
 @app.route('/')
