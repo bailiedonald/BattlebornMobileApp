@@ -3,7 +3,7 @@ from wtforms import StringField, PasswordField, SubmitField, BooleanField, DateF
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
 from battlebornmobile.models import User, Pet, Appointment
 from flask_login import current_user
-
+import random, string
 
 
 class SignUpForm(FlaskForm):
@@ -36,6 +36,14 @@ class LoginForm(FlaskForm):
     password = PasswordField('Password', validators=[DataRequired()])
     remember = BooleanField('Remember Me')
     submit = SubmitField('Login')
+
+
+class ResetPasswordForm(FlaskForm):
+    reset_password = StringField('Password Sent in Email', validators=[DataRequired(), Email()])
+    new_password = PasswordField('New Password', validators=[DataRequired()])
+    confirm_password = PasswordField('Confirm New Password', validators=[DataRequired(), EqualTo('new_password')])
+    submit = SubmitField('Reset Password')
+
 
 
 class PetForm(FlaskForm):

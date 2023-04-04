@@ -1,6 +1,10 @@
 from datetime import datetime
-from battlebornmobile import db, login_manager
+from battlebornmobile import db, login_manager, mail, app
 from flask_login import UserMixin
+from flask_mail import Mail, Message
+from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
+import random
+import string
 
 
 @login_manager.user_loader
@@ -42,7 +46,6 @@ class User(db.Model, UserMixin):
         except:
             return None
         return User.query.get(user_id)
-
 
 
 class Pet(db.Model, UserMixin):

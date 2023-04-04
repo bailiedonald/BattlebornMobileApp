@@ -1,11 +1,10 @@
 from flask import render_template, url_for, flash, redirect, request
 from battlebornmobile import app, db, bcrypt, mail, client
-from battlebornmobile.forms import SignUpForm, LoginForm, PetForm, AppointmentForm
+from battlebornmobile.forms import SignUpForm, LoginForm, PetForm, AppointmentForm, ResetPasswordForm
 from battlebornmobile.models import User, Pet, Appointment
 from flask_login import login_user, current_user, logout_user, login_required
-from flask_mail import Message
-
-
+from flask_mail import Mail, Message
+import random, string
 
 #index Page
 @app.route('/')
@@ -83,10 +82,6 @@ def verify_email(username):
 
     # return render_template('signup.html', title='Sign Up', form=form)
 
-#Confirm Email Page
-@app.route('/signup/Confirmation')
-def confirmemail():
-    return render_template("confirmEmail.html")
 
 #Login Page
 @app.route("/login", methods=['GET', 'POST'])
@@ -110,40 +105,58 @@ def logout():
     logout_user()
     return redirect(url_for('index'))
 
-#Reset Password
-@app.route('/reset_password', methods=['GET', 'POST'])
-def password_reset():
-    if current_user.is_authenticated:
-        return redirect(url_for('index'))
-    form = RequestResetForm()
-    if form.validate_on_submit():
-        user = User.query.filter_by(email=form.email.data.lower()).first()
+
+#Forgot password
+@app.route('/forgot_password', methods=['GET', 'POST'])
+def forgot_password():
+    if request.method == 'POST':
+        email = request.form.get('email')
+        user = User.query.filter_by(email=email).first()
         if user:
+            # generate a new password and update user's password
+            new_password = ''.join(random.choices(string.ascii_uppercase + string.ascii_lowercase + string.digits, k=8))
+            user.password = new_password
+            db.session.commit()
+
+            # send email with password reset instructions
             token = user.get_reset_token()
-            send_reset_email(user, token)
-            flash('An email has been sent with instructions to reset your password.', 'info')
+            msg = Message('Password Reset Request', sender='noreply@example.com', recipients=[user.email])
+            msg.body = f'''To reset your password, visit the following link:
+{url_for('reset_password', token=token, _external=True)}
+
+Your new temporary password is: {new_password}
+
+If you did not make this request then simply ignore this email and no changes will be made.
+'''
+            mail.send(msg)
+            flash('An email has been sent with instructions to reset your password.', 'success')
             return redirect(url_for('login'))
         else:
-            flash('Email does not exist. Please create an account.', 'danger')
-    return render_template('password_reset.html', title='Reset Password', form=form)
+            flash('There is no account with that email. You must register first.', 'warning')
+    return render_template('forgot_password.html')
 
-#New Password
+#Reset password 
 @app.route('/reset_password/<token>', methods=['GET', 'POST'])
-def password_new(token):
-    if current_user.is_authenticated:
-        return redirect(url_for('index'))
+def reset_password(token):
     user = User.verify_reset_token(token)
     if not user:
         flash('That is an invalid or expired token.', 'warning')
-        return redirect(url_for('reset_request'))
+        return redirect(url_for('forgot_password'))
+
     form = ResetPasswordForm()
     if form.validate_on_submit():
-        hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
-        user.password = hashed_password
-        db.session.commit()
-        flash('Your password has been updated! You are now able to log in.', 'success')
-        return redirect(url_for('login'))
-    return render_template('password_new.html', title='Reset Password', form=form)
+        if bcrypt.check_password_hash(user.password, form.current_password.data):
+            user.password = bcrypt.generate_password_hash(form.new_password.data).decode('utf-8')
+            db.session.commit()
+            flash('Your password has been updated!', 'success')
+            return redirect(url_for('login'))
+        else:
+            flash('The current password is incorrect.', 'danger')
+    else:
+        flash('The form was not valid.', 'danger')
+        print(form.errors)
+
+    return render_template('reset_password.html', title='Reset Password', form=form)
 
 
 #Main Dashboard
@@ -355,8 +368,8 @@ def send_sms():
     message = client.messages.create(
         messaging_service_sid='MGdc049f1edc574951803c83a97cd37602',
         body='Good Bye, World!',
-        from_='+15674323893',
-        to='+17753763523')
+        from_='+17758675309',
+        to='+17758675309')
     flash('Notification sent successfully.', 'success')
 
     return render_template("dashboardadmin.html"), 'SMS sent!'
