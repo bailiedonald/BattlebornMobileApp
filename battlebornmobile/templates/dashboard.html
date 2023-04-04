@@ -55,15 +55,22 @@
 </div>
 </br>
 <div class="card">
-    <h2>Your Upcoming Appointments</h2>
+    <br>
+    <h2 align="Center">Your Upcoming Appointments    </h2> 
+        <a href="/appointment/request" align="Center">
+            <button type="button" class="btn btn-success" style="background-color:Navy">Make an Appointment</button>
+        </a>
+
+
      <div class="card-body">     
          <p class="card-text">
              <div class="container">                           
                 <ul style="list-style-type:none;">
-                    {% for appointment in appointments %}
+                    {% for appointment in appointments %}     
+
                     <div class="row">
                         <div class="col-8">
-                            <li>{{ appointment.dateSheduled }} - {{ appointment.timeSheduled }} - {{ appointment.pet_name }} - {{ appointment.service }} - <button type="button">Edit</button> - <button type="button">Remove</button>  </li>
+                            <li> - {{ appointment.pet_name }} - {{ appointment.service }} - {{ appointment.dateSheduled }} - {{ appointment.timeSheduled }} - <button type="button">Edit</button> - <button type="button">Remove</button>  </li>
                             <li>==========================================================</li>
                         </div>
                     </div>       
@@ -74,13 +81,11 @@
      </div>
  </div>
 <div class="card">
-
-
-
-   <h2>Your Pets</h2>
-    <a href="/pet/add">
-        <button type="button" class="btn btn-success">Add Your Pet</button>
-    </a>
+    <br>
+    <h2 align="Center">Your Pets</h2>
+        <a href="/pet/add" align="Center">
+            <button type="button" class="btn btn-success" style="background-color:Navy">Add a Pet</button>
+        </a>
     <div class="card-body">     
         <p class="card-text">
             <div class="container">                            
@@ -96,7 +101,8 @@
                                     {% endif %}
                                 </li>
                                 <li>    Name: {{ pet.pet_name }}</li>
-                                <li>   Species: {{ pet.pet_species }} Breed: {{ pet.pet_breed }} Color: {{ pet.pet_color }}</li>
+                                <li>   Species: {{ pet.pet_species }}   Breed: {{ pet.pet_breed }} 
+                                <li>   Color: {{ pet.pet_color }}</li>
                                 <li>    {{ pet.pet_dob }}</li>
                                 <li>    Height: {{ pet.pet_hieght }} ft Weight: {{ pet.pet_weight }} lbs</li>
                             </div>
