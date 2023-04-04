@@ -213,8 +213,8 @@ def edit_appointment(id):
         # Update the appointment with the form data
         appointment.pet_name = form.pet_name.data
         appointment.service = form.service.data
-        appointment.dateScheduled = form.dateScheduled.data
-        appointment.timeScheduled = form.timeScheduled.data
+        appointment.weekday = form.weekday.data
+        appointment.timeSlot=form.timeSlot.data
         db.session.commit()
 
         flash("Appointment updated successfully!", "success")

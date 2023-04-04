@@ -29,16 +29,37 @@
 					{{ form.service(class="form-control") }}
 				</div>
 				</div>
+                <div class="form-group row">
+					<div class="col-md-6">
+						<div>
+							{{ form.weekday.label(class="form-label") }}
+							<select id="weekday" name="weekday">
+							<option value=" "> </option>
+							<!-- <option value="Sunday">Sunday</option> -->
+							<option value="Monday">Monday</option>
+							<option value="Tuesday">Tuesday</option>
+							<option value="Wednesday">Wednesday</option>
+							<option value="Thursday">Thursday</option>
+							<option value="Friday">Friday</option>
+							<option value="Saturday">Saturday</option>
+							</select>
+						</div>
+					</div>
+				</div>
+				<br>
 				<div class="form-group row">
-				<div class="col-md-6">
-					{{ form.dateSheduled.label(class="form-label") }}
-					{{ form.dateSheduled(class="form-control") }}
-				</div>				
-				<div class="col-md-6">
-					{{ form.timeSheduled.label(class="form-label") }}
-					{{ form.timeSheduled(class="form-control") }}
+					<div class="col-md-6">
+						<div>
+							{{ form.timeSlot.label(class="form-label") }}
+							<select id="timeSlot" name="timeSlot">
+							<option value=" "> </option>
+							<option value="Morning">Morning</option>
+							<option value="Afternoon">Afternoon</option>
+							</select>
+						</div>
+					</div>
 				</div>
-				</div>
+				<br>
 				<div class="form-group row">
 				<div class="col-md-6">
 					<button type="submit" class="btn btn-primary">Save Changes</button>
