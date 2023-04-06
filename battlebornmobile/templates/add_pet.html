@@ -14,7 +14,7 @@
 <h1>Add A Pet</h1>
 	<br/>
 <div class="shadow p-3 mb-5 bg-body rounded">
-	<form method="POST">
+	<form method="POST" enctype="multipart/form-data">
 		{{ form.hidden_tag() }}
 
 		{{ form.pet_name.label(class="form-label") }}
@@ -45,6 +45,10 @@
 		{{ form.pet_weight(class="form-control") }}
 		<br/>
 
+		{{ form.pet_pic.label(class="form-label") }}
+		{{ form.pet_pic(class="form-control") }}
+		<br/>
+
 		{{ form.submit(class="btn btn-secondary") }}
 
 
@@ -60,4 +64,4 @@
 {% endif %}
 
 
-{% endblock %}
+{% endblock %} 
