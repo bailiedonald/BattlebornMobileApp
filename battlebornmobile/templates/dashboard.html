@@ -1,3 +1,12 @@
+from time import time
+
+@app.context_processor
+def utility_processor():
+    def current_time():
+        return int(time())
+    return dict(current_time=current_time)
+
+
 {% extends 'layout.html' %}
     <script src="https://code.jquery.com/jquery-3.6.0.min.js">
 
@@ -71,21 +80,19 @@
 
             <strong>Address:</strong>
             {{ current_user.streetNumber }}<br/>
-
         </p>
-    </div>
-    <div class="col-4">
-            {% if current_user.profile_pic %}
+        <a href="{{ url_for('profile_update') }}" class="btn btn-primary">Update Profile</a>
+        <a href="/profile/picture/update" class="btn btn-primary">Update Profile Picture</a>
 
-            <img src="{{ url_for('static', filename='images/' + current_user.profile_pic)}}" width="200" align="right">
-            
-            {% else %}
-
-            <img src="{{ url_for('static', filename='images/matt.jpeg')}}" width="200" align="right">
-
-            {% endif %}
         
     </div>
+    <div class="col-4">
+        {% if current_user.image_file %}
+            <img src="{{ url_for('static', filename='profile_pics/' + current_user.image_file) }}?{{ current_time() }}" width="200" align="right">
+        {% else %}
+            <img src="{{ url_for('static', filename='images/default.jpg') }}" width="200" align="right">
+        {% endif %}
+        </div>
 </div>
 </br>
 <div class="card">
