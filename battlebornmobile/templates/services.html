@@ -1,51 +1,80 @@
 {% extends 'layout.html' %}
 {% block content %}
-<center>
-<h1>Services Page</h1>
-<head>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Trirong">
-<style>
-body {
-  font-family: "Trirong", serif;
-}
-</style>
-</head>
-<body>
+    <div class="content-section">
+            <form method="POST" action="">
+                {{ form.hidden_tag() }}
+                <fieldset class="form-group">
+                    <legend class="border-bottom mb-4">Authentication Portal</legend>
+                            <head>
+                                <title>Verification Code</title>
+                                <style>
+                                    .verification-code-input {
+                                    width: 40px;
+                                    height: 40px;
+                                    margin: 0 5px;
+                                    padding: 5px;
+                                    font-size: 20px;
+                                    text-align: center;
+                                    border: 1px solid #ccc;
+                                    border-radius: 5px;
+                                    outline: none;
+                                    }
+                                </style>
+                            </head>
+                                <body>
+                                <h1>Enter Verification Code</h1>
+                                <p>This code should be provided in the email that you recieved</p>
+                                    <form>
+                                        <input class="verification-code-input" type="text" maxlength="1" id="digit1" autofocus>
+                                        <input class="verification-code-input" type="text" maxlength="1" id="digit2">
+                                        <input class="verification-code-input" type="text" maxlength="1" id="digit3">
+                                        <input class="verification-code-input" type="text" maxlength="1" id="digit4">
+                                        <input class="verification-code-input" type="text" maxlength="1" id="digit5">
+                                        <input class="verification-code-input" type="text" maxlength="1" id="digit6">
+                                    </form>
+             
+                </fieldset>
+            </div>
+
+                    <div class="form-group">
+                        {{ form.submit(class="btn btn-outline-info") }}
+                    </div>
+            </form>
 
 
-<p>We sees cats, dogs, goats, pigs, chickens, hedgehogs & more f
-or vaccines, checkups and other routine services and exams. 
-<br/>We also offer minor surgeries and spaying/neutering of animals under 40lbs (+40lbs, ask about options) routine labs & cytology, ear & skin infections, mass removals, pain management, & more! 
-<br/><p style="font-size:23px">Here are a few links to help with basic pet care!</p>
-<br/>
-<p style="font-size:23px"> Cats:
-<br/>
-<p style="font-size:18px"> Help with cleaning Cat Ears:
-<p style="font-size:16px"> It is best to clean a cat's ears on a regular basis. Here is a quick tip video to help out with that:
-<br/>
-<iframe width="560" height="315" src="https://www.youtube.com/embed/21aKN-tcKrc" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    <div class="border-top pt-3">
+                        <small class="text-muted">
+                            <a class="ml-2" href="{{ url_for('login') }}">Verify Code</a>
+                        </small>
+                    </div>
+     </div>
 
-<br/>
-<p style="font-size:23px"> Dogs:
-<br/>
-<p style="font-size:18px"> Nail cutting techniques:
-<p style="font-size:16px"> Yes, we all can get really nervous cutting dogs nails, especially when they are not up for the challenge. Here is a quick video to show the best ways to cut your doggies nails!
-<br/>
-<iframe width="560" height="315" src="https://www.youtube.com/embed/sisprxhsc6I" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-
-<br/>
-<p style="font-size:23px"> Goats:
-<p style="font-size:18px"> Before You Buy:
-<p style="font-size:16px"> Are you confused on why you want to get a goat? Goats are freindly animals to have around, and can be fun for the whole family! Here are some basic things you as a future owner should know:
-<br/>
-<iframe width="560" height="315" src="https://www.youtube.com/embed/1x29gSHza6U" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-<p style="font-size:23px"> Horses:
-<p style="font-size:18px"> Hoof Cleaning:
-<p style="font-size:16px"> Did you just finish watching Yellowstone? Do you feel like you can buy a big plot of land and put a few horses on it? Great! The first thing you might want to consider is keeping a horses hoof nice and clean on a regular basis! here is a video on how to keep up with this:
-<br/>
-<iframe width="560" height="315" src="https://www.youtube.com/embed/cw8gjwEtdhY" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-
-</p>
-</center>
-
-{% endblock %}
+    <script>
+      // Automatically move cursor to next input box when user types a digit
+      const inputs = document.querySelectorAll('.verification-code-input');
+      for (let i = 0; i < inputs.length; i++) {
+        inputs[i].addEventListener('input', function(e) {
+          if (this.value.length == this.maxLength) {
+            inputs[i+1].focus();
+          }
+        });
+      }
+      
+      // Function to submit verification code
+      function submitVerificationCode() {
+        const digit1 = document.getElementById('digit1').value;
+        const digit2 = document.getElementById('digit2').value;
+        const digit3 = document.getElementById('digit3').value;
+        const digit4 = document.getElementById('digit4').value;
+        const digit5 = document.getElementById('digit5').value;
+        const digit6 = document.getElementById('digit6').value;
+        
+        const verificationCode = digit1 + digit2 + digit3 + digit4 + digit5 + digit6;
+        
+        // Submit the verification code to server for validation
+        // ...
+      }
+    </script>
+  
+  
+  {% endblock content %}
