@@ -1,0 +1,26 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+
+{% for message in get_flashed_messages() %}
+	<div class="alert alert-warning alert-dismissible fade show" role="alert">
+	  {{ message }}
+	  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+	</div>
+{% endfor %}
+
+{% if current_user.is_authenticated %}
+<h2>Cancel Appointment</h2>
+
+<p>Are you sure you want to cancel your appointment with {{ appointment.pet_name }} on {{ appointment.dateSheduled }} at {{ appointment.timeSheduled }}?</p>
+
+<form method="post">
+    {{ form.hidden_tag() }}
+    <input type="submit" value="Yes, cancel this appointment">
+</form>
+
+<a href="{{ url_for('dashboard') }}">No, go back to dashboard</a>
+
+{% endif %}
+
+{% endblock %}

@@ -166,9 +166,10 @@ def dashboard():
     # Query all pets linked to the current user
     pets = Pet.query.filter_by(owner_id=current_user.id).all()
     # Query all appoinments linked to the current user
-    appointments = Appointment.query.filter_by(owner_id=current_user.id).all()
+    appointments = Appointment.query.filter_by(owner_id=current_user.id).filter_by(cancelled=False).all()
 
     return render_template("dashboard.html", pets=pets, appointments=appointments)
+
 
 #Add Pet Page
 @app.route("/pet/add", methods=['GET', 'POST'])
@@ -201,6 +202,52 @@ def appointment():
         flash('Your request has been received!', 'success')
         return redirect(url_for('dashboard'))
     return render_template('appointment_request.html', title='MakeAppointment', form=form)
+
+#Appointment Edit Page
+@app.route("/appointment/edit/<int:id>", methods=["GET", "POST"])
+@login_required
+def edit_appointment(id):
+    appointment = Appointment.query.get_or_404(id)
+    form = AppointmentForm(obj=appointment)
+
+    if form.validate_on_submit():
+        # Update the appointment with the form data
+        appointment.pet_name = form.pet_name.data
+        appointment.service = form.service.data
+        appointment.weekday = form.weekday.data
+        appointment.timeSlot=form.timeSlot.data
+        db.session.commit()
+
+        flash("Appointment updated successfully!", "success")
+        return redirect(url_for("dashboard"))
+
+    return render_template("appointment_edit.html", form=form)
+
+
+#Appointment Cancel Route
+@app.route("/appointment/cancel/<int:id>", methods=["GET", "POST"])
+@login_required
+def cancel_appointment(id):
+    appointment = Appointment.query.get_or_404(id)
+
+    # Check if the user is the owner of the appointment
+    if appointment.owner != current_user:
+        flash("You don't have permission to cancel this appointment", "danger")
+        return redirect(url_for("dashboard"))
+
+    form = AppointmentForm(obj=appointment)
+
+    if form.validate_on_submit():
+        # Update the appointment with the form data
+        appointment.cancelled = True
+
+        db.session.commit()
+
+        flash("Appointment cancelled successfully!", "success")
+        return redirect(url_for("dashboard"))
+
+    return render_template("appointment_cancel.html", appointment=appointment, form=form)
+
 
 # All Unscheduled Appointments
 @app.route('/appointments/unscheduled')
