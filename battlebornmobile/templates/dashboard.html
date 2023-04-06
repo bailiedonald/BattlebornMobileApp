@@ -23,30 +23,13 @@
             });
         });
 
-        document.addEventListener('DOMContentLoaded', function() {
-            var cancelBtns = document.querySelectorAll('.cancel-appointment-btn');
-            cancelBtns.forEach(function(cancelBtn) {
-                cancelBtn.addEventListener('click', function(event) {
-                    event.preventDefault();
-                    var appointmentId = this.dataset.appointmentId;
-                    var confirmation = confirm('Are you sure you want to cancel this appointment?');
-                    if (confirmation) {
-                        $.ajax({
-                            url: '/appointments/cancel/' + appointmentId,
-                            type: 'GET',
-                            success: function(response) {
-                                // Reload the dashboard page to reflect the cancelled appointment
-                                location.reload();
-                            },
-                            error: function(error) {
-                                console.log(error);
-                            }
-                        });
-                    }
-                });
-            });
-        });
 
+        function showCancelConfirmation(appointmentId) {
+            if (confirm("Are you sure you want to cancel this appointment?")) {
+                window.location.href = "/appointment/cancel/" + appointmentId;
+            }
+        }
+                               
     </script>
 
 
@@ -122,10 +105,10 @@
                         <div class="col-8">
                             <li> - {{ appointment.pet_name }} - {{ appointment.service }} - {{ appointment.dateSheduled }} - {{ appointment.timeSheduled }} -
                                 <a href="/appointment/edit/{{ appointment.id }}">Edit</a> - 
-                                <button class="btn btn-danger cancel-appointment-btn" data-appointment-id="{{ appointment.id }}">Cancel Appointment</button>
+                                <a href="/appointment/cancel/{{ appointment.id }}">Cancel Appointment</a> - 
                             </li>
                             <li>==========================================================</li>
-                        </div>
+                        </div>  
                     </div>
                 {% endfor %}                
                 </ul>

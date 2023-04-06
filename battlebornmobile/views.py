@@ -223,15 +223,30 @@ def edit_appointment(id):
 
     return render_template("appointment_edit.html", form=form)
 
+
 #Appointment Cancel Route
-@app.route('/appointments/cancel/<int:appointment_id>')
+@app.route("/appointment/cancel/<int:id>", methods=["GET", "POST"])
 @login_required
-def cancel_appointment(appointment_id):
-    appointment = Appointment.query.get_or_404(appointment_id)
-    appointment.cancelled = True
-    db.session.commit()
-    flash('Your appointment has been cancelled.', 'success')
-    return redirect(url_for('dashboard'))
+def cancel_appointment(id):
+    appointment = Appointment.query.get_or_404(id)
+
+    # Check if the user is the owner of the appointment
+    if appointment.owner != current_user:
+        flash("You don't have permission to cancel this appointment", "danger")
+        return redirect(url_for("dashboard"))
+
+    form = AppointmentForm(obj=appointment)
+
+    if form.validate_on_submit():
+        # Update the appointment with the form data
+        appointment.cancelled = True
+
+        db.session.commit()
+
+        flash("Appointment cancelled successfully!", "success")
+        return redirect(url_for("dashboard"))
+
+    return render_template("appointment_cancel.html", appointment=appointment, form=form)
 
 
 # All Unscheduled Appointments
