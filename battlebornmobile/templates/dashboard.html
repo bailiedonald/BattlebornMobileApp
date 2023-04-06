@@ -1,12 +1,3 @@
-from time import time
-
-@app.context_processor
-def utility_processor():
-    def current_time():
-        return int(time())
-    return dict(current_time=current_time)
-
-
 {% extends 'layout.html' %}
     <script src="https://code.jquery.com/jquery-3.6.0.min.js">
 
@@ -87,12 +78,13 @@ def utility_processor():
         
     </div>
     <div class="col-4">
-        {% if current_user.image_file %}
-            <img src="{{ url_for('static', filename='profile_pics/' + current_user.image_file) }}?{{ current_time() }}" width="200" align="right">
+        {% if current_user.image_file != 'default.jpg' %}
+            <img src="{{ url_for('static', filename='profile_pics/' + current_user.image_file)}}" width="200" align="right">
         {% else %}
-            <img src="{{ url_for('static', filename='images/default.jpg') }}" width="200" align="right">
+            <img src="{{ url_for('static', filename='images/default.jpeg')}}" width="200" align="right">
         {% endif %}
-        </div>
+    </div>
+        
 </div>
 </br>
 <div class="card">
