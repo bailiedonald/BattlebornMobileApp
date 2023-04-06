@@ -1,10 +1,13 @@
+import os, random, string
 from flask import render_template, url_for, flash, redirect, request
 from battlebornmobile import app, db, bcrypt, mail, client
-from battlebornmobile.forms import SignUpForm, LoginForm, PetForm, AppointmentForm, ResetPasswordForm
+from battlebornmobile.forms import SignUpForm, LoginForm, PetForm, AppointmentForm, ResetPasswordForm, UpdateProfileForm, UpdateProfilePictureForm
 from battlebornmobile.models import User, Pet, Appointment
 from flask_login import login_user, current_user, logout_user, login_required
 from flask_mail import Mail, Message
-import random, string
+from werkzeug.utils import secure_filename
+
+
 
 #index Page
 @app.route('/')
@@ -169,6 +172,60 @@ def dashboard():
     appointments = Appointment.query.filter_by(owner_id=current_user.id).filter_by(cancelled=False).all()
 
     return render_template("dashboard.html", pets=pets, appointments=appointments)
+
+# Profile Update
+@app.route('/profile/update', methods=['GET', 'POST'])
+@login_required
+def profile_update():
+    form = UpdateProfileForm()
+    if form.validate_on_submit():
+        current_user.username = form.username.data
+        current_user.email = form.email.data
+        current_user.firstName = form.firstName.data
+        current_user.lastName = form.lastName.data
+        current_user.phoneNumber = form.phoneNumber.data
+        current_user.streetNumber = form.streetNumber.data
+        current_user.city = form.city.data
+        current_user.state = form.state.data
+        current_user.zipcode = form.zipcode.data
+        db.session.commit()
+        flash('Your account has been updated!', 'success')
+        return redirect(url_for('dashboard'))
+    elif request.method == 'GET':
+        form.username.data = current_user.username
+        form.email.data = current_user.email
+        form.firstName.data = current_user.firstName
+        form.lastName.data = current_user.lastName
+        form.phoneNumber.data = current_user.phoneNumber
+        form.streetNumber.data = current_user.streetNumber
+        form.city.data = current_user.city
+        form.state.data = current_user.state
+        form.zipcode.data = current_user.zipcode
+    return render_template('profile_update.html', title='Update User Information', form=form)
+
+
+# Profile Picture Update
+@app.route('/profile/picture/update', methods=['GET', 'POST'])
+@login_required
+def profile_picture_update():
+    form = UpdateProfilePictureForm()
+    if form.validate_on_submit():
+        # Generate custom filename for the uploaded image file
+        _, file_ext = os.path.splitext(form.profile_picture.data.filename)
+        filename = secure_filename(current_user.username + 'picture' + file_ext)
+
+        # Save the uploaded image file
+        image_path = os.path.join(app.root_path, 'static/profile_pics', filename)
+        form.profile_picture.data.save(image_path)
+
+        # Update the user's profile picture in the database
+        current_user.image_file = filename
+        db.session.commit()
+
+        flash('Your profile picture has been updated!', 'success')
+        return redirect(url_for('dashboard'))
+
+    return render_template('profile_picture_update.html', form=form)
 
 
 #Add Pet Page
