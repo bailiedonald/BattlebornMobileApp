@@ -227,22 +227,45 @@ def profile_picture_update():
 
     return render_template('profile_picture_update.html', form=form)
 
-
-#Add Pet Page
+# Add Pet Page
 @app.route("/pet/add", methods=['GET', 'POST'])
 @login_required
 def add_pet():
     form = PetForm()
     if form.validate_on_submit():
         pet = Pet(pet_name=form.pet_name.data, pet_dob=form.pet_dob.data, pet_species=form.pet_species.data, pet_breed=form.pet_breed.data, pet_color=form.pet_color.data, pet_height=form.pet_height.data, pet_weight=form.pet_weight.data, owner_id=current_user.id)
+
+        # Save pet pic to filesystem
+        if form.pet_pic.data:
+            pic_filename = secure_filename(current_user.username + '_' + form.pet_name.data + '.' + form.pet_pic.data.filename.split('.')[-1])
+            pic_path = os.path.join(app.root_path, 'static/pet_pics', pic_filename)
+            form.pet_pic.data.save(pic_path)
+            pet.pet_pic = pic_filename
+
         # Add Pet to Pet Database
         db.session.add(pet)
         db.session.commit()
-        
+
         flash('Your pet has been added!', 'success')
         return redirect(url_for('dashboard'))
 
     return render_template('add_pet.html', form=form)
+
+# #Add Pet Page
+# @app.route("/pet/add", methods=['GET', 'POST'])
+# @login_required
+# def add_pet():
+#     form = PetForm()
+#     if form.validate_on_submit():
+#         pet = Pet(pet_name=form.pet_name.data, pet_dob=form.pet_dob.data, pet_species=form.pet_species.data, pet_breed=form.pet_breed.data, pet_color=form.pet_color.data, pet_height=form.pet_height.data, pet_weight=form.pet_weight.data, owner_id=current_user.id)
+#         # Add Pet to Pet Database
+#         db.session.add(pet)
+#         db.session.commit()
+        
+#         flash('Your pet has been added!', 'success')
+#         return redirect(url_for('dashboard'))
+
+#     return render_template('add_pet.html', form=form)
 
 #Appointment Request Page
 @app.route("/appointment/request", methods=['GET', 'POST'])

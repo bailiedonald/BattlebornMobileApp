@@ -56,7 +56,7 @@ class Pet(db.Model, UserMixin):
     pet_color = db.Column(db.String(50))
     pet_height = db.Column(db.String(100))
     pet_weight = db.Column(db.String(1000))
-    pet_pic = db.Column(db.String(20), nullable=False, default='animals.jpeg')
+    pet_pic = db.Column(db.String(255), nullable=False, default='animals.jpeg')
     #Link to Pet Owner in user Database
     owner_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 

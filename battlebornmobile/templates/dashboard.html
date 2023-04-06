@@ -129,19 +129,20 @@
                         <div class="row">
                             <div class="col-8">
                                 <li>
-                                    {% if pet.pet_pic %}
-                                    <img src="{{ url_for('static', filename='images/' + pet.pet_pic) }}" width="200" align="left">
-                                    {% else %}
-                                    <img src="{{ url_for('static', filename='images/animals.jpeg') }}" width="200" align="left">
-                                    {% endif %}
+                                {% if pet.pet_pic != 'animals.jpeg' %}
+                                    <img src="{{ url_for('static', filename='pet_pics/' + pet.pet_pic) }}" width="200" align="Left">
+                                {% else %}
+                                    <img src="{{ url_for('static', filename='images/animals.jpeg') }}" width="200" align="Left">
+                                {% endif %}
                                 </li>
                                 <li>    Name: {{ pet.pet_name }}</li>
-                                <li>   Species: {{ pet.pet_species }}   Breed: {{ pet.pet_breed }} 
+                                <li>    Species: {{ pet.pet_species }}  -  Breed: {{ pet.pet_breed }} 
                                 <li>   Color: {{ pet.pet_color }}</li>
-                                <li>    {{ pet.pet_dob }}</li>
+                                <li>    Date of Birth: {{ pet.pet_dob }}</li>
                                 <li>    Height: {{ pet.pet_hieght }} ft Weight: {{ pet.pet_weight }} lbs</li>
                             </div>
                         </div>
+                        <br>
                     {% endfor %}
                 </ul>
             </div>

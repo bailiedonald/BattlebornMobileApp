@@ -47,17 +47,17 @@ class ResetPasswordForm(FlaskForm):
     submit = SubmitField('Reset Password')
 
 
-
 class PetForm(FlaskForm):
-    id = StringField()
     pet_name = StringField("Pet Name", validators=[DataRequired()])
     pet_dob = DateField("Pet Birthday", validators=[DataRequired()])
     pet_species = StringField("Pet Species", validators=[DataRequired()])
     pet_breed = StringField("Pet Breed", validators=[DataRequired()])
     pet_color = StringField("Pet Color", validators=[DataRequired()])
-    pet_height = StringField("Pet Hieght")
+    pet_height = StringField("Pet Height")
     pet_weight = StringField("Pet Weight")
+    pet_pic = FileField("Pet Picture", validators=[FileAllowed(['jpg', 'jpeg', 'png'])])
     submit = SubmitField('Add Pet')
+
 
 class AppointmentForm(FlaskForm):
     id = IntegerField('User ID')
