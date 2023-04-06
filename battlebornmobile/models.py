@@ -1,6 +1,9 @@
+import os, random, string
 from datetime import datetime
-from battlebornmobile import db, login_manager
+from battlebornmobile import db, login_manager, mail, app
 from flask_login import UserMixin
+from flask_mail import Mail, Message
+from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 
 
 @login_manager.user_loader
@@ -20,7 +23,7 @@ class User(db.Model, UserMixin):
     city = db.Column(db.String(25))
     state = db.Column(db.String(15))
     zipcode = db.Column(db.String(5))
-    image_file = db.Column(db.String(20), nullable=False, default='default.jpg')
+    image_file = db.Column(db.String(255), nullable=False, default='default.jpg')
     active = db.Column(db.Boolean, default=False, nullable=False)
     StaffAccess = db.Column(db.Boolean, default=False, nullable=False)
     AdminAccess = db.Column(db.Boolean, default=False, nullable=False)
@@ -42,7 +45,6 @@ class User(db.Model, UserMixin):
         except:
             return None
         return User.query.get(user_id)
-
 
 
 class Pet(db.Model, UserMixin):

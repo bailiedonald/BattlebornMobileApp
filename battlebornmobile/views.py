@@ -1,9 +1,11 @@
+import os, random, string
 from flask import render_template, url_for, flash, redirect, request
 from battlebornmobile import app, db, bcrypt, mail, client
-from battlebornmobile.forms import SignUpForm, LoginForm, PetForm, AppointmentForm
+from battlebornmobile.forms import SignUpForm, LoginForm, PetForm, AppointmentForm, ResetPasswordForm, UpdateProfileForm, UpdateProfilePictureForm
 from battlebornmobile.models import User, Pet, Appointment
 from flask_login import login_user, current_user, logout_user, login_required
-from flask_mail import Message
+from flask_mail import Mail, Message
+from werkzeug.utils import secure_filename
 
 
 
@@ -83,10 +85,6 @@ def verify_email(username):
 
     # return render_template('signup.html', title='Sign Up', form=form)
 
-#Confirm Email Page
-@app.route('/signup/Confirmation')
-def confirmemail():
-    return render_template("confirmEmail.html")
 
 #Login Page
 @app.route("/login", methods=['GET', 'POST'])
@@ -110,40 +108,58 @@ def logout():
     logout_user()
     return redirect(url_for('index'))
 
-#Reset Password
-@app.route('/reset_password', methods=['GET', 'POST'])
-def password_reset():
-    if current_user.is_authenticated:
-        return redirect(url_for('index'))
-    form = RequestResetForm()
-    if form.validate_on_submit():
-        user = User.query.filter_by(email=form.email.data.lower()).first()
+
+#Forgot password
+@app.route('/password/forgot', methods=['GET', 'POST'])
+def password_forgot():
+    if request.method == 'POST':
+        email = request.form.get('email')
+        user = User.query.filter_by(email=email).first()
         if user:
+            # generate a new password and update user's password
+            new_password = ''.join(random.choices(string.ascii_uppercase + string.ascii_lowercase + string.digits, k=8))
+            user.password = new_password
+            db.session.commit()
+
+            # send email with password reset instructions
             token = user.get_reset_token()
-            send_reset_email(user, token)
-            flash('An email has been sent with instructions to reset your password.', 'info')
+            msg = Message('Password Reset Request', sender='noreply@example.com', recipients=[user.email])
+            msg.body = f'''To reset your password, visit the following link:
+{url_for('password_change', token=token, _external=True)}
+
+Your new temporary password is: {new_password}
+
+If you did not make this request then simply ignore this email and no changes will be made.
+'''
+            mail.send(msg)
+            flash('An email has been sent with instructions to reset your password.', 'success')
             return redirect(url_for('login'))
         else:
-            flash('Email does not exist. Please create an account.', 'danger')
-    return render_template('password_reset.html', title='Reset Password', form=form)
+            flash('There is no account with that email. You must register first.', 'warning')
+    return render_template('password_forgot.html')
 
-#New Password
-@app.route('/reset_password/<token>', methods=['GET', 'POST'])
-def password_new(token):
-    if current_user.is_authenticated:
-        return redirect(url_for('index'))
+#Change password 
+@app.route('/password/change', methods=['GET', 'POST'])
+def reset_password(token):
     user = User.verify_reset_token(token)
     if not user:
         flash('That is an invalid or expired token.', 'warning')
-        return redirect(url_for('reset_request'))
+        return redirect(url_for('forgot_password'))
+
     form = ResetPasswordForm()
     if form.validate_on_submit():
-        hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
-        user.password = hashed_password
-        db.session.commit()
-        flash('Your password has been updated! You are now able to log in.', 'success')
-        return redirect(url_for('login'))
-    return render_template('password_new.html', title='Reset Password', form=form)
+        if bcrypt.check_password_hash(user.password, form.current_password.data):
+            user.password = bcrypt.generate_password_hash(form.new_password.data).decode('utf-8')
+            db.session.commit()
+            flash('Your password has been updated!', 'success')
+            return redirect(url_for('login'))
+        else:
+            flash('The current password is incorrect.', 'danger')
+    else:
+        flash('The form was not valid.', 'danger')
+        print(form.errors)
+
+    return render_template('reset_password.html', title='Reset Password', form=form)
 
 
 #Main Dashboard
@@ -153,9 +169,64 @@ def dashboard():
     # Query all pets linked to the current user
     pets = Pet.query.filter_by(owner_id=current_user.id).all()
     # Query all appoinments linked to the current user
-    appointments = Appointment.query.filter_by(owner_id=current_user.id).all()
+    appointments = Appointment.query.filter_by(owner_id=current_user.id).filter_by(cancelled=False).all()
 
     return render_template("dashboard.html", pets=pets, appointments=appointments)
+
+# Profile Update
+@app.route('/profile/update', methods=['GET', 'POST'])
+@login_required
+def profile_update():
+    form = UpdateProfileForm()
+    if form.validate_on_submit():
+        current_user.username = form.username.data
+        current_user.email = form.email.data
+        current_user.firstName = form.firstName.data
+        current_user.lastName = form.lastName.data
+        current_user.phoneNumber = form.phoneNumber.data
+        current_user.streetNumber = form.streetNumber.data
+        current_user.city = form.city.data
+        current_user.state = form.state.data
+        current_user.zipcode = form.zipcode.data
+        db.session.commit()
+        flash('Your account has been updated!', 'success')
+        return redirect(url_for('dashboard'))
+    elif request.method == 'GET':
+        form.username.data = current_user.username
+        form.email.data = current_user.email
+        form.firstName.data = current_user.firstName
+        form.lastName.data = current_user.lastName
+        form.phoneNumber.data = current_user.phoneNumber
+        form.streetNumber.data = current_user.streetNumber
+        form.city.data = current_user.city
+        form.state.data = current_user.state
+        form.zipcode.data = current_user.zipcode
+    return render_template('profile_update.html', title='Update User Information', form=form)
+
+
+# Profile Picture Update
+@app.route('/profile/picture/update', methods=['GET', 'POST'])
+@login_required
+def profile_picture_update():
+    form = UpdateProfilePictureForm()
+    if form.validate_on_submit():
+        # Generate custom filename for the uploaded image file
+        _, file_ext = os.path.splitext(form.profile_picture.data.filename)
+        filename = secure_filename(current_user.username + 'picture' + file_ext)
+
+        # Save the uploaded image file
+        image_path = os.path.join(app.root_path, 'static/profile_pics', filename)
+        form.profile_picture.data.save(image_path)
+
+        # Update the user's profile picture in the database
+        current_user.image_file = filename
+        db.session.commit()
+
+        flash('Your profile picture has been updated!', 'success')
+        return redirect(url_for('dashboard'))
+
+    return render_template('profile_picture_update.html', form=form)
+
 
 #Add Pet Page
 @app.route("/pet/add", methods=['GET', 'POST'])
@@ -188,6 +259,52 @@ def appointment():
         flash('Your request has been received!', 'success')
         return redirect(url_for('dashboard'))
     return render_template('appointment_request.html', title='MakeAppointment', form=form)
+
+#Appointment Edit Page
+@app.route("/appointment/edit/<int:id>", methods=["GET", "POST"])
+@login_required
+def edit_appointment(id):
+    appointment = Appointment.query.get_or_404(id)
+    form = AppointmentForm(obj=appointment)
+
+    if form.validate_on_submit():
+        # Update the appointment with the form data
+        appointment.pet_name = form.pet_name.data
+        appointment.service = form.service.data
+        appointment.weekday = form.weekday.data
+        appointment.timeSlot=form.timeSlot.data
+        db.session.commit()
+
+        flash("Appointment updated successfully!", "success")
+        return redirect(url_for("dashboard"))
+
+    return render_template("appointment_edit.html", form=form)
+
+
+#Appointment Cancel Route
+@app.route("/appointment/cancel/<int:id>", methods=["GET", "POST"])
+@login_required
+def cancel_appointment(id):
+    appointment = Appointment.query.get_or_404(id)
+
+    # Check if the user is the owner of the appointment
+    if appointment.owner != current_user:
+        flash("You don't have permission to cancel this appointment", "danger")
+        return redirect(url_for("dashboard"))
+
+    form = AppointmentForm(obj=appointment)
+
+    if form.validate_on_submit():
+        # Update the appointment with the form data
+        appointment.cancelled = True
+
+        db.session.commit()
+
+        flash("Appointment cancelled successfully!", "success")
+        return redirect(url_for("dashboard"))
+
+    return render_template("appointment_cancel.html", appointment=appointment, form=form)
+
 
 # All Unscheduled Appointments
 @app.route('/appointments/unscheduled')
@@ -336,7 +453,7 @@ def smsSend():
         try:
             message = client.messages.create(
                 body=message,
-                from_='+15674323893',  
+                from_='+17752405149',  
                 to=phone_number
             )
             flash('Notification sent successfully.', 'success')
@@ -355,7 +472,7 @@ def send_sms():
     message = client.messages.create(
         messaging_service_sid='MGdc049f1edc574951803c83a97cd37602',
         body='Good Bye, World!',
-        from_='+15674323893',
+        from_='+17752405149',
         to='+17753763523')
     flash('Notification sent successfully.', 'success')
 
