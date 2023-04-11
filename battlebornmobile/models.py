@@ -1,10 +1,9 @@
+import os, random, string
 from datetime import datetime
 from battlebornmobile import db, login_manager, mail, app
 from flask_login import UserMixin
 from flask_mail import Mail, Message
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
-import random
-import string
 
 
 @login_manager.user_loader
@@ -24,7 +23,7 @@ class User(db.Model, UserMixin):
     city = db.Column(db.String(25))
     state = db.Column(db.String(15))
     zipcode = db.Column(db.String(5))
-    image_file = db.Column(db.String(20), nullable=False, default='default.jpg')
+    image_file = db.Column(db.String(255), nullable=False, default='default.jpg')
     active = db.Column(db.Boolean, default=False, nullable=False)
     StaffAccess = db.Column(db.Boolean, default=False, nullable=False)
     AdminAccess = db.Column(db.Boolean, default=False, nullable=False)
@@ -57,7 +56,7 @@ class Pet(db.Model, UserMixin):
     pet_color = db.Column(db.String(50))
     pet_height = db.Column(db.String(100))
     pet_weight = db.Column(db.String(1000))
-    pet_pic = db.Column(db.String(20), nullable=False, default='animals.jpeg')
+    pet_pic = db.Column(db.String(255), nullable=False, default='animals.jpeg')
     #Link to Pet Owner in user Database
     owner_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 

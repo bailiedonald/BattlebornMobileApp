@@ -1,10 +1,13 @@
+import os, random, string
 from flask import render_template, url_for, flash, redirect, request
 from battlebornmobile import app, db, bcrypt, mail, client
-from battlebornmobile.forms import SignUpForm, LoginForm, PetForm, AppointmentForm, ResetPasswordForm
+from battlebornmobile.forms import SignUpForm, LoginForm, PetForm, AppointmentForm, ResetPasswordForm, UpdateProfileForm, UpdateProfilePictureForm
 from battlebornmobile.models import User, Pet, Appointment
 from flask_login import login_user, current_user, logout_user, login_required
 from flask_mail import Mail, Message
-import random, string
+from werkzeug.utils import secure_filename
+
+
 
 #index Page
 @app.route('/')
@@ -107,8 +110,8 @@ def logout():
 
 
 #Forgot password
-@app.route('/forgot_password', methods=['GET', 'POST'])
-def forgot_password():
+@app.route('/password/forgot', methods=['GET', 'POST'])
+def password_forgot():
     if request.method == 'POST':
         email = request.form.get('email')
         user = User.query.filter_by(email=email).first()
@@ -122,7 +125,7 @@ def forgot_password():
             token = user.get_reset_token()
             msg = Message('Password Reset Request', sender='noreply@example.com', recipients=[user.email])
             msg.body = f'''To reset your password, visit the following link:
-{url_for('reset_password', token=token, _external=True)}
+{url_for('password_change', token=token, _external=True)}
 
 Your new temporary password is: {new_password}
 
@@ -133,10 +136,10 @@ If you did not make this request then simply ignore this email and no changes wi
             return redirect(url_for('login'))
         else:
             flash('There is no account with that email. You must register first.', 'warning')
-    return render_template('forgot_password.html')
+    return render_template('password_forgot.html')
 
-#Reset password 
-@app.route('/reset_password/<token>', methods=['GET', 'POST'])
+#Change password 
+@app.route('/password/change', methods=['GET', 'POST'])
 def reset_password(token):
     user = User.verify_reset_token(token)
     if not user:
@@ -166,25 +169,103 @@ def dashboard():
     # Query all pets linked to the current user
     pets = Pet.query.filter_by(owner_id=current_user.id).all()
     # Query all appoinments linked to the current user
-    appointments = Appointment.query.filter_by(owner_id=current_user.id).all()
+    appointments = Appointment.query.filter_by(owner_id=current_user.id).filter_by(cancelled=False).all()
 
     return render_template("dashboard.html", pets=pets, appointments=appointments)
 
-#Add Pet Page
+# Profile Update
+@app.route('/profile/update', methods=['GET', 'POST'])
+@login_required
+def profile_update():
+    form = UpdateProfileForm()
+    if form.validate_on_submit():
+        current_user.username = form.username.data
+        current_user.email = form.email.data
+        current_user.firstName = form.firstName.data
+        current_user.lastName = form.lastName.data
+        current_user.phoneNumber = form.phoneNumber.data
+        current_user.streetNumber = form.streetNumber.data
+        current_user.city = form.city.data
+        current_user.state = form.state.data
+        current_user.zipcode = form.zipcode.data
+        db.session.commit()
+        flash('Your account has been updated!', 'success')
+        return redirect(url_for('dashboard'))
+    elif request.method == 'GET':
+        form.username.data = current_user.username
+        form.email.data = current_user.email
+        form.firstName.data = current_user.firstName
+        form.lastName.data = current_user.lastName
+        form.phoneNumber.data = current_user.phoneNumber
+        form.streetNumber.data = current_user.streetNumber
+        form.city.data = current_user.city
+        form.state.data = current_user.state
+        form.zipcode.data = current_user.zipcode
+    return render_template('profile_update.html', title='Update User Information', form=form)
+
+
+# Profile Picture Update
+@app.route('/profile/picture/update', methods=['GET', 'POST'])
+@login_required
+def profile_picture_update():
+    form = UpdateProfilePictureForm()
+    if form.validate_on_submit():
+        # Generate custom filename for the uploaded image file
+        _, file_ext = os.path.splitext(form.profile_picture.data.filename)
+        filename = secure_filename(current_user.username + 'picture' + file_ext)
+
+        # Save the uploaded image file
+        image_path = os.path.join(app.root_path, 'static/profile_pics', filename)
+        form.profile_picture.data.save(image_path)
+
+        # Update the user's profile picture in the database
+        current_user.image_file = filename
+        db.session.commit()
+
+        flash('Your profile picture has been updated!', 'success')
+        return redirect(url_for('dashboard'))
+
+    return render_template('profile_picture_update.html', form=form)
+
+# Add Pet Page
 @app.route("/pet/add", methods=['GET', 'POST'])
 @login_required
 def add_pet():
     form = PetForm()
     if form.validate_on_submit():
         pet = Pet(pet_name=form.pet_name.data, pet_dob=form.pet_dob.data, pet_species=form.pet_species.data, pet_breed=form.pet_breed.data, pet_color=form.pet_color.data, pet_height=form.pet_height.data, pet_weight=form.pet_weight.data, owner_id=current_user.id)
+
+        # Save pet pic to filesystem
+        if form.pet_pic.data:
+            pic_filename = secure_filename(current_user.username + '_' + form.pet_name.data + '.' + form.pet_pic.data.filename.split('.')[-1])
+            pic_path = os.path.join(app.root_path, 'static/pet_pics', pic_filename)
+            form.pet_pic.data.save(pic_path)
+            pet.pet_pic = pic_filename
+
         # Add Pet to Pet Database
         db.session.add(pet)
         db.session.commit()
-        
+
         flash('Your pet has been added!', 'success')
         return redirect(url_for('dashboard'))
 
     return render_template('add_pet.html', form=form)
+
+# #Add Pet Page
+# @app.route("/pet/add", methods=['GET', 'POST'])
+# @login_required
+# def add_pet():
+#     form = PetForm()
+#     if form.validate_on_submit():
+#         pet = Pet(pet_name=form.pet_name.data, pet_dob=form.pet_dob.data, pet_species=form.pet_species.data, pet_breed=form.pet_breed.data, pet_color=form.pet_color.data, pet_height=form.pet_height.data, pet_weight=form.pet_weight.data, owner_id=current_user.id)
+#         # Add Pet to Pet Database
+#         db.session.add(pet)
+#         db.session.commit()
+        
+#         flash('Your pet has been added!', 'success')
+#         return redirect(url_for('dashboard'))
+
+#     return render_template('add_pet.html', form=form)
 
 #Appointment Request Page
 @app.route("/appointment/request", methods=['GET', 'POST'])
@@ -201,6 +282,52 @@ def appointment():
         flash('Your request has been received!', 'success')
         return redirect(url_for('dashboard'))
     return render_template('appointment_request.html', title='MakeAppointment', form=form)
+
+#Appointment Edit Page
+@app.route("/appointment/edit/<int:id>", methods=["GET", "POST"])
+@login_required
+def edit_appointment(id):
+    appointment = Appointment.query.get_or_404(id)
+    form = AppointmentForm(obj=appointment)
+
+    if form.validate_on_submit():
+        # Update the appointment with the form data
+        appointment.pet_name = form.pet_name.data
+        appointment.service = form.service.data
+        appointment.weekday = form.weekday.data
+        appointment.timeSlot=form.timeSlot.data
+        db.session.commit()
+
+        flash("Appointment updated successfully!", "success")
+        return redirect(url_for("dashboard"))
+
+    return render_template("appointment_edit.html", form=form)
+
+
+#Appointment Cancel Route
+@app.route("/appointment/cancel/<int:id>", methods=["GET", "POST"])
+@login_required
+def cancel_appointment(id):
+    appointment = Appointment.query.get_or_404(id)
+
+    # Check if the user is the owner of the appointment
+    if appointment.owner != current_user:
+        flash("You don't have permission to cancel this appointment", "danger")
+        return redirect(url_for("dashboard"))
+
+    form = AppointmentForm(obj=appointment)
+
+    if form.validate_on_submit():
+        # Update the appointment with the form data
+        appointment.cancelled = True
+
+        db.session.commit()
+
+        flash("Appointment cancelled successfully!", "success")
+        return redirect(url_for("dashboard"))
+
+    return render_template("appointment_cancel.html", appointment=appointment, form=form)
+
 
 # All Unscheduled Appointments
 @app.route('/appointments/unscheduled')
@@ -349,7 +476,7 @@ def smsSend():
         try:
             message = client.messages.create(
                 body=message,
-                from_='+15674323893',  
+                from_='+17752405149',  
                 to=phone_number
             )
             flash('Notification sent successfully.', 'success')
@@ -368,8 +495,8 @@ def send_sms():
     message = client.messages.create(
         messaging_service_sid='MGdc049f1edc574951803c83a97cd37602',
         body='Good Bye, World!',
-        from_='+17758675309',
-        to='+17758675309')
+        from_='+17752405149',
+        to='+17753763523')
     flash('Notification sent successfully.', 'success')
 
     return render_template("dashboardadmin.html"), 'SMS sent!'

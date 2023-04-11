@@ -1,3 +1,4 @@
+
 {% extends 'layout.html' %}
 
 {% block content %}
@@ -6,3 +7,85 @@
     spencer@alsetdsgd.com thank you</p>
 
 {% endblock %}
+
+
+
+
+<!-- <h1>Confirm Email to Complete Account Registration</h1>
+
+    <div class="content-section">
+            <form method="POST" action="">
+                {{ form.hidden_tag() }}
+                <fieldset class="form-group">
+                    <legend class="border-bottom mb-4">Authentication Portal</legend>
+                            <head>
+                                <title>Verification Code</title>
+                                <style>
+                                    .verification-code-input {
+                                    width: 40px;
+                                    height: 40px;
+                                    margin: 0 5px;
+                                    padding: 5px;
+                                    font-size: 20px;
+                                    text-align: center;
+                                    border: 1px solid #ccc;
+                                    border-radius: 5px;
+                                    outline: none;
+                                    }
+                                </style>
+                            </head>
+                                <body>
+                                <h1>Enter Verification Code</h1>
+                                <p>This code should be provided in the email that you recieved</p>
+                                    <form>
+                                        <input class="verification-code-input" type="text" maxlength="1" id="digit1" autofocus>
+                                        <input class="verification-code-input" type="text" maxlength="1" id="digit2">
+                                        <input class="verification-code-input" type="text" maxlength="1" id="digit3">
+                                        <input class="verification-code-input" type="text" maxlength="1" id="digit4">
+                                        <input class="verification-code-input" type="text" maxlength="1" id="digit5">
+                                        <input class="verification-code-input" type="text" maxlength="1" id="digit6">
+                                    </form>
+             
+                </fieldset>
+            </div>
+
+                    <div class="form-group">
+                        {{ form.submit(class="btn btn-outline-info") }}
+                    </div>
+            </form>
+
+
+                    <div class="border-top pt-3">
+                        <small class="text-muted">
+                            <a class="ml-2" href="{{ url_for('login') }}">Verify Code</a>
+                        </small>
+                    </div>
+     </div>
+
+    <script>
+      // Automatically move cursor to next input box when user types a digit
+      const inputs = document.querySelectorAll('.verification-code-input');
+      for (let i = 0; i < inputs.length; i++) {
+        inputs[i].addEventListener('input', function(e) {
+          if (this.value.length == this.maxLength) {
+            inputs[i+1].focus();
+          }
+        });
+      }
+      
+      // Function to submit verification code
+      function submitVerificationCode() {
+        const digit1 = document.getElementById('digit1').value;
+        const digit2 = document.getElementById('digit2').value;
+        const digit3 = document.getElementById('digit3').value;
+        const digit4 = document.getElementById('digit4').value;
+        const digit5 = document.getElementById('digit5').value;
+        const digit6 = document.getElementById('digit6').value;
+        
+        const verificationCode = digit1 + digit2 + digit3 + digit4 + digit5 + digit6;
+        
+        // Submit the verification code to server for validation
+        // ...
+      }
+    </script>
+   -->
