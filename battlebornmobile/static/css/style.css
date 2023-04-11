@@ -250,3 +250,32 @@ figure {
 hr.border {
   border: 1px solid black
 }
+
+
+/*About us page formatting*/
+.aboutus {
+  padding: 15vmin 0;
+ }
+
+
+ .aboutus .row .col-mid-6 .matt img{
+  opacity: 0.8;
+  width: 80%;
+  border-radius: 0.2em;
+ }
+
+ .aboutus .row .col-md-6:last-child{
+  position: relative;
+ }
+
+ .aboutus .row .col-md-6 .panel{
+  position: absolute;
+  top: 17vmin;
+  left: 80vmin;
+  right: -100vmin;
+  background: white;
+  border-radius: 1px;
+  text-align:left;
+  padding: 0vmin 5vmin 5vmin 5vmin;
+  box-shadow: 20px 0px 35px rgba(0,0,0,0.2);
+ }
