@@ -1,15 +1,16 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, BooleanField, DateField, SelectField, IntegerField, DateTimeField
+from wtforms import StringField, PasswordField, SubmitField, BooleanField, DateField, SelectField, IntegerField, DateTimeField, FileField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
+from flask_wtf.file import FileAllowed
 from battlebornmobile.models import User, Pet, Appointment
 from flask_login import current_user
+import random, string
 
 
 
 class SignUpForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired(), Length(min=2, max=20)])
     email = StringField('Email', validators=[DataRequired(), Email()])
-    confirm_email = StringField('Confirm Email', validators=[DataRequired(), Email()])
     firstName = StringField('First Name', validators=[DataRequired()])
     lastName = StringField('Last Name', validators=[DataRequired()])
     phoneNumber = StringField('Phone Number')
@@ -39,16 +40,24 @@ class LoginForm(FlaskForm):
     submit = SubmitField('Login')
 
 
+class ResetPasswordForm(FlaskForm):
+    reset_password = StringField('Password Sent in Email', validators=[DataRequired(), Email()])
+    new_password = PasswordField('New Password', validators=[DataRequired()])
+    confirm_password = PasswordField('Confirm New Password', validators=[DataRequired(), EqualTo('new_password')])
+    submit = SubmitField('Reset Password')
+
+
 class PetForm(FlaskForm):
-    id = StringField()
     pet_name = StringField("Pet Name", validators=[DataRequired()])
     pet_dob = DateField("Pet Birthday", validators=[DataRequired()])
     pet_species = StringField("Pet Species", validators=[DataRequired()])
     pet_breed = StringField("Pet Breed", validators=[DataRequired()])
     pet_color = StringField("Pet Color", validators=[DataRequired()])
-    pet_height = StringField("Pet Hieght")
+    pet_height = StringField("Pet Height")
     pet_weight = StringField("Pet Weight")
+    pet_pic = FileField("Pet Picture", validators=[FileAllowed(['jpg', 'jpeg', 'png'])])
     submit = SubmitField('Add Pet')
+
 
 class AppointmentForm(FlaskForm):
     id = IntegerField('User ID')
@@ -64,9 +73,6 @@ class AppointmentForm(FlaskForm):
     state = StringField('State', validators=[DataRequired()])
     zipcode = StringField('Zip Code', validators=[DataRequired()])
     submit = SubmitField('Make Appointment')
-    dateScheduled = DateField("Date Scheduled", validators=[DataRequired()])
-    timeScheduled = DateTimeField('Time Scheduled', validators=[DataRequired()])
- 
 
 
     def __init__(self, *args, **kwargs):
@@ -117,3 +123,19 @@ class SearchForm(FlaskForm):
     password = PasswordField('Password', validators=[DataRequired()])
     confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password')])
     submit = SubmitField("Submit")
+
+
+class UpdateProfileForm(FlaskForm):
+    username = StringField("Username", validators=[DataRequired(), Length(min=2, max=20)])
+    email = StringField("Email", validators=[DataRequired(), Email()])
+    firstName = StringField("First Name", validators=[DataRequired(), Length(min=2, max=30)])
+    lastName = StringField("Last Name", validators=[DataRequired(), Length(min=2, max=30)])
+    phoneNumber = StringField("Phone Number", validators=[Length(max=20)])
+    streetNumber = StringField("Street Number")
+    city = StringField("City")
+    state = StringField("State")
+    zipcode = StringField("Zipcode")
+    submit = SubmitField("Update")
+
+class UpdateProfilePictureForm(FlaskForm):
+    profile_picture = FileField('Update Profile Picture', validators=[FileAllowed(['jpg', 'jpeg', 'png'])])

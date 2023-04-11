@@ -22,10 +22,6 @@
 				<div class="form-group row">
 				{{ form.hidden_tag() }}
 				<div class="col-md-6">
-					{{ form.id.label(class="form-label") }}
-					{{ form.id(value=current_user.id, class="form-control") }}
-				</div>	
-				<div class="col-md-6">
 					{{ form.firstName.label(class="form-label") }}
 					{{ form.firstName(value=current_user.firstName, class="form-control") }}
 				</div>				
@@ -58,11 +54,11 @@
 							{{ form.weekday.label(class="form-label") }}
 							<select id="weekday" name="weekday">
 							<option value=" "> </option>
-							<!-- <option value="volvo">Sunday</option> -->
+							<!-- <option value="Sunday">Sunday</option> -->
 							<option value="Monday">Monday</option>
-							<!-- <option value="Tuesday">Tuesday</option> -->
-							<!-- <option value="Wednesday">Wednesday</option> -->
-							<!-- <option value="Thursday">Thursday</option> -->
+							<option value="Tuesday">Tuesday</option>
+							<option value="Wednesday">Wednesday</option>
+							<option value="Thursday">Thursday</option>
 							<option value="Friday">Friday</option>
 							<option value="Saturday">Saturday</option>
 							</select>
