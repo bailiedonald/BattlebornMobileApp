@@ -331,15 +331,24 @@ def unscheduled_appointments():
 @login_required
 def schedule_appointment(id):
     appointment = Appointment.query.get_or_404(id)
+    if appointment.scheduled or appointment.cancelled:
+        abort(400)  # bad request
+
+    date_scheduled = request.form['dateScheduled']
+    time_scheduled = request.form['timeScheduled']
+
+    if not date_scheduled or not time_scheduled:
+        flash('Please select a date and time for the appointment.', 'error')
+        return redirect(url_for('scheduler'))
+
+    appointment.dateSheduled = date_scheduled
+    appointment.timeSheduled = time_scheduled
     appointment.scheduled = True
-    appointment.dateScheduled = request.form.get('dateScheduled')
-    appointment.timeScheduled = request.form.get('timeScheduled')
-    
-    #Update An Appointment in the Appointment Database
-    db.session.add(appointment)
+
     db.session.commit()
     flash('Appointment scheduled successfully!', 'success')
     return redirect(url_for('scheduler'))
+
 
 #Confirm appointment
 @app.route('/appointment/confirm')
