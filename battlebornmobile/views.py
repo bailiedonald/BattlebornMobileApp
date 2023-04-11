@@ -1,5 +1,5 @@
 import os, random, string
-from flask import render_template, url_for, flash, redirect, request
+from flask import render_template, url_for, flash, redirect, request, send_file
 from battlebornmobile import app, db, bcrypt, mail, client
 from battlebornmobile.forms import SignUpForm, LoginForm, PetForm, AppointmentForm, ResetPasswordForm, UpdateProfileForm, UpdateProfilePictureForm
 from battlebornmobile.models import User, Pet, Appointment
@@ -435,7 +435,6 @@ def search():
     else:
         users = User.query.all()
     return render_template('recordsSearch.html', users=users, search_query=search_query)
-
 
 
 #Update User Page
