@@ -63,6 +63,11 @@ class Pet(db.Model, UserMixin):
     # Add this to the Pet model
     appointments = db.relationship('Appointment', backref='pet', lazy=True)
 
+<<<<<<< HEAD
+=======
+    def __repr__(self):
+        return f"Pet('{self.id}', '{self.pet_name}', '{self.pet_dob}', '{self.pet_species}', '{self.pet_breed}', '{self.pet_color}','{self.pet_height}','{self.pet_weight}')"
+>>>>>>> parent of 2b62bb7 (Merge pull request #124 from bailiedonald/main)
 
 
     def __repr__(self):
