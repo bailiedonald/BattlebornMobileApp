@@ -49,7 +49,13 @@
           <a class="navbar-brand" href="/dashboard">Account</a>
         </li>
       {% endif %}
-     
+
+     {% if current_user.AdminAccess %}
+        <li class="nav-item">
+          <a class="navbar-brand" href="/admin/dashboard">Admin Tools</a>
+        </li>
+      {% endif %}
+      
       {% if current_user.StaffAccess %}
         <li class="nav-item">
           <a class="navbar-brand" href="/staff/scheduler">Schedule Appointments</a>
@@ -62,11 +68,7 @@
         </li>
       {% endif %}
 
-      {% if current_user.AdminAccess %}
-        <li class="nav-item">
-          <a class="navbar-brand" href="/admin/dashboard">Admin Dashboard</a>
-        </li>
-      {% endif %}
+
 
       <li class="nav-item">
         <a class="navbar-brand" href="/logout">Logout</a>
