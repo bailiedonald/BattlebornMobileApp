@@ -6,7 +6,7 @@ from battlebornmobile.models import User, Pet, Appointment
 from flask_login import login_user, current_user, logout_user, login_required
 from flask_mail import Mail, Message
 from werkzeug.utils import secure_filename
-
+from twilio.rest import Client
 
 
 #index Page
@@ -181,6 +181,7 @@ def dashboard():
 @app.route('/profile/update', methods=['GET', 'POST'])
 @login_required
 def profile_update():
+    staff = current_user.StaffAccess
     form = UpdateProfileForm()
     if form.validate_on_submit():
         current_user.username = form.username.data
@@ -194,7 +195,11 @@ def profile_update():
         current_user.zipcode = form.zipcode.data
         db.session.commit()
         flash('Your account has been updated!', 'success')
-        return redirect(url_for('dashboard'))
+        if staff == True:
+            return render_template("dashboardstaff.html")
+        else:
+            flash ("Access Denied Staff Only.")
+            return render_template("dashboard.html")
     elif request.method == 'GET':
         form.username.data = current_user.username
         form.email.data = current_user.email
@@ -213,6 +218,7 @@ def profile_update():
 @login_required
 def profile_picture_update():
     form = UpdateProfilePictureForm()
+    staff = current_user.StaffAccess
     if form.validate_on_submit():
         # Generate custom filename for the uploaded image file
         _, file_ext = os.path.splitext(form.profile_picture.data.filename)
@@ -227,8 +233,11 @@ def profile_picture_update():
         db.session.commit()
 
         flash('Your profile picture has been updated!', 'success')
-        return redirect(url_for('dashboard'))
-
+        if staff == True:
+            return render_template("dashboardstaff.html")
+        else:
+            flash ("Access Denied Staff Only.")
+            return render_template("dashboard.html")
     return render_template('profile_picture_update.html', form=form)
 
 # Add Pet Page
@@ -271,26 +280,6 @@ def appointment():
         flash('Your request has been received!', 'success')
         return redirect(url_for('dashboard'))
     return render_template('appointment_request.html', title='MakeAppointment', form=form)
-
-#Appointment Edit Page
-@app.route("/appointment/edit/<int:id>", methods=["GET", "POST"])
-@login_required
-def edit_appointment(id):
-    appointment = Appointment.query.get_or_404(id)
-    form = AppointmentForm(obj=appointment)
-
-    if form.validate_on_submit():
-        # Update the appointment with the form data
-        appointment.pet_name = form.pet_name.data
-        appointment.service = form.service.data
-        appointment.weekday = form.weekday.data
-        appointment.timeSlot=form.timeSlot.data
-        db.session.commit()
-
-        flash("Appointment updated successfully!", "success")
-        return redirect(url_for("dashboard"))
-
-    return render_template("appointment_edit.html", form=form)
 
 
 #Appointment Cancel Route
@@ -347,7 +336,7 @@ def schedule_appointment(id):
 
     db.session.commit()
     flash('Appointment scheduled successfully!', 'success')
-    return redirect(url_for('scheduler'))
+    return redirect(url_for('confirm_appointment'))
 
 
 #Confirm appointment
