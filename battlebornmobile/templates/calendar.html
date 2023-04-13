@@ -11,10 +11,6 @@
       $(document).ready(function() {
         $('#calendar').fullCalendar({
           events: '/events',
-          eventClick: function(event) {
-            window.location.href = event.url;
-            return false;
-          },
         });
       });
     </script>
