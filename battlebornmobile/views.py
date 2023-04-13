@@ -1,5 +1,5 @@
 import os, random, string
-from flask import render_template, url_for, flash, redirect, request
+from flask import render_template, url_for, flash, redirect, request, send_file
 from battlebornmobile import app, db, bcrypt, mail, client
 from battlebornmobile.forms import SignUpForm, LoginForm, PetForm, AppointmentForm, ResetPasswordForm, UpdateProfileForm, UpdateProfilePictureForm
 from battlebornmobile.models import User, Pet, Appointment
@@ -46,7 +46,7 @@ def signup():
         # Update the user's account information to indicate that the email address is not yet verified
         # You can use a database or other storage mechanism to track this information
         hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
-        user = User(username=form.username.data, email=form.email.data.lower(), password=hashed_password, firstName=form.firstName.data, lastName=form.lastName.data, phoneNumber=form.phoneNumber.data, streetNumber=form.streetNumber.data, city=form.city.data, state=form.state.data, zipcode=form.zipcode.data)
+        user = User(username=form.username.data.lower(), email=form.email.data.lower(), password=hashed_password, firstName=form.firstName.data, lastName=form.lastName.data, phoneNumber=form.phoneNumber.data, streetNumber=form.streetNumber.data, city=form.city.data, state=form.state.data, zipcode=form.zipcode.data)
         db.session.add(user)
         db.session.commit()
 
@@ -97,7 +97,11 @@ def login():
         if user and bcrypt.check_password_hash(user.password, form.password.data):
             login_user(user, remember=form.remember.data)
             next_page = request.args.get('next')
-            return redirect(next_page) if next_page else redirect(url_for('dashboard'))
+            staff = current_user.StaffAccess
+            if staff == True:
+                return render_template("dashboardstaff.html")
+            else:
+                return redirect(next_page) if next_page else redirect(url_for('dashboard'))
         else:
             flash('Login Unsuccessful. Please check email and password', 'danger')
     return render_template('login.html', title='Login', form=form)
@@ -251,21 +255,6 @@ def add_pet():
 
     return render_template('add_pet.html', form=form)
 
-# #Add Pet Page
-# @app.route("/pet/add", methods=['GET', 'POST'])
-# @login_required
-# def add_pet():
-#     form = PetForm()
-#     if form.validate_on_submit():
-#         pet = Pet(pet_name=form.pet_name.data, pet_dob=form.pet_dob.data, pet_species=form.pet_species.data, pet_breed=form.pet_breed.data, pet_color=form.pet_color.data, pet_height=form.pet_height.data, pet_weight=form.pet_weight.data, owner_id=current_user.id)
-#         # Add Pet to Pet Database
-#         db.session.add(pet)
-#         db.session.commit()
-        
-#         flash('Your pet has been added!', 'success')
-#         return redirect(url_for('dashboard'))
-
-#     return render_template('add_pet.html', form=form)
 
 #Appointment Request Page
 @app.route("/appointment/request", methods=['GET', 'POST'])
@@ -342,15 +331,24 @@ def unscheduled_appointments():
 @login_required
 def schedule_appointment(id):
     appointment = Appointment.query.get_or_404(id)
+    if appointment.scheduled or appointment.cancelled:
+        abort(400)  # bad request
+
+    date_scheduled = request.form['dateScheduled']
+    time_scheduled = request.form['timeScheduled']
+
+    if not date_scheduled or not time_scheduled:
+        flash('Please select a date and time for the appointment.', 'error')
+        return redirect(url_for('scheduler'))
+
+    appointment.dateSheduled = date_scheduled
+    appointment.timeSheduled = time_scheduled
     appointment.scheduled = True
-    appointment.dateScheduled = request.form.get('dateScheduled')
-    appointment.timeScheduled = request.form.get('timeScheduled')
-    
-    #Update An Appointment in the Appointment Database
-    db.session.add(appointment)
+
     db.session.commit()
     flash('Appointment scheduled successfully!', 'success')
     return redirect(url_for('scheduler'))
+
 
 #Confirm appointment
 @app.route('/appointment/confirm')
@@ -457,6 +455,7 @@ def records():
     pets = Pet.query.all()
     return render_template('records.html', users=users)
 
+
 #Staff Search Customer Records
 @app.route('/staff/records/search')
 @login_required
@@ -479,6 +478,7 @@ def update_user(user_id):
         return render_template('dashboard.html', user=user)
     else:
         return render_template('update.html', user=user)
+
 
 #Calendar Page
 @app.route('/calendar')
