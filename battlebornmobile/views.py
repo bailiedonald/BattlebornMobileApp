@@ -6,7 +6,7 @@ from battlebornmobile.models import User, Pet, Appointment
 from flask_login import login_user, current_user, logout_user, login_required
 from flask_mail import Mail, Message
 from werkzeug.utils import secure_filename
-
+from twilio.rest import Client
 
 
 #index Page
@@ -272,26 +272,6 @@ def appointment():
         return redirect(url_for('dashboard'))
     return render_template('appointment_request.html', title='MakeAppointment', form=form)
 
-#Appointment Edit Page
-@app.route("/appointment/edit/<int:id>", methods=["GET", "POST"])
-@login_required
-def edit_appointment(id):
-    appointment = Appointment.query.get_or_404(id)
-    form = AppointmentForm(obj=appointment)
-
-    if form.validate_on_submit():
-        # Update the appointment with the form data
-        appointment.pet_name = form.pet_name.data
-        appointment.service = form.service.data
-        appointment.weekday = form.weekday.data
-        appointment.timeSlot=form.timeSlot.data
-        db.session.commit()
-
-        flash("Appointment updated successfully!", "success")
-        return redirect(url_for("dashboard"))
-
-    return render_template("appointment_edit.html", form=form)
-
 
 #Appointment Cancel Route
 @app.route("/appointment/cancel/<int:id>", methods=["GET", "POST"])
@@ -347,14 +327,27 @@ def schedule_appointment(id):
 
     db.session.commit()
     flash('Appointment scheduled successfully!', 'success')
-    return redirect(url_for('scheduler'))
+    return redirect(url_for('confirm_appointment'))
 
 
 #Confirm appointment
-@app.route('/appointment/confirm')
+@app.route('/appointment/confirm<int:id>')
 # @login_required
 def confirm_appointment():
-    return render_template("appointment_confirm.html")
+    phone_number = '<Your phone number>' #Add the phone number of the recipient here
+    message = 'Hello, your appointment has been scheduled.' #Add the message here
+    try:
+        message = client.messages.create(
+            body=message,
+            from_='+17752405149',  
+            to=phone_number
+        )
+        flash('Notification sent successfully.', 'success')
+        return render_template("appointment_confirm.html")
+    except:
+        flash('Failed to send notification', 'error')
+        return render_template("appointment_confirm.html")
+
 
 #All Appointments
 @app.route('/appointments')
