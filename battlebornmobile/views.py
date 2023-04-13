@@ -331,23 +331,10 @@ def schedule_appointment(id):
 
 
 #Confirm appointment
-@app.route('/appointment/confirm<int:id>')
+@app.route('/appointment/confirm')
 # @login_required
 def confirm_appointment():
-    phone_number = '<Your phone number>' #Add the phone number of the recipient here
-    message = 'Hello, your appointment has been scheduled.' #Add the message here
-    try:
-        message = client.messages.create(
-            body=message,
-            from_='+17752405149',  
-            to=phone_number
-        )
-        flash('Notification sent successfully.', 'success')
-        return render_template("appointment_confirm.html")
-    except:
-        flash('Failed to send notification', 'error')
-        return render_template("appointment_confirm.html")
-
+    return render_template("appointment_confirm.html")
 
 #All Appointments
 @app.route('/appointments')
