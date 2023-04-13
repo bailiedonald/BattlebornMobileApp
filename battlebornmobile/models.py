@@ -64,14 +64,21 @@ class Pet(db.Model, UserMixin):
     appointments = db.relationship('Appointment', backref='pet', lazy=True)
 
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> parent of ef956f5 (a)
     def __repr__(self):
         return f"Pet('{self.id}', '{self.pet_name}', '{self.pet_dob}', '{self.pet_species}', '{self.pet_breed}', '{self.pet_color}','{self.pet_height}','{self.pet_weight}')"
 
 
+<<<<<<< HEAD
     def __repr__(self):
         return f"Pet('{self.id}', '{self.pet_name}', '{self.pet_dob}', '{self.pet_species}', '{self.pet_breed}', '{self.pet_color}','{self.pet_height}','{self.pet_weight}')"
 
 
+=======
+>>>>>>> parent of ef956f5 (a)
 class Appointment(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     firstName = db.Column(db.String(30), nullable=True)
