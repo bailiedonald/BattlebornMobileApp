@@ -319,17 +319,17 @@ hr.border {
 }
 
 /*Contact*/
-.contact .fa-user-clock, .fa-phone, .fa-envelope-open-text {
+.contact .fa-clock, .fa-phone, .fa-envelope {
   font-size: 2em;
   margin: 1rem;
 }
 
 .contact .fa-exclamation {
-  font-size: 3em;
-  margin: 0rem;
+  font-size: 2em;
+  margin: 1.5rem;
 }
 
-.contact .fa-user-clock, .fa-phone, .fa-envelope-open-text, .fa-exclamation {
+.contact .fa-clock, .fa-phone, .fa-envelope, .fa-exclamation {
   color: #ffffff;
 }
 
