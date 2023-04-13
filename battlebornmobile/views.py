@@ -46,7 +46,7 @@ def signup():
         # Update the user's account information to indicate that the email address is not yet verified
         # You can use a database or other storage mechanism to track this information
         hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
-        user = User(username=form.username.data, email=form.email.data.lower(), password=hashed_password, firstName=form.firstName.data, lastName=form.lastName.data, phoneNumber=form.phoneNumber.data, streetNumber=form.streetNumber.data, city=form.city.data, state=form.state.data, zipcode=form.zipcode.data)
+        user = User(username=form.username.data.lower(), email=form.email.data.lower(), password=hashed_password, firstName=form.firstName.data, lastName=form.lastName.data, phoneNumber=form.phoneNumber.data, streetNumber=form.streetNumber.data, city=form.city.data, state=form.state.data, zipcode=form.zipcode.data)
         db.session.add(user)
         db.session.commit()
 
@@ -426,13 +426,35 @@ def staffdashboard():
         flash ("Access Denied Staff Only.")
         return render_template("dashboard.html")
 
+# Update Pet Record
+@app.route('/staff/records/update_pdf/<int:pet_id>', methods=['POST'])
+@login_required
+def update_pdf(pet_id):
+    pet = Pet.query.get_or_404(pet_id)
+    user = pet.owner
+    pdf_file = request.files['pdf_file']
+    if pdf_file:
+        # Modify filename to include user ID and pet ID
+        filename = f"{user.id}_{pet.id}_pet_record.pdf"
+        pdf_path = os.path.join('static/pdf_records', filename)
+        pdf_file.save(pdf_path)
+        pet.record = filename
+        db.session.commit()
+        flash('PDF record updated successfully!', 'success')
+    else:
+        flash('Please select a file to upload!', 'danger')
+    return redirect(url_for('records'))
+
+
 
 #Staff View Customer Records
 @app.route('/staff/records', methods={"GET", "POST"})
 @login_required
 def records():
     users = User.query.all()
+    pets = Pet.query.all()
     return render_template('records.html', users=users)
+
 
 #Staff Search Customer Records
 @app.route('/staff/records/search')
@@ -456,6 +478,7 @@ def update_user(user_id):
         return render_template('dashboard.html', user=user)
     else:
         return render_template('update.html', user=user)
+
 
 #Calendar Page
 @app.route('/calendar')
