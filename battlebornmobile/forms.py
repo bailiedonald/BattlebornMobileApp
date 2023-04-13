@@ -7,7 +7,7 @@ from flask_login import current_user
 import random, string
 
 
-
+# This is a form
 class SignUpForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired(), Length(min=2, max=20)])
     email = StringField('Email', validators=[DataRequired(), Email()])

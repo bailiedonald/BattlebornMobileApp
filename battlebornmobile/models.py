@@ -10,7 +10,7 @@ from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 def load_user(user_id):
     return User.query.get(int(user_id))
 
-#User Database Table
+#User Database
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(50), unique=True, nullable=False)
@@ -57,9 +57,9 @@ class Pet(db.Model, UserMixin):
     pet_height = db.Column(db.String(100))
     pet_weight = db.Column(db.String(1000))
     pet_pic = db.Column(db.String(255), nullable=False, default='animals.jpeg')
-    record = db.Column(db.Binary, nullable=True)
     #Link to Pet Owner in user Database
     owner_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+
     # Add this to the Pet model
     appointments = db.relationship('Appointment', backref='pet', lazy=True)
 
