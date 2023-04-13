@@ -426,12 +426,33 @@ def staffdashboard():
         flash ("Access Denied Staff Only.")
         return render_template("dashboard.html")
 
+# Update Pet Record
+@app.route('/staff/records/update_pdf/<int:pet_id>', methods=['POST'])
+@login_required
+def update_pdf(pet_id):
+    pet = Pet.query.get_or_404(pet_id)
+    user = pet.owner
+    pdf_file = request.files['pdf_file']
+    if pdf_file:
+        # Modify filename to include user ID and pet ID
+        filename = f"{user.id}_{pet.id}_pet_record.pdf"
+        pdf_path = os.path.join('static/pdf_records', filename)
+        pdf_file.save(pdf_path)
+        pet.record = filename
+        db.session.commit()
+        flash('PDF record updated successfully!', 'success')
+    else:
+        flash('Please select a file to upload!', 'danger')
+    return redirect(url_for('records'))
+
+
 
 #Staff View Customer Records
 @app.route('/staff/records', methods={"GET", "POST"})
 @login_required
 def records():
     users = User.query.all()
+    pets = Pet.query.all()
     return render_template('records.html', users=users)
 
 
@@ -445,27 +466,6 @@ def search():
     else:
         users = User.query.all()
     return render_template('recordsSearch.html', users=users, search_query=search_query)
-
-@app.route('/staff/records/upload_pdf/<int:user_id>', methods=['POST'])
-def upload_pdf(user_id):
-    pdf_file = request.files.get('pdf_file')
-    if pdf_file:
-        filename = secure_filename(pdf_file.filename)
-        pdf_path = os.path.join(app.root_path['static/pet_records'], filename)
-        pdf_file.save(pdf_path)
-        db.update_user_pdf_record(user_id, filename)
-    return redirect(url_for('customer_records'))
-
-
-@app.route('/staff/records/update_pdf/<int:user_id>', methods=['POST'])
-def update_pdf(user_id):
-    pdf_file = request.files.get('pdf_file')
-    if pdf_file:
-        filename = secure_filename(pdf_file.filename)
-        pdf_path = os.path.join(app.root_path, ['static/pet_records'], filename)
-        pdf_file.save(pdf_path)
-        db.update_user_pdf_record(user_id, filename)
-    return redirect(url_for('customer_records'))
 
 
 #Update User Page

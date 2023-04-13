@@ -63,10 +63,9 @@ class Pet(db.Model, UserMixin):
     # Add this to the Pet model
     appointments = db.relationship('Appointment', backref='pet', lazy=True)
 
-
-
     def __repr__(self):
         return f"Pet('{self.id}', '{self.pet_name}', '{self.pet_dob}', '{self.pet_species}', '{self.pet_breed}', '{self.pet_color}','{self.pet_height}','{self.pet_weight}')"
+
 
 
 class Appointment(db.Model, UserMixin):
