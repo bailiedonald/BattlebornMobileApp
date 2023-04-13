@@ -29,10 +29,21 @@
             <td>{{ user.phoneNumber }}</td>
             <td>
                 {% if user.pdfRecord %}
-                    <a href="{{ url_for('static', filename='pdf_records/' + user.pdfRecord) }}">View PDF</a>
-                {% else %}
-                    No PDF record found
-                {% endif %}
+                <a href="{{ url_for('static', filename='pdf_records/' + user.pdfRecord) }}">View PDF</a>
+                <br>
+                <form action="/staff/records/update_pdf/{{ user.id }}" method="post" enctype="multipart/form-data">
+                    <input type="file" name="pdf_file">
+                    <button type="submit">Update PDF</button>
+                </form>
+            {% else %}
+                No PDF record found
+                <br>
+                <form action="/staff/records/upload_pdf/{{ user.id }}" method="post" enctype="multipart/form-data">
+                    <input type="file" name="pdf_file">
+                    <button type="submit">Upload PDF</button>
+                </form>
+            {% endif %}
+            
             </td>
             <td>
                 {% for pet in user.pets %}

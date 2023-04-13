@@ -46,7 +46,7 @@ def signup():
         # Update the user's account information to indicate that the email address is not yet verified
         # You can use a database or other storage mechanism to track this information
         hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
-        user = User(username=form.username.data, email=form.email.data.lower(), password=hashed_password, firstName=form.firstName.data, lastName=form.lastName.data, phoneNumber=form.phoneNumber.data, streetNumber=form.streetNumber.data, city=form.city.data, state=form.state.data, zipcode=form.zipcode.data)
+        user = User(username=form.username.data.lower(), email=form.email.data.lower(), password=hashed_password, firstName=form.firstName.data, lastName=form.lastName.data, phoneNumber=form.phoneNumber.data, streetNumber=form.streetNumber.data, city=form.city.data, state=form.state.data, zipcode=form.zipcode.data)
         db.session.add(user)
         db.session.commit()
 
@@ -434,6 +434,7 @@ def records():
     users = User.query.all()
     return render_template('records.html', users=users)
 
+
 #Staff Search Customer Records
 @app.route('/staff/records/search')
 @login_required
@@ -444,6 +445,27 @@ def search():
     else:
         users = User.query.all()
     return render_template('recordsSearch.html', users=users, search_query=search_query)
+
+@app.route('/staff/records/upload_pdf/<int:user_id>', methods=['POST'])
+def upload_pdf(user_id):
+    pdf_file = request.files.get('pdf_file')
+    if pdf_file:
+        filename = secure_filename(pdf_file.filename)
+        pdf_path = os.path.join(app.root_path['static/pet_records'], filename)
+        pdf_file.save(pdf_path)
+        db.update_user_pdf_record(user_id, filename)
+    return redirect(url_for('customer_records'))
+
+
+@app.route('/staff/records/update_pdf/<int:user_id>', methods=['POST'])
+def update_pdf(user_id):
+    pdf_file = request.files.get('pdf_file')
+    if pdf_file:
+        filename = secure_filename(pdf_file.filename)
+        pdf_path = os.path.join(app.root_path, ['static/pet_records'], filename)
+        pdf_file.save(pdf_path)
+        db.update_user_pdf_record(user_id, filename)
+    return redirect(url_for('customer_records'))
 
 
 #Update User Page
@@ -456,6 +478,7 @@ def update_user(user_id):
         return render_template('dashboard.html', user=user)
     else:
         return render_template('update.html', user=user)
+
 
 #Calendar Page
 @app.route('/calendar')
