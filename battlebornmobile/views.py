@@ -173,7 +173,7 @@ def dashboard():
     # Query all pets linked to the current user
     pets = Pet.query.filter_by(owner_id=current_user.id).all()
     # Query all appoinments linked to the current user
-    appointments = Appointment.query.filter_by(owner_id=current_user.id).filter_by(cancelled=False).all()
+    appointments = Appointment.query.filter_by(owner_id=current_user.id).filter_by(cancelled=False, completed=False).all()
 
     return render_template("dashboard.html", pets=pets, appointments=appointments)
 
@@ -359,17 +359,6 @@ def scheduler():
 
     return render_template("scheduler.html", appointments=appointments)
 
-#Admin Dashboard
-@app.route('/admin/dashboard')
-@login_required
-# @roles_required('admin')
-def admindashboard():
-    admin = current_user.AdminAccess
-    if admin == True:
-        return render_template("dashboardadmin.html")
-    else:
-        flash ("Access Denied Admin Only.")
-        return render_template("dashboard.html")
 
 #Admin User Access Table
 @app.route('/admin/useraccess')
