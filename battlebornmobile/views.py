@@ -181,6 +181,7 @@ def dashboard():
 @app.route('/profile/update', methods=['GET', 'POST'])
 @login_required
 def profile_update():
+    staff = current_user.StaffAccess
     form = UpdateProfileForm()
     if form.validate_on_submit():
         current_user.username = form.username.data
@@ -194,7 +195,11 @@ def profile_update():
         current_user.zipcode = form.zipcode.data
         db.session.commit()
         flash('Your account has been updated!', 'success')
-        return redirect(url_for('dashboard'))
+        if staff == True:
+            return render_template("dashboardstaff.html")
+        else:
+            flash ("Access Denied Staff Only.")
+            return render_template("dashboard.html")
     elif request.method == 'GET':
         form.username.data = current_user.username
         form.email.data = current_user.email
@@ -213,6 +218,7 @@ def profile_update():
 @login_required
 def profile_picture_update():
     form = UpdateProfilePictureForm()
+    staff = current_user.StaffAccess
     if form.validate_on_submit():
         # Generate custom filename for the uploaded image file
         _, file_ext = os.path.splitext(form.profile_picture.data.filename)
@@ -227,8 +233,11 @@ def profile_picture_update():
         db.session.commit()
 
         flash('Your profile picture has been updated!', 'success')
-        return redirect(url_for('dashboard'))
-
+        if staff == True:
+            return render_template("dashboardstaff.html")
+        else:
+            flash ("Access Denied Staff Only.")
+            return render_template("dashboard.html")
     return render_template('profile_picture_update.html', form=form)
 
 # Add Pet Page
