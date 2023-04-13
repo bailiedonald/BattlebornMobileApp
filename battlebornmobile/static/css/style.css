@@ -317,3 +317,89 @@ hr.border {
 .services .padding {
   padding-bottom: 3rem;
 }
+
+/*Contact*/
+.contact .fa-user-clock, .fa-phone, .fa-envelope-open-text {
+  font-size: 2em;
+  margin: 1rem;
+}
+
+.contact .fa-exclamation {
+  font-size: 3em;
+  margin: 1rem;
+}
+
+.contact .fa-user-clock, .fa-phone, .fa-envelope-open-text, .fa-exclamation {
+  color: #ffffff;
+}
+
+.contact{
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+ 
+}
+
+.contact .container{
+  width: 1000px!important;
+}
+
+.contact p{
+  font-size: 12px;
+}
+
+.contact h1{
+  font-family: Verdana, Geneva, Tahoma, sans-serif!important;
+}
+.contact .bg-primary{
+  background-color: #003366 !important;
+  font-family:Verdana, Geneva, Tahoma, sans-serif!important;
+
+}
+.contact .form-control {
+  height: 36px;
+  background: #fff;
+  color: rgba(0, 0, 0, 0.8);
+  font-size: 18px;
+  border-radius: 2px;
+  box-shadow: none !important;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+.contact .contactForm .form-control {
+  border: none;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  padding: 0;
+}
+
+
+.contact .form-control:focus,.form-control:active {
+  border-color: #01d28e !important;
+}
+.contact .form-label {
+  color: #000;
+  text-transform: uppercase;
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+.contact .btn.btn-primary {
+  background: #FFA300 !important;
+  border-color: #FFA300 !important;
+  color: #fff;
+  width: 100px;
+  border-radius: 0!important;
+  
+}
+.contact .btn.btn-primary:hover{
+  background-color: #ebd65b!important;
+}
+
+.contact .bi{
+  font-size: 50px;
+}
+@media only screen and (max-width: 600px) {
+  .contact .container{
+      width: 100%!important;
+      padding-bottom: 207px!important;
+  }
+}
