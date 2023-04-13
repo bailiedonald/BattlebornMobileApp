@@ -84,6 +84,7 @@ class Appointment(db.Model, UserMixin):
     dateSheduled= db.Column(db.String(30))
     timeSheduled = db.Column(db.String(20))
     scheduled = db.Column(db.Boolean, default=False, nullable=False)
+    completed = db.Column(db.Boolean, default=False, nullable=False)
     cancelled = db.Column(db.Boolean, default=False, nullable=False)
     #Link to Pet Owner in user Database
     pet_id = db.Column(db.Integer, db.ForeignKey('pet.id'))
