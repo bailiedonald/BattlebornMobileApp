@@ -9,57 +9,14 @@
 	
 {% endfor %}
 {% block content %}
-<h1>Welcome To The Admin Page</h1>
-
-<br/>
-
-<div class="card">
-    <div class="card-body">
-        <p class="card-text">
-            <div class="container">
-            <div class="row">
-                <div class="col-8">
-        
-            <strong>First Name:</strong>
-            {{ current_user.firstName }}
-            <strong>Last Name:</strong>
-            {{ current_user.lastName }}  <br/>
-
-            <strong>Username:</strong>
-            {{ current_user.username }}<br/>
-
-            <strong>Email:</strong>
-            {{ current_user.email }}<br/>
-
-            <strong>Contact Number:</strong>
-            {{ current_user.phoneNumber }}<br/>
-
-            <strong>Address:</strong>
-            {{ current_user.streetNumber }}<br/>
-        </p>
-        <a href="{{ url_for('profile_update') }}" class="btn btn-primary">Update Profile</a>
-        <a href="/profile/picture/update" class="btn btn-primary">Update Profile Picture</a>
-
-        
-    </div>
-    <div class="col-4">
-        {% if current_user.image_file != 'default.jpg' %}
-            <img src="{{ url_for('static', filename='profile_pics/' + current_user.image_file)}}" width="200" align="right">
-        {% else %}
-            <img src="{{ url_for('static', filename='images/default.jpeg')}}" width="200" align="right">
-        {% endif %}
-    </div>
-        
-</div>
-</div>
-</div>
-</div>
-</br>
+<h1>Admin Tools</h1>
 <u>
     <li class="nav-item">
-        <a class="navbar-brand" href="/admin/useraccess"> User Access Tools </a>
-   
-        <a class="navbar-brand" href="/staff/records"> Customer List</a>
+        <a class="navbar-brand" href="/admin/useraccess">User Access Tools</a>
     </li>
+    <li class="nav-item">
+        <a class="navbar-brand" href="/staff/records">Customer List</a>
+    </li>
+
 </u>
 {% endblock %}
