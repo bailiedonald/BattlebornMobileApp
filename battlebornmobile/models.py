@@ -16,6 +16,7 @@ class User(db.Model, UserMixin):
     username = db.Column(db.String(50), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(60), nullable=False)
+    temp_password = db.Column(db.String(60), nullable=True)
     firstName = db.Column(db.String(30), nullable=True)
     lastName = db.Column(db.String(30), nullable=True)
     phoneNumber = db.Column(db.String(20), nullable=True)
@@ -84,6 +85,7 @@ class Appointment(db.Model, UserMixin):
     dateSheduled= db.Column(db.String(30))
     timeSheduled = db.Column(db.String(20))
     scheduled = db.Column(db.Boolean, default=False, nullable=False)
+    completed = db.Column(db.Boolean, default=False, nullable=False)
     cancelled = db.Column(db.Boolean, default=False, nullable=False)
     #Link to Pet Owner in user Database
     pet_id = db.Column(db.Integer, db.ForeignKey('pet.id'))

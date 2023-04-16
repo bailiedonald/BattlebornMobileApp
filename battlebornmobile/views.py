@@ -122,14 +122,13 @@ def password_forgot():
         if user:
             # generate a new password and update user's password
             new_password = ''.join(random.choices(string.ascii_uppercase + string.ascii_lowercase + string.digits, k=8))
-            user.password = new_password
+            user.temp_password = new_password
             db.session.commit()
 
             # send email with password reset instructions
-            token = user.get_reset_token()
             msg = Message('Password Reset Request', sender='noreply@example.com', recipients=[user.email])
             msg.body = f'''To reset your password, visit the following link:
-{url_for('password_change', token=token, _external=True)}
+{url_for('password_reset', _external=True)}
 
 Your new temporary password is: {new_password}
 
@@ -142,28 +141,31 @@ If you did not make this request then simply ignore this email and no changes wi
             flash('There is no account with that email. You must register first.', 'warning')
     return render_template('password_forgot.html')
 
-#Change password 
-@app.route('/password/change', methods=['GET', 'POST'])
-def reset_password(token):
-    user = User.verify_reset_token(token)
-    if not user:
-        flash('That is an invalid or expired token.', 'warning')
-        return redirect(url_for('forgot_password'))
+# Reset password 
+@app.route('/password/reset', methods=['GET', 'POST'])
+def password_reset():
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
 
     form = ResetPasswordForm()
     if form.validate_on_submit():
-        if bcrypt.check_password_hash(user.password, form.current_password.data):
-            user.password = bcrypt.generate_password_hash(form.new_password.data).decode('utf-8')
-            db.session.commit()
-            flash('Your password has been updated!', 'success')
-            return redirect(url_for('login'))
-        else:
-            flash('The current password is incorrect.', 'danger')
+        user = User.query.filter_by(email=form.email.data).first()
+        if not user:
+            flash('That is an invalid or not active user.', 'warning')
+            return redirect(url_for('password_forgot'))
+        if user.temp_password != form.temp_password.data:
+            flash('The temporary password is incorrect.', 'danger')
+            return redirect(url_for('password_reset'))
+        user.temp_password = None
+        user.password = bcrypt.generate_password_hash(form.new_password.data).decode('utf-8')
+        db.session.commit()
+        flash('Your password has been updated!', 'success')
+        return redirect(url_for('login'))
     else:
         flash('The form was not valid.', 'danger')
         print(form.errors)
 
-    return render_template('reset_password.html', title='Reset Password', form=form)
+    return render_template('password_reset.html', title='Reset Password', form=form)
 
 
 #Main Dashboard
@@ -173,7 +175,7 @@ def dashboard():
     # Query all pets linked to the current user
     pets = Pet.query.filter_by(owner_id=current_user.id).all()
     # Query all appoinments linked to the current user
-    appointments = Appointment.query.filter_by(owner_id=current_user.id).filter_by(cancelled=False).all()
+    appointments = Appointment.query.filter_by(owner_id=current_user.id).filter_by(cancelled=False, completed=False).all()
 
     return render_template("dashboard.html", pets=pets, appointments=appointments)
 
@@ -359,17 +361,6 @@ def scheduler():
 
     return render_template("scheduler.html", appointments=appointments)
 
-#Admin Dashboard
-@app.route('/admin/dashboard')
-@login_required
-# @roles_required('admin')
-def admindashboard():
-    admin = current_user.AdminAccess
-    if admin == True:
-        return render_template("dashboardadmin.html")
-    else:
-        flash ("Access Denied Admin Only.")
-        return render_template("dashboard.html")
 
 #Admin User Access Table
 @app.route('/admin/useraccess')

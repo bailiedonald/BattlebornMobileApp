@@ -19,7 +19,7 @@
 
 <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
   <div class="container-fluid">
-    <a class="navbar-brand" href="#"><img src={{ url_for('static', filename='images/bmvhlogo.jpeg' ) }} width="75" height="75"></a>
+    <a class="navbar-brand" href="/"><img src={{ url_for('static', filename='images/bmvhlogo.jpeg' ) }} width="75" height="75"></a>
   </div>
   <!-- Left side of Navbar -->
   <ul class="navbar-nav mr-auto">
@@ -52,7 +52,7 @@
 
      {% if current_user.AdminAccess %}
         <li class="nav-item">
-          <a class="navbar-brand" href="/admin/dashboard">Admin Tools</a>
+          <a class="navbar-brand" href="/admin/useraccess">Admin Tools</a>
         </li>
       {% endif %}
       
