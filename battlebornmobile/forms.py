@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, BooleanField, DateField, SelectField, IntegerField, DateTimeField, FileField
+from wtforms import validators, StringField, PasswordField, SubmitField, BooleanField, DateField, SelectField, IntegerField, DateTimeField, FileField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
 from flask_wtf.file import FileAllowed
 from battlebornmobile.models import User, Pet, Appointment
@@ -41,9 +41,10 @@ class LoginForm(FlaskForm):
 
 
 class ResetPasswordForm(FlaskForm):
-    reset_password = StringField('Password Sent in Email', validators=[DataRequired(), Email()])
-    new_password = PasswordField('New Password', validators=[DataRequired()])
-    confirm_password = PasswordField('Confirm New Password', validators=[DataRequired(), EqualTo('new_password')])
+    email = StringField('Email', validators=[validators.DataRequired(), validators.Email()])
+    temp_password = PasswordField('Current Password', validators=[validators.DataRequired()])
+    new_password = PasswordField('New Password', validators=[validators.DataRequired(), validators.EqualTo('confirm_password', message='Passwords must match')])
+    confirm_password = PasswordField('Confirm New Password', validators=[validators.DataRequired()])
     submit = SubmitField('Reset Password')
 
 
