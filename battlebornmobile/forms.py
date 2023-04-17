@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, BooleanField, DateField, SelectField, IntegerField, DateTimeField, FileField
+from wtforms import validators, StringField, PasswordField, SubmitField, BooleanField, DateField, SelectField, IntegerField, DateTimeField, FileField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
 from flask_wtf.file import FileAllowed
 from battlebornmobile.models import User, Pet, Appointment
@@ -7,7 +7,7 @@ from flask_login import current_user
 import random, string
 
 
-
+# This is a form
 class SignUpForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired(), Length(min=2, max=20)])
     email = StringField('Email', validators=[DataRequired(), Email()])
@@ -41,9 +41,10 @@ class LoginForm(FlaskForm):
 
 
 class ResetPasswordForm(FlaskForm):
-    reset_password = StringField('Password Sent in Email', validators=[DataRequired(), Email()])
-    new_password = PasswordField('New Password', validators=[DataRequired()])
-    confirm_password = PasswordField('Confirm New Password', validators=[DataRequired(), EqualTo('new_password')])
+    email = StringField('Email', validators=[validators.DataRequired(), validators.Email()])
+    temp_password = PasswordField('Current Password', validators=[validators.DataRequired()])
+    new_password = PasswordField('New Password', validators=[validators.DataRequired(), validators.EqualTo('confirm_password', message='Passwords must match')])
+    confirm_password = PasswordField('Confirm New Password', validators=[validators.DataRequired()])
     submit = SubmitField('Reset Password')
 
 
@@ -61,7 +62,7 @@ class PetForm(FlaskForm):
 
 class AppointmentForm(FlaskForm):
     id = IntegerField('User ID')
-    pet_name = SelectField('Pet', coerce=int, validators=[DataRequired()])
+    pet_name = SelectField('Pet', coerce=str, validators=[DataRequired()]) 
     firstName = StringField('First Name', validators=[DataRequired()])
     lastName = StringField('Last Name', validators=[DataRequired()])
     phoneNumber = StringField('Phone Number')
@@ -74,27 +75,22 @@ class AppointmentForm(FlaskForm):
     zipcode = StringField('Zip Code', validators=[DataRequired()])
     submit = SubmitField('Make Appointment')
 
-
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         # Get all pets for the current user
         pets = Pet.query.filter_by(owner_id=current_user.id).all()
-        # Create a list of tuples with the pet ID and name
-        pet_choices = [(pet.id, pet.pet_name) for pet in pets]
+        # Create a list of tuples with the pet name and ID
+        pet_choices = [(pet.pet_name, pet.pet_name) for pet in pets]  # Change the list comprehension
         # Add an option for no pet selected
-        pet_choices.insert(0, (0, 'Select a pet'))
+        pet_choices.insert(0, ('', 'Select a pet'))  # Change the ID value to an empty string
         # Set the pet field's choices
         self.pet_name.choices = pet_choices
 
-    def validate_firstName(self, firstName):
-        user = User.query.filter_by(firstName=firstName.data).first()
-        if not user:
-            raise ValidationError('User does not exist.')
-    
-    def validate_lastName(self, lastName):
-        user = User.query.filter_by(lastName=lastName.data).first()
-        if not user:
-            raise ValidationError('User does not exist.')
+    def validate_pet_name(self, pet_name):
+        pet = Pet.query.filter_by(pet_name=pet_name.data, owner_id=current_user.id).first()
+        if not pet:
+            raise ValidationError('Pet does not exist.')
+
 
 
 

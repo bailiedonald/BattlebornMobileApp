@@ -10,12 +10,13 @@ from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 def load_user(user_id):
     return User.query.get(int(user_id))
 
-#User Database Table
+#User Database
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(50), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(60), nullable=False)
+    temp_password = db.Column(db.String(60), nullable=True)
     firstName = db.Column(db.String(30), nullable=True)
     lastName = db.Column(db.String(30), nullable=True)
     phoneNumber = db.Column(db.String(20), nullable=True)
@@ -64,7 +65,7 @@ class Pet(db.Model, UserMixin):
     appointments = db.relationship('Appointment', backref='pet', lazy=True)
 
     def __repr__(self):
-        return f"Pet('{self.id}', '{self.pet_name}', '{self.pet_dob}', '{self.Ppet_species}', '{self.pet_breed}', '{self.pet_color}','{self.pet_height}','{self.pet_weight}')"
+        return f"Pet('{self.id}', '{self.pet_name}', '{self.pet_dob}', '{self.pet_species}', '{self.pet_breed}', '{self.pet_color}','{self.pet_height}','{self.pet_weight}')"
 
 
 
@@ -84,6 +85,7 @@ class Appointment(db.Model, UserMixin):
     dateSheduled= db.Column(db.String(30))
     timeSheduled = db.Column(db.String(20))
     scheduled = db.Column(db.Boolean, default=False, nullable=False)
+    completed = db.Column(db.Boolean, default=False, nullable=False)
     cancelled = db.Column(db.Boolean, default=False, nullable=False)
     #Link to Pet Owner in user Database
     pet_id = db.Column(db.Integer, db.ForeignKey('pet.id'))

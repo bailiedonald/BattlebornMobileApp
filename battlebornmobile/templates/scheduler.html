@@ -1,39 +1,42 @@
 {% extends 'layout.html' %}
 {% block content %}
+
 <style>
   * {
     box-sizing: border-box;
   }
-  
-  /* Create two equal columns that floats next to each other */
+
+  /* Create two equal columns that float next to each other */
   .column {
     float: left;
     width: 50%;
     padding: 10px;
   }
-  
+
   /* Clear floats after the columns */
   .row:after {
     content: "";
     display: table;
     clear: both;
   }
-  </style>
+</style>
+
 <div class="container">
   <div class="row justify-content-start">
-    
+
     <div class="col-5">
-      {% for appointment in appointments %}     
-      <article class="container p-3 my-3 border">
+      {% for appointment in appointments %}
+        <article class="container p-3 my-3 border">
           <div class="media-body">
             <div class="article-metadata">
-              <h3 class="article-title" >{{ appointment.firstName }} {{ appointment.lastName }}</h3>
+              <h3 class="article-title">{{ appointment.firstName }} {{ appointment.lastName }}</h3>
             </div>
-            <h3 class="article-title" >Pets name: {{ appointment.pet_name }}</a></h3>
-            <p class="article-content">Service needed:  {{ appointment.service }}</p>
-            <p class="article-content">Preferred Day Week: {{ appointment.weekday }}</p>
-            <p class="article-content">Preferred Time Slot: {{ appointment.timeSlot }}</p>
+            <h3 class="article-title">Pet's name: {{ appointment.pet_name }}</h3>
+            <p class="article-content">Service needed: {{ appointment.service }}</p>
+            <p class="article-content">Preferred day of the week: {{ appointment.weekday }}</p>
+            <p class="article-content">Preferred time slot: {{ appointment.timeSlot }}</p>
           </div>
+          {% if not appointment.scheduled %}
           <form method="POST" action="{{ url_for('schedule_appointment', id=appointment.id) }}">
             <div class="form-group">
               <label for="dateScheduled">Date scheduled:</label>
@@ -43,19 +46,25 @@
               <label for="timeScheduled">Time scheduled:</label>
               <input type="time" class="form-control" id="timeScheduled" name="timeScheduled" value="">
             </div>
-            
-            <button type="submit" class="btn btn-success" onclick="return confirm('Are you sure you want to schedule this appointment?')">Schedule</button>
-          </form>          
+            <button type="submit" class="btn btn-success" onclick="return confirm('Are you sure you want to schedule this appointment?')" render_template("appointment_confirm.html")>Schedule</button>
+          </form>
+          {% else %}
+          <div class="alert alert-success" role="alert">
+            This appointment has already been scheduled for {{ appointment.dateScheduled }} at {{ appointment.timeScheduled }}.
+          </div>
+          {% endif %}
         </article>
       {% endfor %}
     </div>
+
     <div class="col-7">
       {% include 'calendar.html' %}
     </div>
-  </div> 
-</div>
-{% endblock %}
 
+  </div>
+</div>
+
+{% endblock %}
 
 
         

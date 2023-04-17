@@ -1,12 +1,12 @@
 import os, random, string
-from flask import render_template, url_for, flash, redirect, request
+from flask import render_template, url_for, flash, redirect, request, send_file
 from battlebornmobile import app, db, bcrypt, mail, client
 from battlebornmobile.forms import SignUpForm, LoginForm, PetForm, AppointmentForm, ResetPasswordForm, UpdateProfileForm, UpdateProfilePictureForm
 from battlebornmobile.models import User, Pet, Appointment
 from flask_login import login_user, current_user, logout_user, login_required
 from flask_mail import Mail, Message
 from werkzeug.utils import secure_filename
-
+from twilio.rest import Client
 
 
 #index Page
@@ -46,7 +46,7 @@ def signup():
         # Update the user's account information to indicate that the email address is not yet verified
         # You can use a database or other storage mechanism to track this information
         hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
-        user = User(username=form.username.data, email=form.email.data.lower(), password=hashed_password, firstName=form.firstName.data, lastName=form.lastName.data, phoneNumber=form.phoneNumber.data, streetNumber=form.streetNumber.data, city=form.city.data, state=form.state.data, zipcode=form.zipcode.data)
+        user = User(username=form.username.data.lower(), email=form.email.data.lower(), password=hashed_password, firstName=form.firstName.data, lastName=form.lastName.data, phoneNumber=form.phoneNumber.data, streetNumber=form.streetNumber.data, city=form.city.data, state=form.state.data, zipcode=form.zipcode.data)
         db.session.add(user)
         db.session.commit()
 
@@ -97,7 +97,11 @@ def login():
         if user and bcrypt.check_password_hash(user.password, form.password.data):
             login_user(user, remember=form.remember.data)
             next_page = request.args.get('next')
-            return redirect(next_page) if next_page else redirect(url_for('dashboard'))
+            staff = current_user.StaffAccess
+            if staff == True:
+                return render_template("dashboardstaff.html")
+            else:
+                return redirect(next_page) if next_page else redirect(url_for('dashboard'))
         else:
             flash('Login Unsuccessful. Please check email and password', 'danger')
     return render_template('login.html', title='Login', form=form)
@@ -118,14 +122,13 @@ def password_forgot():
         if user:
             # generate a new password and update user's password
             new_password = ''.join(random.choices(string.ascii_uppercase + string.ascii_lowercase + string.digits, k=8))
-            user.password = new_password
+            user.temp_password = new_password
             db.session.commit()
 
             # send email with password reset instructions
-            token = user.get_reset_token()
             msg = Message('Password Reset Request', sender='noreply@example.com', recipients=[user.email])
             msg.body = f'''To reset your password, visit the following link:
-{url_for('password_change', token=token, _external=True)}
+{url_for('password_reset', _external=True)}
 
 Your new temporary password is: {new_password}
 
@@ -138,28 +141,31 @@ If you did not make this request then simply ignore this email and no changes wi
             flash('There is no account with that email. You must register first.', 'warning')
     return render_template('password_forgot.html')
 
-#Change password 
-@app.route('/password/change', methods=['GET', 'POST'])
-def reset_password(token):
-    user = User.verify_reset_token(token)
-    if not user:
-        flash('That is an invalid or expired token.', 'warning')
-        return redirect(url_for('forgot_password'))
+# Reset password 
+@app.route('/password/reset', methods=['GET', 'POST'])
+def password_reset():
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
 
     form = ResetPasswordForm()
     if form.validate_on_submit():
-        if bcrypt.check_password_hash(user.password, form.current_password.data):
-            user.password = bcrypt.generate_password_hash(form.new_password.data).decode('utf-8')
-            db.session.commit()
-            flash('Your password has been updated!', 'success')
-            return redirect(url_for('login'))
-        else:
-            flash('The current password is incorrect.', 'danger')
+        user = User.query.filter_by(email=form.email.data).first()
+        if not user:
+            flash('That is an invalid or not active user.', 'warning')
+            return redirect(url_for('password_forgot'))
+        if user.temp_password != form.temp_password.data:
+            flash('The temporary password is incorrect.', 'danger')
+            return redirect(url_for('password_reset'))
+        user.temp_password = None
+        user.password = bcrypt.generate_password_hash(form.new_password.data).decode('utf-8')
+        db.session.commit()
+        flash('Your password has been updated!', 'success')
+        return redirect(url_for('login'))
     else:
         flash('The form was not valid.', 'danger')
         print(form.errors)
 
-    return render_template('reset_password.html', title='Reset Password', form=form)
+    return render_template('password_reset.html', title='Reset Password', form=form)
 
 
 #Main Dashboard
@@ -169,7 +175,7 @@ def dashboard():
     # Query all pets linked to the current user
     pets = Pet.query.filter_by(owner_id=current_user.id).all()
     # Query all appoinments linked to the current user
-    appointments = Appointment.query.filter_by(owner_id=current_user.id).filter_by(cancelled=False).all()
+    appointments = Appointment.query.filter_by(owner_id=current_user.id).filter_by(cancelled=False, completed=False).all()
 
     return render_template("dashboard.html", pets=pets, appointments=appointments)
 
@@ -177,6 +183,7 @@ def dashboard():
 @app.route('/profile/update', methods=['GET', 'POST'])
 @login_required
 def profile_update():
+    staff = current_user.StaffAccess
     form = UpdateProfileForm()
     if form.validate_on_submit():
         current_user.username = form.username.data
@@ -190,7 +197,11 @@ def profile_update():
         current_user.zipcode = form.zipcode.data
         db.session.commit()
         flash('Your account has been updated!', 'success')
-        return redirect(url_for('dashboard'))
+        if staff == True:
+            return render_template("dashboardstaff.html")
+        else:
+            flash ("Access Denied Staff Only.")
+            return render_template("dashboard.html")
     elif request.method == 'GET':
         form.username.data = current_user.username
         form.email.data = current_user.email
@@ -209,6 +220,7 @@ def profile_update():
 @login_required
 def profile_picture_update():
     form = UpdateProfilePictureForm()
+    staff = current_user.StaffAccess
     if form.validate_on_submit():
         # Generate custom filename for the uploaded image file
         _, file_ext = os.path.splitext(form.profile_picture.data.filename)
@@ -223,8 +235,11 @@ def profile_picture_update():
         db.session.commit()
 
         flash('Your profile picture has been updated!', 'success')
-        return redirect(url_for('dashboard'))
-
+        if staff == True:
+            return render_template("dashboardstaff.html")
+        else:
+            flash ("Access Denied Staff Only.")
+            return render_template("dashboard.html")
     return render_template('profile_picture_update.html', form=form)
 
 # Add Pet Page
@@ -251,21 +266,6 @@ def add_pet():
 
     return render_template('add_pet.html', form=form)
 
-# #Add Pet Page
-# @app.route("/pet/add", methods=['GET', 'POST'])
-# @login_required
-# def add_pet():
-#     form = PetForm()
-#     if form.validate_on_submit():
-#         pet = Pet(pet_name=form.pet_name.data, pet_dob=form.pet_dob.data, pet_species=form.pet_species.data, pet_breed=form.pet_breed.data, pet_color=form.pet_color.data, pet_height=form.pet_height.data, pet_weight=form.pet_weight.data, owner_id=current_user.id)
-#         # Add Pet to Pet Database
-#         db.session.add(pet)
-#         db.session.commit()
-        
-#         flash('Your pet has been added!', 'success')
-#         return redirect(url_for('dashboard'))
-
-#     return render_template('add_pet.html', form=form)
 
 #Appointment Request Page
 @app.route("/appointment/request", methods=['GET', 'POST'])
@@ -282,26 +282,6 @@ def appointment():
         flash('Your request has been received!', 'success')
         return redirect(url_for('dashboard'))
     return render_template('appointment_request.html', title='MakeAppointment', form=form)
-
-#Appointment Edit Page
-@app.route("/appointment/edit/<int:id>", methods=["GET", "POST"])
-@login_required
-def edit_appointment(id):
-    appointment = Appointment.query.get_or_404(id)
-    form = AppointmentForm(obj=appointment)
-
-    if form.validate_on_submit():
-        # Update the appointment with the form data
-        appointment.pet_name = form.pet_name.data
-        appointment.service = form.service.data
-        appointment.weekday = form.weekday.data
-        appointment.timeSlot=form.timeSlot.data
-        db.session.commit()
-
-        flash("Appointment updated successfully!", "success")
-        return redirect(url_for("dashboard"))
-
-    return render_template("appointment_edit.html", form=form)
 
 
 #Appointment Cancel Route
@@ -342,15 +322,24 @@ def unscheduled_appointments():
 @login_required
 def schedule_appointment(id):
     appointment = Appointment.query.get_or_404(id)
+    if appointment.scheduled or appointment.cancelled:
+        abort(400)  # bad request
+
+    date_scheduled = request.form['dateScheduled']
+    time_scheduled = request.form['timeScheduled']
+
+    if not date_scheduled or not time_scheduled:
+        flash('Please select a date and time for the appointment.', 'error')
+        return redirect(url_for('scheduler'))
+
+    appointment.dateSheduled = date_scheduled
+    appointment.timeSheduled = time_scheduled
     appointment.scheduled = True
-    appointment.dateScheduled = request.form.get('dateScheduled')
-    appointment.timeScheduled = request.form.get('timeScheduled')
-    
-    #Update An Appointment in the Appointment Database
-    db.session.add(appointment)
+
     db.session.commit()
     flash('Appointment scheduled successfully!', 'success')
-    return redirect(url_for('scheduler'))
+    return redirect(url_for('confirm_appointment'))
+
 
 #Confirm appointment
 @app.route('/appointment/confirm')
@@ -372,17 +361,6 @@ def scheduler():
 
     return render_template("scheduler.html", appointments=appointments)
 
-#Admin Dashboard
-@app.route('/admin/dashboard')
-@login_required
-# @roles_required('admin')
-def admindashboard():
-    admin = current_user.AdminAccess
-    if admin == True:
-        return render_template("dashboardadmin.html")
-    else:
-        flash ("Access Denied Admin Only.")
-        return render_template("dashboard.html")
 
 #Admin User Access Table
 @app.route('/admin/useraccess')
@@ -457,6 +435,7 @@ def records():
     pets = Pet.query.all()
     return render_template('records.html', users=users)
 
+
 #Staff Search Customer Records
 @app.route('/staff/records/search')
 @login_required
@@ -479,6 +458,7 @@ def update_user(user_id):
         return render_template('dashboard.html', user=user)
     else:
         return render_template('update.html', user=user)
+
 
 #Calendar Page
 @app.route('/calendar')
