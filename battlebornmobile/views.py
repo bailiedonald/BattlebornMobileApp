@@ -357,8 +357,9 @@ def appointments():
 #@login_required
 def scheduler():
     appointments = Appointment.query.filter_by(scheduled=False).all()
-
-    return render_template("scheduler.html", appointments=appointments)
+#     tappointments = Appointment.query.filter_by(dateSheduled=todaydate).all()
+# tappointments=tappointments
+    return render_template("scheduler.html", appointments=appointments, )
 
 
 #Admin User Access Table
@@ -492,20 +493,6 @@ def events():
                 'time': event.timeSheduled
         })
     return jsonify(event_list)
-
-#    events = [
- #      {
-  #          'title': 'Event 1',
-   #         'start': '2023-04-20',
-    #        'customText': 'Additional text for Event 1',
-     #   },
-      #  {
-       #     'title': 'Event 2',
-        #    'start': '2023-04-22',
-         #   'customText': 'Additional text for Event 2',
-        #},
-    #]
-    #return jsonify(events)
 
 if __name__ == '__main__':
     app.run(debug=True)
