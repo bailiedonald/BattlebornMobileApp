@@ -1,5 +1,5 @@
 import os, random, string
-from flask import render_template, url_for, flash, redirect, request, send_file
+from flask import render_template, url_for, flash, redirect, jsonify, request, send_file
 from battlebornmobile import app, db, bcrypt, mail, client
 from battlebornmobile.forms import SignUpForm, LoginForm, PetForm, AppointmentForm, ResetPasswordForm, UpdateProfileForm, UpdateProfilePictureForm
 from battlebornmobile.models import User, Pet, Appointment
@@ -335,7 +335,6 @@ def schedule_appointment(id):
     appointment.dateSheduled = date_scheduled
     appointment.timeSheduled = time_scheduled
     appointment.scheduled = True
-
     db.session.commit()
     flash('Appointment scheduled successfully!', 'success')
     return redirect(url_for('confirm_appointment'))
@@ -343,19 +342,19 @@ def schedule_appointment(id):
 
 #Confirm appointment
 @app.route('/appointment/confirm')
-# @login_required
+@login_required
 def confirm_appointment():
     return render_template("appointment_confirm.html")
 
 #All Appointments
 @app.route('/appointments')
-# @login_required
+@login_required
 def appointments():
     return render_template("appointments.html")
 
 #Scheduler
 @app.route('/staff/scheduler')
-@login_required
+#@login_required
 def scheduler():
     appointments = Appointment.query.filter_by(scheduled=False).all()
 
@@ -462,9 +461,56 @@ def update_user(user_id):
 
 #Calendar Page
 @app.route('/calendar')
-@login_required
 def calendar():
-    return render_template("calendar.html")
+    return render_template('calendar.html')
+
+
+
+#Calendar Event class
+class Event(db.Model):
+        
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(80))
+    start = db.Column(db.DateTime, nullable=False)
+
+    def __init__(self, title, start):
+        self.title = title
+        self.start = start
+    
+
+#Calendar events
+@app.route('/events')
+
+def events():
+    events = Appointment.query.all()
+    event_list = []
+    for event in events:
+        if event.scheduled:
+            event_list.append({
+                'title': event.pet_name,
+                'start': event.dateSheduled,
+                'time': event.timeSheduled
+        })
+    return jsonify(event_list)
+
+#    events = [
+ #      {
+  #          'title': 'Event 1',
+   #         'start': '2023-04-20',
+    #        'customText': 'Additional text for Event 1',
+     #   },
+      #  {
+       #     'title': 'Event 2',
+        #    'start': '2023-04-22',
+         #   'customText': 'Additional text for Event 2',
+        #},
+    #]
+    #return jsonify(events)
+
+if __name__ == '__main__':
+    app.run(debug=True)
+    
+    
 
 
 #SMS Notification Page
