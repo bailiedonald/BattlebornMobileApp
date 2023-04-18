@@ -407,21 +407,19 @@ def staffdashboard():
         return render_template("dashboard.html")
 
 
-# Update Pet Record
-@app.route('/staff/records/update_pdf/<int:pet_id>', methods=['POST'])
+# Save Pet Record
+@app.route('/staff/records/save_pdf', methods=['POST'])
 @login_required
-def update_pdf(pet_id):
-    pet = Pet.query.get_or_404(pet_id)
-    user = pet.owner
-    pdf_file = request.files['pdf_file']
+def save_pdf():
+    pdf_file = request.files['pet_records']
     if pdf_file:
-        # Modify filename to include user ID and pet ID
-        filename = f"{pet.id}_{pet.pet_name}_record.pdf"
+        # Modify filename to include current timestamp and original filename
+        filename = secure_filename(pdf_file.filename)
+        timestamp = int(time.time())
+        filename = f"{timestamp}_{filename}"
         pdf_path = os.path.join('static/pet_records', filename)
         pdf_file.save(pdf_path)
-        pet.pdf_record = filename
-        db.session.commit()
-        flash('PDF record updated successfully!', 'success')
+        flash('PDF record saved successfully!', 'success')
     else:
         flash('Please select a file to upload!', 'danger')
     return redirect(url_for('records'))

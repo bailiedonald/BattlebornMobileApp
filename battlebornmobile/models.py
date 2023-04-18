@@ -47,6 +47,7 @@ class User(db.Model, UserMixin):
             return None
         return User.query.get(user_id)
 
+
 class Pet(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     pet_name = db.Column(db.String(50), nullable=False)
