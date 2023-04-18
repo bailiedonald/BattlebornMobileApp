@@ -406,6 +406,7 @@ def staffdashboard():
         flash ("Access Denied Staff Only.")
         return render_template("dashboard.html")
 
+
 # Update Pet Record
 @app.route('/staff/records/update_pdf/<int:pet_id>', methods=['POST'])
 @login_required
@@ -415,16 +416,15 @@ def update_pdf(pet_id):
     pdf_file = request.files['pdf_file']
     if pdf_file:
         # Modify filename to include user ID and pet ID
-        filename = f"{user.id}_{pet.id}_pet_record.pdf"
-        pdf_path = os.path.join('static/pdf_records', filename)
+        filename = f"{pet.id}_{pet.pet_name}_record.pdf"
+        pdf_path = os.path.join('static/pet_records', filename)
         pdf_file.save(pdf_path)
-        pet.record = filename
+        pet.pdf_record = filename
         db.session.commit()
         flash('PDF record updated successfully!', 'success')
     else:
         flash('Please select a file to upload!', 'danger')
     return redirect(url_for('records'))
-
 
 
 #Staff View Customer Records
