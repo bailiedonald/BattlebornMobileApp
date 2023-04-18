@@ -1,38 +1,4 @@
 {% extends 'layout.html' %}
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js">
-
-        $(document).ready(function() {
-            // When an edit button is clicked
-            $("button[id^='edit-']").click(function() {
-                // Get the appointment ID from the button's ID
-                var appointmentId = $(this).attr('id').split('-')[1];
-
-                // Send an AJAX request to the server to get the appointment details
-                $.ajax({
-                    url: "/appointment/edit/" + appointmentId,
-                    type: "GET",
-                    dataType: "html",
-                    success: function(response) {
-                        // Replace the appointments list with the appointment form
-                        $("#appointments-list").html(response);
-                    },
-                    error: function(error) {
-                        console.log(error);
-                    }
-                });
-            });
-        });
-
-
-        function showCancelConfirmation(appointmentId) {
-            if (confirm("Are you sure you want to cancel this appointment?")) {
-                window.location.href = "/appointment/cancel/" + appointmentId;
-            }
-        }
-                               
-    </script>
-
-
 {% block content %}
 
 {% for message in get_flashed_messages() %}
