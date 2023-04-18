@@ -103,10 +103,15 @@
                     {% for appointment in appointments %}
                     <div class="row">
                         <div class="col-8">
-                            <li> - {{ appointment.pet_name }} - {{ appointment.service }} - {{ appointment.dateSheduled }} - {{ appointment.timeSheduled }} -
+                            <li>                        
+                            {% if not appointment.scheduled %}
+                                **Pending Appointment** 
+                            {% else %}
+                                **Scheduled Appointment** 
+                            {% endif %} - {{ appointment.pet_name }} - {{ appointment.service }} - {{ appointment.dateSheduled }} - {{ appointment.timeSheduled }} -
                                 <a href="/appointment/cancel/{{ appointment.id }}">Cancel Appointment</a> - 
                             </li>
-                            <li>==========================================================</li>
+                            <li>=======================================================================</li>
                         </div>  
                     </div>
                 {% endfor %}                
