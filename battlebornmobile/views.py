@@ -1,5 +1,5 @@
 import os, random, string, shutil
-from flask import render_template, url_for, flash, redirect, jsonify, request, send_file
+from flask import render_template, url_for, flash, redirect, jsonify, request, send_file, send_from_directory
 from battlebornmobile import app, db, bcrypt, mail, client
 from battlebornmobile.forms import SignUpForm, LoginForm, PetForm, AppointmentForm, ResetPasswordForm, UpdateProfileForm, UpdateProfilePictureForm
 from battlebornmobile.models import User, Pet, Appointment
@@ -180,6 +180,7 @@ def dashboard():
 
     return render_template("dashboard.html", pets=pets, appointments=appointments)
 
+
 # Profile Update
 @app.route('/profile/update', methods=['GET', 'POST'])
 @login_required
@@ -242,6 +243,7 @@ def profile_picture_update():
             flash ("Access Denied Staff Only.")
             return render_template("dashboard.html")
     return render_template('profile_picture_update.html', form=form)
+
 
 #Add Pet Page
 @app.route("/pet/add", methods=['GET', 'POST'])
@@ -317,6 +319,13 @@ def update_pet_record(pet_id):
     # Render the update pet record form
     return render_template('update_pet_record.html', pet=pet)
 
+
+#View PDF
+@app.route('/view_pdf/<int:id>')
+def view_pdf(id):
+    pet = Pet.query.get_or_404(id)
+    pdf_path = os.path.join(app.root_path, 'static/pet_records', pet.pdf_record)
+    return send_file(pdf_path, attachment_filename=pet.pdf_record)
 
 
 #Appointment Request Page

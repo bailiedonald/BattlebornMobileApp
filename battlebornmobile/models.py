@@ -17,7 +17,7 @@ class User(db.Model, UserMixin):
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(60), nullable=False)
     temp_password = db.Column(db.String(60), nullable=True)
-    auth_code = db.Column(db.String(60), nullable=True)
+    # auth_code = db.Column(db.String(60), nullable=True)
     firstName = db.Column(db.String(30), nullable=True)
     lastName = db.Column(db.String(30), nullable=True)
     phoneNumber = db.Column(db.String(20), nullable=True)
