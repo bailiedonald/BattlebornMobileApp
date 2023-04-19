@@ -9,14 +9,13 @@
 </form>
 <br>
 <br>
-<table>
+<table class="table">
     <thead>
         <tr>
             <th>Last Name</th>
             <th>First Name</th>
             <th>Email</th>
             <th>Phone Number</th>
-            <th>PDF Record</th>
             <th>Pets</th>
         </tr>
     </thead>
@@ -27,32 +26,47 @@
             <td>{{ user.firstName }}</td>
             <td>{{ user.email }}</td>
             <td>{{ user.phoneNumber }}</td>
-            <td>
-                {% if user.pdfRecord %}
-                <a href="{{ url_for('static', filename='pdf_records/' + user.pdfRecord) }}">View PDF</a>
-                <br>
-                <form action="/staff/records/update_pdf/{{ user.id }}" method="post" enctype="multipart/form-data">
-                    <input type="file" name="pdf_file">
-                    <button type="submit">Update PDF</button>
-                </form>
-            {% else %}
-                No PDF record found
-                <br>
-                <form action="/staff/records/upload_pdf/{{ user.id }}" method="post" enctype="multipart/form-data">
-                    <input type="file" name="pdf_file">
-                    <button type="submit">Upload PDF</button>
-                </form>
-            {% endif %}
             
-            </td>
             <td>
                 {% for pet in user.pets %}
-                    {{ pet.pet_name }} ({{ pet.pet_species }}) link to {{ pet.record}}<br>
+                  <div class="pet-info">
+                    <p class="pet-name">{{ pet.pet_name }} - {{ pet.pet_species }} - 
+                    <a href="{{ url_for('update_pet_record', pet_id=pet.id) }}">View Record</a></p><br>
+                </div>
                 {% endfor %}
             </td>
         </tr>
         {% endfor %}
     </tbody>
 </table>
+
+<style>
+    .table {
+        border-collapse: collapse;
+        width: 100%;
+    }
+    .table td, .table th {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+    }
+    .table th {
+        padding-top: 12px;
+        padding-bottom: 12px;
+        background-color: #2712c6;
+        color: white;
+    }
+    form {
+        display: inline-block;
+        margin-bottom: 0;
+    }
+    button {
+        margin-left: 5px;
+    }
+    .pdf-container {
+        width: 100%;
+        height: 500px;
+    }
+</style>
 
 {% endblock %}

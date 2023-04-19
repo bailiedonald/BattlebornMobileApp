@@ -1,13 +1,9 @@
 {% extends 'layout.html' %}
-
 {% block content %}
-
-
 {% if current_user.is_authenticated %}
+
 <h2>Cancel Appointment</h2>
-
 <p>Are you sure you want to cancel your appointment with {{ appointment.pet_name }} on {{ appointment.dateSheduled }} at {{ appointment.timeSheduled }}?</p>
-
 <form method="post">
     {{ form.hidden_tag() }}
     <input type="submit" value="Yes, cancel this appointment">

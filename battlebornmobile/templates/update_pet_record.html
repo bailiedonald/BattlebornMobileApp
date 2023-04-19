@@ -1,0 +1,30 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+
+<h1>Update Pet Record</h1>
+
+<form action="{{ url_for('update_pet_record', pet_id=pet.id) }}" method="post" enctype="multipart/form-data">
+    <button type="submit" class="btn btn-primary">Update Record</button>
+    <div class="form-group">
+        <label for="pet_name">Pet Name</label>
+        <input type="text" class="form-control" id="pet_name" name="pet_name" value="{{ pet.pet_name }}">
+    </div>
+    <div class="form-group">
+        <label for="pet_species">Pet Species</label>
+        <input type="text" class="form-control" id="pet_species" name="pet_species" value="{{ pet.pet_species }}">
+    </div>
+    <div class="form-group d-flex">
+        <input type="file" class="form-control-file mr-2" id="pet_record" name="pdf_file">     
+    </div>
+</form>
+
+<div>
+    <label for="pet_record">Current Pet Record</label>
+    {% if pet.pdf_record %}
+    <div class="embed-responsive embed-responsive-16by9">
+        <iframe class="embed-responsive-item" src="{{ url_for('static', filename='pet_records/' + pet.pdf_record) }}"></iframe>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
