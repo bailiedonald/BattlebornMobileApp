@@ -17,6 +17,7 @@ class User(db.Model, UserMixin):
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(60), nullable=False)
     temp_password = db.Column(db.String(60), nullable=True)
+    # auth_code = db.Column(db.String(60), nullable=True)
     firstName = db.Column(db.String(30), nullable=True)
     lastName = db.Column(db.String(30), nullable=True)
     phoneNumber = db.Column(db.String(20), nullable=True)
@@ -70,7 +71,6 @@ class Pet(db.Model, UserMixin):
         return f"Pet('{self.id}', '{self.pet_name}', '{self.pet_dob}', '{self.pet_species}', '{self.pet_breed}', '{self.pet_color}','{self.pet_height}','{self.pet_weight}')"
 
 
-
 class Appointment(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     firstName = db.Column(db.String(30), nullable=True)
@@ -92,8 +92,6 @@ class Appointment(db.Model, UserMixin):
     #Link to Pet Owner in user Database
     pet_id = db.Column(db.Integer, db.ForeignKey('pet.id'))
     owner_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-
-
 
     def __repr__(self):
         return f"Pet('{self.id}', '{self.scheduled}', '{self.cancelled}', '{self.owner_id}')"
