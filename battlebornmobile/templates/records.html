@@ -16,8 +16,7 @@
             <th>First Name</th>
             <th>Email</th>
             <th>Phone Number</th>
-            <th>PDF Record</th>
-            <th>Pets</th>
+
         </tr>
     </thead>
     <tbody>
@@ -28,27 +27,7 @@
             <td>{{ user.email }}</td>
             <td>{{ user.phoneNumber }}</td>
             <td>
-                {% if user.pdfRecord %}
-                <a href="{{ url_for('static', filename='pet_records/' + pet.pdf_Record) }}">View PDF</a>
-                <br>
-                <form action="/staff/records/update_pdf/{{ user.id }}" method="post" enctype="multipart/form-data">
-                    <input type="file" name="pdf_file">
-                    <button type="submit">Update PDF</button>
-                </form>
-                {% else %}
-                No PDF record found
-                <br>
-                <form action="/staff/records/save_pdf" method="post" enctype="multipart/form-data">
-                    <input type="file" name="pdf_file">
-                    <button type="submit">Upload PDF</button>
-                </form>
-                {% endif %}
-            </td>
-            <td>
-                {% for pet in user.pets %}
-                    {{ pet.pet_name }} ({{ pet.pet_species }}) link to {{ pet.record}}<br>
-                {% endfor %}
-            </td>
+               
         </tr>
         {% endfor %}
     </tbody>

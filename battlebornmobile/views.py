@@ -3,6 +3,7 @@ from flask import render_template, url_for, flash, redirect, jsonify, request, s
 from battlebornmobile import app, db, bcrypt, mail, client
 from battlebornmobile.forms import SignUpForm, LoginForm, PetForm, AppointmentForm, ResetPasswordForm, UpdateProfileForm, UpdateProfilePictureForm
 from battlebornmobile.models import User, Pet, Appointment
+from datetime import datetime
 from flask_login import login_user, current_user, logout_user, login_required
 from flask_mail import Mail, Message
 from werkzeug.utils import secure_filename
@@ -407,31 +408,38 @@ def staffdashboard():
         return render_template("dashboard.html")
 
 
-# Save Pet Record
+
+#Upload Pet PDF_Record
 @app.route('/staff/records/save_pdf', methods=['POST'])
 @login_required
-def save_pdf():
-    pdf_file = request.files['pet_records']
+def update_pdf(pet_id):
+    pet = Pet.query.get_or_404(pet_id)
+    user = pet.owner
+    pdf_file = request.files['pdf_file']
     if pdf_file:
-        # Modify filename to include current timestamp and original filename
-        filename = secure_filename(pdf_file.filename)
-        timestamp = int(time.time())
-        filename = f"{timestamp}_{filename}"
-        pdf_path = os.path.join('static/pet_records', filename)
+        # Modify filename to include user ID and pet ID
+        filename = f"{user.id}_{pet.id}_pet_record.pdf"
+        pdf_path = os.path.join('static/pdf_records', filename)
         pdf_file.save(pdf_path)
-        flash('PDF record saved successfully!', 'success')
+        pet.record = filename
+        db.session.commit()
+        flash('PDF record updated successfully!', 'success')
     else:
         flash('Please select a file to upload!', 'danger')
     return redirect(url_for('records'))
 
 
-#Staff View Customer Records
+# Staff View Customer Records
 @app.route('/staff/records', methods={"GET", "POST"})
 @login_required
 def records():
-    users = User.query.all()
-    pets = Pet.query.all()
-    return render_template('records.html', users=users)
+    try:
+        users = User.query.all()
+        pets = Pet.query.all()
+        return render_template('records.html', users=users)
+    except Exception as e:
+        flash(f'An error occurred: {e}', 'danger')
+        return redirect(url_for('dashboard'))
 
 
 #Staff Search Customer Records
