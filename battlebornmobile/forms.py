@@ -136,3 +136,9 @@ class UpdateProfileForm(FlaskForm):
 
 class UpdateProfilePictureForm(FlaskForm):
     profile_picture = FileField('Update Profile Picture', validators=[FileAllowed(['jpg', 'jpeg', 'png'])])
+
+class VerificationCodeInoDayForm(FlaskForm):
+    phoneNumber = StringField("Phone Number", validators=[Length(max=20)])
+
+class VerificationCodeActualForm(FlaskForm):
+    phoneNumber = StringField("Phone Number", validators=[Length(max=20)])

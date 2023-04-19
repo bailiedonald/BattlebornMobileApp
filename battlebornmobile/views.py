@@ -406,7 +406,7 @@ def appointments():
 
 #Scheduler
 @app.route('/staff/scheduler')
-#@login_required
+@login_required
 def scheduler():
     appointments = Appointment.query.filter_by(scheduled=False).all()
 #     tappointments = Appointment.query.filter_by(dateSheduled=todaydate).all()
