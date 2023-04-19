@@ -1,13 +1,13 @@
 from flask_wtf import FlaskForm
+from wtforms import StringField, DateField, FileField, SubmitField
 from wtforms import validators, StringField, PasswordField, SubmitField, BooleanField, DateField, SelectField, IntegerField, DateTimeField, FileField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
-from flask_wtf.file import FileAllowed
+from flask_wtf.file import FileAllowed, FileRequired
 from battlebornmobile.models import User, Pet, Appointment
 from flask_login import current_user
 import random, string
 
 
-# This is a form
 class SignUpForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired(), Length(min=2, max=20)])
     email = StringField('Email', validators=[DataRequired(), Email()])
@@ -57,6 +57,7 @@ class PetForm(FlaskForm):
     pet_height = StringField("Pet Height")
     pet_weight = StringField("Pet Weight")
     pet_pic = FileField("Pet Picture", validators=[FileAllowed(['jpg', 'jpeg', 'png'])])
+    pet_record = FileField("Pet Record", validators=[FileAllowed(['pdf'])])
     submit = SubmitField('Add Pet')
 
 

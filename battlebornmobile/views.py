@@ -1,4 +1,4 @@
-import os, random, string
+import os, random, string, shutil
 from flask import render_template, url_for, flash, redirect, jsonify, request, send_file
 from battlebornmobile import app, db, bcrypt, mail, client
 from battlebornmobile.forms import SignUpForm, LoginForm, PetForm, AppointmentForm, ResetPasswordForm, UpdateProfileForm, UpdateProfilePictureForm
@@ -257,6 +257,19 @@ def add_pet():
             pic_path = os.path.join(app.root_path, 'static/pet_pics', pic_filename)
             form.pet_pic.data.save(pic_path)
             pet.pet_pic = pic_filename
+        
+        # Save PDF record to filesystem and update pet record field
+        if form.pet_record.data:
+            pdf_filename = secure_filename(current_user.username + '_' + form.pet_name.data + '.' + form.pet_record.data.filename.split('.')[-1])
+            pdf_path = os.path.join(app.root_path, 'static/pet_records', pdf_filename)
+            form.pet_record.data.save(pdf_path)
+            pet.pdf_record = pdf_filename
+        else:
+            # Copy default pdf record if no file is uploaded
+            default_pdf_path = os.path.join(app.root_path, 'static/pet_records/new_record.pdf')
+            filename = f"{current_user.id}_{pet.pet_name}_record.pdf"
+            pet.pdf_record = filename
+            shutil.copyfile(default_pdf_path, os.path.join(app.root_path, 'static/pet_records', pet.pdf_record))
 
         # Add Pet to Pet Database
         db.session.add(pet)
@@ -266,6 +279,44 @@ def add_pet():
         return redirect(url_for('dashboard'))
 
     return render_template('add_pet.html', form=form)
+
+
+#Upload Pet PDF_Record
+@app.route('/staff/records/update_pet_record/<int:pet_id>', methods=['GET', 'POST'])
+def update_pet_record(pet_id):
+    # Get the pet object from the database using the pet_id
+    pet = Pet.query.filter_by(id=pet_id).first()
+
+    if not pet:
+        flash('Pet record not found', 'error')
+        return redirect(url_for('customer_records'))
+
+    if request.method == 'POST':
+        # Handle the form submission
+        if 'pdf_file' not in request.files:
+            flash('No PDF file selected', 'error')
+            return redirect(request.url)
+
+        file = request.files['pdf_file']
+
+        if not file.filename:
+            flash('No PDF file selected', 'error')
+            return redirect(request.url)
+
+        # Save the PDF file to the server
+        filename = f"{pet.owner_id}_{pet.pet_name}_record.pdf"
+        file.save(os.path.join(app.root_path, 'static/pet_records/', filename))
+
+        # Update the pet's PDF record in the database
+        pet.pdf_record = filename
+        db.session.commit()
+
+        flash('PDF record updated successfully', 'success')
+        return redirect(url_for('records'))
+
+    # Render the update pet record form
+    return render_template('update_pet_record.html', pet=pet)
+
 
 
 #Appointment Request Page
@@ -406,27 +457,6 @@ def staffdashboard():
     else:
         flash ("Access Denied Staff Only.")
         return render_template("dashboard.html")
-
-
-
-#Upload Pet PDF_Record
-@app.route('/staff/records/save_pdf', methods=['POST'])
-@login_required
-def update_pdf(pet_id):
-    pet = Pet.query.get_or_404(pet_id)
-    user = pet.owner
-    pdf_file = request.files['pdf_file']
-    if pdf_file:
-        # Modify filename to include user ID and pet ID
-        filename = f"{user.id}_{pet.id}_pet_record.pdf"
-        pdf_path = os.path.join('static/pdf_records', filename)
-        pdf_file.save(pdf_path)
-        pet.record = filename
-        db.session.commit()
-        flash('PDF record updated successfully!', 'success')
-    else:
-        flash('Please select a file to upload!', 'danger')
-    return redirect(url_for('records'))
 
 
 # Staff View Customer Records
