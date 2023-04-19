@@ -142,7 +142,7 @@ If you did not make this request then simply ignore this email and no changes wi
             flash('There is no account with that email. You must register first.', 'warning')
     return render_template('password_forgot.html')
 
-# Reset password 
+#Reset password 
 @app.route('/password/reset', methods=['GET', 'POST'])
 def password_reset():
     if current_user.is_authenticated:
@@ -216,7 +216,7 @@ def profile_update():
     return render_template('profile_update.html', title='Update User Information', form=form)
 
 
-# Profile Picture Update
+#Profile Picture Update
 @app.route('/profile/picture/update', methods=['GET', 'POST'])
 @login_required
 def profile_picture_update():
@@ -243,7 +243,7 @@ def profile_picture_update():
             return render_template("dashboard.html")
     return render_template('profile_picture_update.html', form=form)
 
-# Add Pet Page
+#Add Pet Page
 @app.route("/pet/add", methods=['GET', 'POST'])
 @login_required
 def add_pet():
@@ -361,15 +361,15 @@ def cancel_appointment(id):
     return render_template("appointment_cancel.html", appointment=appointment, form=form)
 
 
-# All Unscheduled Appointments
-@app.route('/appointments/unscheduled')
-@login_required
-def unscheduled_appointments():
-    appointments = Appointment.query.filter_by(scheduled=False).all()
-    return render_template('appointment_unscheduled.html', appointments=appointments)
+# #All Unscheduled Appointments
+# @app.route('/appointments/unscheduled')
+# @login_required
+# def unscheduled_appointments():
+#     appointments = Appointment.query.filter_by(scheduled=False).all()
+#     return render_template('appointment_unscheduled.html', appointments=appointments)
 
 
-# Schedule Each Appointment
+#Schedule Each Appointment
 @app.route('/appointments/schedule/<int:id>', methods=['POST'])
 @login_required
 def schedule_appointment(id):
@@ -398,11 +398,13 @@ def schedule_appointment(id):
 def confirm_appointment():
     return render_template("appointment_confirm.html")
 
+
 #All Appointments
 @app.route('/appointments')
 @login_required
 def appointments():
     return render_template("appointments.html")
+
 
 #Scheduler
 @app.route('/staff/scheduler')
@@ -447,6 +449,7 @@ def updateAccess(user_id):
         flash ("Access Denied Admin Only.")
         return render_template("dashboard.html")
 
+
 #Staff Dashboard
 @app.route('/staff/dashboard')
 @login_required
@@ -459,7 +462,7 @@ def staffdashboard():
         return render_template("dashboard.html")
 
 
-# Staff View Customer Records
+#Staff View Customer Records
 @app.route('/staff/records', methods={"GET", "POST"})
 @login_required
 def records():
@@ -502,7 +505,6 @@ def calendar():
     return render_template('calendar.html')
 
 
-
 #Calendar Event class
 class Event(db.Model):
         
@@ -517,7 +519,6 @@ class Event(db.Model):
 
 #Calendar events
 @app.route('/events')
-
 def events():
     events = Appointment.query.all()
     event_list = []
@@ -533,8 +534,6 @@ def events():
 if __name__ == '__main__':
     app.run(debug=True)
     
-    
-
 
 #SMS Notification Page
 @app.route('/sms/send', methods=['GET', 'POST'])
@@ -555,7 +554,6 @@ def smsSend():
             return redirect(url_for('dashboard'))
     else:
         return 'Method not allowed', 405
-
 
 
 # Example view function that sends a SMS message
