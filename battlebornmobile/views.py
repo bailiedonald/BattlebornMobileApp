@@ -45,14 +45,14 @@ def signup():
     form = SignUpForm()
     if form.validate_on_submit():
 
-#         # Process the user's sign-up information and generate a verification token
-#         email = form.email.data
-#         username = form.username.data
+        # # Process the user's sign-up information and generate a verification token
+        # email = form.email.data
+        # username = form.username.data
 
-#         # Send the verification email to the user's email address
-#         msg = Message('Verify your email address', sender=app.config['MAIL_USERNAME'], recipients=[email])
-#         msg.body = render_template('verification_email.txt', username=username)
-#         mail.send(msg)
+        # # Send the verification email to the user's email address
+        # msg = Message('Verify your email address', sender=app.config['MAIL_USERNAME'], recipients=[email])
+        # msg.body = render_template('verification_email.txt', username=username)
+        # mail.send(msg)
 
         # Update the user's account information to indicate that the email address is not yet verified
         # You can use a database or other storage mechanism to track this information
