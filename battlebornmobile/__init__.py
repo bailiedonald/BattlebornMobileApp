@@ -49,7 +49,6 @@
 # login_manager.login_view = 'login'
 # login_manager.login_message_category = 'info'
 
-
 # from battlebornmobile import views
 
 
@@ -84,13 +83,11 @@ app.config['MAIL_USERNAME'] = os.environ.get('MAIL_USERNAME')
 app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD')
 
 # Twilio credentials
-app.config['Account_Sid'] = os.environ.get('Account_Sid')
-app.config['Auth_Token'] = os.environ.get('Auth_Token')
+Account_Sid = os.environ.get('Account_Sid')
+Auth_Token = os.environ.get('Auth_Token')
 
 # Initialize the Twilio client
 client = Client(Account_Sid, Auth_Token)
-
-
 
 db = SQLAlchemy(app)
 mail = Mail(app)
@@ -103,10 +100,8 @@ s = URLSafeTimedSerializer(app.config['SECRET_KEY'])
 def load_user(user_id):
     return users.get(user_id)
 
-
 login_manager.login_view = 'login'
 login_manager.login_message_category = 'info'
-
 
 from battlebornmobile import views
 
