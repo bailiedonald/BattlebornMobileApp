@@ -36,6 +36,26 @@ def layout():
     return render_template("layout.html")
 
 #SignUp Page
+# @app.route("/signup", methods=['GET', 'POST'])
+# def signup():
+#     if current_user.is_authenticated:
+#         return redirect(url_for('index'))
+
+#     form = SignUpForm()
+#     if form.validate_on_submit():
+
+#         # Update the user's account information to indicate that the email address is not yet verified
+#         # You can use a database or other storage mechanism to track this information
+#         hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+#         user = User(username=form.username.data.lower(), email=form.email.data.lower(), password=hashed_password, firstName=form.firstName.data, lastName=form.lastName.data, phoneNumber=form.phoneNumber.data, streetNumber=form.streetNumber.data, city=form.city.data, state=form.state.data, zipcode=form.zipcode.data)
+#         db.session.add(user)
+#         db.session.commit()
+
+#         flash('Please check your email to verify your new account')
+#         return render_template('confirmEmail.html')
+
+#     return render_template('signup.html', title='Sign Up', form=form)
+
 @app.route("/signup", methods=['GET', 'POST'])
 def signup():
     if current_user.is_authenticated:
@@ -43,11 +63,19 @@ def signup():
 
     form = SignUpForm()
     if form.validate_on_submit():
+        # Process the user's sign-up information and generate a verification token
+        email = form.email.data
+        username = form.username.data
+
+        # Send the verification email to the user's email address
+        msg = Message('Verify your email address', sender='MAIL_USERNAME', recipients=[email])
+        msg.body = render_template('verification_email.txt', username=username)
+        mail.send(msg)
 
         # Update the user's account information to indicate that the email address is not yet verified
         # You can use a database or other storage mechanism to track this information
         hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
-        user = User(username=form.username.data.lower(), email=form.email.data.lower(), password=hashed_password, firstName=form.firstName.data, lastName=form.lastName.data, phoneNumber=form.phoneNumber.data, streetNumber=form.streetNumber.data, city=form.city.data, state=form.state.data, zipcode=form.zipcode.data)
+        user = User(username=username.lower(), email=email.lower(), password=hashed_password, firstName=form.firstName.data, lastName=form.lastName.data, phoneNumber=form.phoneNumber.data, streetNumber=form.streetNumber.data, city=form.city.data, state=form.state.data, zipcode=form.zipcode.data)
         db.session.add(user)
         db.session.commit()
 
@@ -55,6 +83,7 @@ def signup():
         return render_template('confirmEmail.html')
 
     return render_template('signup.html', title='Sign Up', form=form)
+
 
 #Verify Email Page
 @app.route('/verify_email/<string:username>', methods=['GET'])
@@ -64,27 +93,7 @@ def verify_email(username):
     db.session.commit()
     flash('Your email has been confirmed! You can now login.', 'success')
     return redirect(url_for('login'))
-    # if form.validate_on_submit():
-    #     # Process the user's sign-up information and generate a verification token
-    #     email = form.email.data
-    #     username = form.username.data
 
-    #     # Send the verification email to the user's email address
-    #     msg = Message('Verify your email address', sender='spencer@alsetdsgd.com', recipients=[email])
-    #     msg.body = render_template('verification_email.txt', username=form.username.data)
-    #     mail.send(msg)
-
-    #     # Update the user's account information to indicate that the email address is not yet verified
-    #     # You can use a database or other storage mechanism to track this information
-    #     hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
-    #     user = User(username=form.username.data, email=email, password=hashed_password, firstName=form.firstName.data, lastName=form.lastName.data, phoneNumber=form.phoneNumber.data, streetNumber=form.streetNumber.data, city=form.city.data, state=form.state.data, zipcode=form.zipcode.data)
-    #     db.session.add(user)
-    #     db.session.commit()
-
-    #     flash('Please check your email to verify your new account')
-    #     return render_template('confirmEmail.html')
-
-    # return render_template('signup.html', title='Sign Up', form=form)
 
 
 #Login Page
