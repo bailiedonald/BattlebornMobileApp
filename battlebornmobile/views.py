@@ -10,6 +10,7 @@ from werkzeug.utils import secure_filename
 from twilio.rest import Client
 
 
+
 #index Page
 @app.route('/')
 def index():
@@ -68,7 +69,7 @@ def signup():
         username = form.username.data
 
         # Send the verification email to the user's email address
-        msg = Message('Verify your email address', sender='MAIL_USERNAME', recipients=[email])
+        msg = Message('Verify your email address', sender=app.config['MAIL_USERNAME'], recipients=[email])
         msg.body = render_template('verification_email.txt', username=username)
         mail.send(msg)
 
