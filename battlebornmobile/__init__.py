@@ -27,8 +27,8 @@ app.config['MAIL_USERNAME'] = 'spencer@alsetdsgd.com'
 app.config['MAIL_PASSWORD'] = 'Spring22'
 
 #Twilio credentials
-Account_Sid = 'AC003773b4742a681273555f869fe8c6d1'
-Auth_Token = '0b57f20b3db3982301d34480e5af5077'
+Account_Sid = '####'
+Auth_Token = '####'
 
 #Initialize the Twilio client
 client = Client(Account_Sid, Auth_Token)
