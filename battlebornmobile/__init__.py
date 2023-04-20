@@ -11,19 +11,18 @@ import os
 app = Flask(__name__)
 
 #Donny Databsae Setup
-app.config['SECRET_KEY'] = 'Super Secret Password'
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False # Add this line to disable track modifications
 
 # local hard code
-# app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://battlebornmobile_user:cnaZi2wlEj9GSs8MxWKOuaQWquvhfwD7@dpg-cghhue02qv23kcr6c6a0-a.oregon-postgres.render.com/battlebornmobile'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://battlebornmobile_user:cnaZi2wlEj9GSs8MxWKOuaQWquvhfwD7@dpg-cghhue02qv23kcr6c6a0-a.oregon-postgres.render.com/battlebornmobile'
 
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
+# app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
 # postgresql://battlebornmobile_user:cnaZi2wlEj9GSs8MxWKOuaQWquvhfwD7@dpg-cghhue02qv23kcr6c6a0-a.oregon-postgres.render.com/battlebornmobile
 
 
 
 
-app.config['SECURITY_ROLES'] = {'admin': 'Administrator', 'staff': 'Staff', 'user': 'User'}
 
 #Email verification Setup
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
