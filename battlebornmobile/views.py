@@ -593,8 +593,8 @@ load_dotenv()
 # Initialize the Flask app
 app = Flask(__name__)
 
-account_sid = os.environ.get("TWILIO_ACCOUNT_SID")
-auth_token = os.environ.get("TWILIO_AUTH_TOKEN")
+account_Sid = os.environ.get("ACCOUNT_SID")
+auth_Token = os.environ.get("AUTH_TOKEN")
 verify_service_id = os.environ.get("TWILIO_VERIFY_SERVICE_ID")
 my_phone_number = os.environ.get("TWILIO_PHONE_NUMBER")
 
