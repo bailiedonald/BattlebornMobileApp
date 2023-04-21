@@ -1,5 +1,4 @@
 {% extends 'layout.html' %}
-
 {% block content %}
 
 <style>
@@ -47,7 +46,7 @@
               <label for="timeScheduled">Time scheduled:</label>
               <input type="time" class="form-control" id="timeScheduled" name="timeScheduled" value="">
             </div>
-            <button type="submit" class="btn btn-success" onclick="return confirm('Are you sure you want to schedule this appointment?')">Schedule</button>
+            <button type="submit" class="btn btn-success" onclick="return confirm('Are you sure you want to schedule this appointment?')" render_template("appointment_confirm.html")>Schedule</button>
           </form>
           {% else %}
           <div class="alert alert-success" role="alert">
@@ -60,6 +59,22 @@
 
     <div class="col-7">
       {% include 'calendar.html' %}
+      <div class="card-body">     
+        <p class="card-text">
+            <div class="container">                           
+               <ul style="list-style-type:none;">
+                   {% for appointment in appointments %}
+                   <div class="row">
+                       <div class="col-8">
+                           <li> - {{ appointment.pet_name }} - {{ appointment.service }} - {{ appointment.dateSheduled }} - {{ appointment.timeSheduled }} - </li>
+                           <li>==========================================================</li>
+                       </div>  
+                   </div>
+               {% endfor %}                
+               </ul>
+            </div>
+        </p>
+    </div>
     </div>
 
   </div>

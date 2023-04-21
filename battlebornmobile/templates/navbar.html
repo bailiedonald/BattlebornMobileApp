@@ -1,25 +1,20 @@
 <head>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"/>
   <style>
-
     .navbar-nav 
     {
       flex-direction: row;
     }
-
     .nav-link 
     {
       padding-right: .5rem !important;
       padding-left: .5rem !important;
     }
-
   </style>
 </head>
-
-
 <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
   <div class="container-fluid">
-    <a class="navbar-brand" href="#"><img src={{ url_for('static', filename='images/bmvhlogo.jpeg' ) }} width="75" height="75"></a>
+    <a class="navbar-brand" href="/"><img src={{ url_for('static', filename='images/bmvhlogo.jpeg' ) }} width="75" height="75"></a>
   </div>
   <!-- Left side of Navbar -->
   <ul class="navbar-nav mr-auto">
@@ -49,7 +44,13 @@
           <a class="navbar-brand" href="/dashboard">Account</a>
         </li>
       {% endif %}
-     
+
+     {% if current_user.AdminAccess %}
+        <li class="nav-item">
+          <a class="navbar-brand" href="/admin/useraccess">Admin Tools</a>
+        </li>
+      {% endif %}
+      
       {% if current_user.StaffAccess %}
         <li class="nav-item">
           <a class="navbar-brand" href="/staff/scheduler">Schedule Appointments</a>
@@ -62,11 +63,7 @@
         </li>
       {% endif %}
 
-      {% if current_user.AdminAccess %}
-        <li class="nav-item">
-          <a class="navbar-brand" href="/admin/dashboard">Admin Dashboard</a>
-        </li>
-      {% endif %}
+
 
       <li class="nav-item">
         <a class="navbar-brand" href="/logout">Logout</a>

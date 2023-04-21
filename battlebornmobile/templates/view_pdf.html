@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>View PDF</title>
+  </head>
+  <body>
+    <embed src="{{ url_for('static', filename='pet_records/' + pet.pdf_record) }}" type="application/pdf" width="100%" height="600px" />
+  </body>
+</html>
