@@ -95,7 +95,7 @@ def login():
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data.lower()).first()
-        if user and bcrypt.check_password_hash(user.password, form.password.data):
+        if user and bcrypt.check_password_hash(user.password, form.password.data) and user.active:
             login_user(user, remember=form.remember.data)
             next_page = request.args.get('next')
             staff = current_user.StaffAccess
@@ -285,6 +285,7 @@ def add_pet():
 
 #Upload Pet PDF_Record
 @app.route('/staff/records/update_pet_record/<int:pet_id>', methods=['GET', 'POST'])
+@login_required
 def update_pet_record(pet_id):
     # Get the pet object from the database using the pet_id
     pet = Pet.query.filter_by(id=pet_id).first()
@@ -322,6 +323,7 @@ def update_pet_record(pet_id):
 
 #View PDF
 @app.route('/view_pdf/<int:id>')
+@login_required
 def view_pdf(id):
     pet = Pet.query.get_or_404(id)
     pdf_path = os.path.join(app.root_path, 'static/pet_records', pet.pdf_record)
@@ -498,6 +500,7 @@ def search():
 
 #Update User Page
 @app.route('/update/<int:user_id>', methods=['GET', 'POST'])
+@login_required
 def update_user(user_id):
     user = User.query.get(user_id)
     if request.method == 'POST':
@@ -510,6 +513,7 @@ def update_user(user_id):
 
 #Calendar Page
 @app.route('/calendar')
+@login_required
 def calendar():
     return render_template('calendar.html')
 
@@ -528,6 +532,7 @@ class Event(db.Model):
 
 #Calendar events
 @app.route('/events')
+@login_required
 def events():
     events = Appointment.query.all()
     event_list = []
@@ -546,6 +551,7 @@ if __name__ == '__main__':
 
 #SMS Notification Page
 @app.route('/sms/send', methods=['GET', 'POST'])
+@login_required
 def smsSend():
     if request.method == 'POST':
         phone_number = request.form.get('phoneNumber')
@@ -567,6 +573,7 @@ def smsSend():
 
 # Example view function that sends a SMS message
 @app.route('/sendtext', methods=['GET', 'POST'])
+@login_required
 def send_sms():
     message = client.messages.create(
         messaging_service_sid='MGdc049f1edc574951803c83a97cd37602',
