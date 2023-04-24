@@ -336,7 +336,7 @@ def appointment():
     return render_template('appointment_request.html', title='MakeAppointment', form=form)
 
 
-#Appointment Cancel Route
+#Appointment Cancel RouteF
 @app.route("/appointment/cancel/<int:id>", methods=["GET", "POST"])
 @login_required
 def cancel_appointment(id):
@@ -418,7 +418,7 @@ def scheduler():
 
 #Admin User Access Table
 @app.route('/admin/useraccess')
-@login_required
+#@login_required
 def userAccess():
     admin = current_user.AdminAccess
     if admin:
@@ -568,3 +568,149 @@ def send_sms():
 
     return render_template("dashboardadmin.html"), 'SMS sent!'
 
+
+
+
+#####################
+#########
+######
+###
+##
+#
+#
+#
+# This is the stuff that we were talking about Donnie.. If you need help with understanding it, let me know..
+
+# import os
+# import sqlite3
+# import random
+# from flask import Flask, render_template, request, flash, redirect, url_for
+# from twilio.rest import Client
+# from dotenv import load_dotenv
+
+# load_dotenv()
+
+# # Initialize the Flask app
+# app = Flask(__name__)
+
+# account_Sid = os.environ.get("ACCOUNT_SID")
+# auth_Token = os.environ.get("AUTH_TOKEN")
+# verify_service_id = os.environ.get("TWILIO_VERIFY_SERVICE_ID")
+# my_phone_number = os.environ.get("TWILIO_PHONE_NUMBER")
+
+# def init_db():
+#     conn = sqlite3.connect('users.db')
+#     c = conn.cursor()
+#     c.execute('''
+#         CREATE TABLE IF NOT EXISTS users (
+#         id INTEGER PRIMARY KEY,
+#         phone_number TEXT,
+#         verification_sid TEXT,
+#         verified INTEGER DEFAULT 0
+#     )''')
+#     conn.commit()
+#     conn.close()
+
+# init_db()
+
+# # Initialize the Twilio client
+# client = Client(account_sid, auth_token)
+
+# # Define the start_verification function
+# def start_verification(to, channel='sms'):
+#     if channel not in ('sms', 'call', 'whatsapp'):
+#         channel = 'sms'
+
+#     service = verify_service_id
+
+#     verification = client.verify \
+#         .v2.services(service) \
+#         .verifications \
+#         .create(to=to, channel=channel)
+    
+#     return verification.sid
+
+# # Create a function to store a user's phone number and verification SID in the database
+# def store_verification_sid(phone_number, verification_sid):
+#     conn = sqlite3.connect('users.db')
+#     c = conn.cursor()
+#     c.execute('INSERT INTO users (phone_number, verification_sid) VALUES (?, ?)',
+#               (phone_number, verification_sid))
+#     conn.commit()
+#     conn.close()
+
+# # Create the route that displays the phone number form
+# @app.route('/')
+# def enter_phone_number():
+#     return render_template('enterphonenumber.html')
+
+# # Create the route that handles the phone number form submission
+# @app.route('/send_verification_code', methods=['POST'])
+# def send_verification_code():
+#     phone_number = request.form['phone_number']
+    
+#     # Initiate a new verification using Twilio Verify
+#     verification_sid = start_verification(phone_number)
+    
+#     # Store the verification SID in the database
+#     store_verification_sid(phone_number, verification_sid)
+    
+#     # Render the verification code form
+#     return render_template('verify_code.html')
+
+# # Create the route that displays the verification code form
+# @app.route('/verify_code', methods=['GET'])
+# def verify_code():
+#     return render_template('verify_code.html')
+
+# @app.route('/check_verification_code', methods=['POST'])
+# def check_verification_code():
+#     phone_number = request.form['phone_number']
+#     verification_code = request.form['verification_code']
+
+#     # Retrieve the verification SID from the database
+#     conn = sqlite3.connect('users.db')
+#     c = conn.cursor()
+#     c.execute('SELECT verification_sid FROM users WHERE phone_number = ?', (phone_number,))
+#     result = c.fetchone()
+#     conn.close()
+
+#     verification_sid = result[0] if result else None
+
+#     # Verify the verification code using the Twilio Verify API
+#     if verification_sid:
+#         verification_check = client.verify.v2.services(verify_service_id).verification_checks.create(to=phone_number, code=verification_code)
+
+#         # Check if the verification was successful
+#         if verification_check.status == 'approved':
+#             # Update the user's verified status in the database
+#             conn = sqlite3.connect('users.db')
+#             c = conn.cursor()
+#             c.execute('UPDATE users SET verified = 1 WHERE phone_number = ?', (phone_number,))
+#             conn.commit()
+#             conn.close()
+
+#             # Display a confirmation page
+#             return render_template('confirmed.html')
+
+#         # Display a denial page if verification failed
+#         else:
+#             return render_template('denied.html')
+
+#     # Display a denial page if no verification SID found
+#     else:
+#         return render_template('denied.html')
+
+
+#     # Create the index page
+# @app.route('/index')
+# def index():
+#     return render_template('index.html')
+
+# # Create the login page
+# @app.route('/login')
+# def login():
+#     return render_template('login.html')
+
+# if __name__ == '__main__':
+#     app.run()
