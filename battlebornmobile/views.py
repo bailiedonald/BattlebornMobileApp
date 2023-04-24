@@ -418,7 +418,7 @@ def scheduler():
 
 #Admin User Access Table
 @app.route('/admin/useraccess')
-#@login_required
+@login_required
 def userAccess():
     admin = current_user.AdminAccess
     if admin:
