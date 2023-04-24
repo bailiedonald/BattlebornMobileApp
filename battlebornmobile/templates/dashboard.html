@@ -51,7 +51,7 @@
     <br>
     <h2 align="Center">Your Upcoming Appointments    </h2> 
         <a href="/appointment/request" align="Center">
-            <button type="button" class="btn btn-success" style="background-color:Navy">Make an Appointment</button>
+            <button type="button" class="btn btn-success" style="background-color:Navy">Request an Appointment</button>
         </a>
      <div class="card-body">     
          <p class="card-text">
@@ -61,16 +61,18 @@
                     <div class="row">
                         <div class="col-8">
                             <li>                        
+
                                 - {{ appointment.pet_name }} 
                                 - {{ appointment.service }} 
                                 - {{ appointment.dateSheduled }} 
                                 - {{ appointment.timeSheduled }} 
-                                - {% if not appointment.scheduled %}
-                                **Pending Appointment** 
-                                {% else %}
-                                **Scheduled Appointment**  
-                                {% endif %}
-                                - <a href="/appointment/cancel/{{ appointment.id }}">Cancel Appointment</a> - 
+                            {% if not appointment.scheduled %}
+                                **Pending Approval** 
+                            {% else %}
+                                **Approved** 
+                            {% endif %} - {{ appointment.pet_name }} - {{ appointment.service }} - {{ appointment.dateSheduled }} - {{ appointment.timeSheduled }} -
+                                <a href="/appointment/cancel/{{ appointment.id }}">Cancel Appointment</a> - 
+
                             </li>
                             <li>===============================================================</li>
                         </div>  

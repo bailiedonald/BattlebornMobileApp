@@ -336,7 +336,7 @@ def appointment():
     return render_template('appointment_request.html', title='MakeAppointment', form=form)
 
 
-#Appointment Cancel Route
+#Appointment Cancel RouteF
 @app.route("/appointment/cancel/<int:id>", methods=["GET", "POST"])
 @login_required
 def cancel_appointment(id):
@@ -418,7 +418,7 @@ def scheduler():
 
 #Admin User Access Table
 @app.route('/admin/useraccess')
-@login_required
+#@login_required
 def userAccess():
     admin = current_user.AdminAccess
     if admin:
