@@ -1,4 +1,5 @@
 # For Dev and Local Use
+import os
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
@@ -6,7 +7,9 @@ from flask_login import LoginManager
 from twilio.rest import Client
 from flask_mail import Mail
 from itsdangerous import URLSafeTimedSerializer
-import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 app = Flask(__name__)
@@ -27,8 +30,11 @@ app.config['MAIL_USERNAME'] = 'spencer@alsetdsgd.com'
 app.config['MAIL_PASSWORD'] = 'Spring22'
 
 #Twilio credentials
-Account_Sid = '####'
-Auth_Token = '####'
+Account_Sid = os.environ.get("ACCOUNT_SID")
+Auth_Token = os.environ.get("AUTH_TOKEN")
+verify_service_id = os.environ.get("TWILIO_VERIFY_SERVICE_ID")
+my_phone_number = os.environ.get("TWILIO_PHONE_NUMBER")
+
 
 #Initialize the Twilio client
 client = Client(Account_Sid, Auth_Token)
@@ -85,6 +91,9 @@ from battlebornmobile import views
 # # Twilio credentials
 # Account_Sid = os.environ.get('Account_Sid')
 # Auth_Token = os.environ.get('Auth_Token')
+# verify_service_id = os.environ.get("TWILIO_VERIFY_SERVICE_ID")
+# my_phone_number = os.environ.get("TWILIO_PHONE_NUMBER")
+
 
 # # Initialize the Twilio client
 # client = Client(Account_Sid, Auth_Token)
