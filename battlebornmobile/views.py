@@ -62,17 +62,15 @@ def signup():
         db.session.commit()
 
         flash('Please check your email to verify your new account')
-        return render_template('confirmEmail.html')
+        return redirect(url_for('verify_account'))
 
     return render_template('signup.html', title='Sign Up', form=form)
 
 #Verify Account Page
-@app.route('/verify_account/<string:username>', methods=['GET'])
-def verify_account(username):
-    user = User.query.filter_by(username=username).first_or_404()
-    user.active = True
-    db.session.commit()
-    flash('Your email has been confirmed! You can now login.', 'success')
+@app.route('/verify_account', methods=['GET'])
+def verify_account():
+
+    flash('Thank you for signing up please verify your account.', 'success')
     return render_template('confirmAccount.html')
 
 
