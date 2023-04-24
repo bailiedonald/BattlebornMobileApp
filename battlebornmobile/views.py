@@ -1,5 +1,5 @@
 import os, random, string, shutil
-from flask import render_template, url_for, flash, redirect, jsonify, request, send_file, send_from_directory
+from flask import render_template, url_for, flash, redirect, jsonify, abort, request, send_file, send_from_directory
 from battlebornmobile import app, db, bcrypt, mail, client
 from battlebornmobile.forms import SignUpForm, LoginForm, PetForm, AppointmentForm, ResetPasswordForm, UpdateProfileForm, UpdateProfilePictureForm
 from battlebornmobile.models import User, Pet, Appointment
@@ -427,7 +427,7 @@ def scheduler():
 
 #Admin User Access Table
 @app.route('/admin/useraccess')
-#@login_required
+@login_required
 def userAccess():
     admin = current_user.AdminAccess
     if admin:
