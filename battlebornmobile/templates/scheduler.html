@@ -47,7 +47,7 @@
               <label for="timeScheduled">Time scheduled:</label>
               <input type="time" class="form-control" id="timeScheduled" name="timeScheduled" value="">
             </div>
-            <button type="submit" class="btn btn-success" onclick="return confirm('Are you sure you want to schedule this appointment?')">Schedule</button>
+            <button type="submit" class="btn btn-success" onclick="return confirm('Are you sure you want to schedule this appointment?')" render_template("appointment_confirm.html")>Schedule</button>
           </form>
           {% else %}
           <div class="alert alert-success" role="alert">
