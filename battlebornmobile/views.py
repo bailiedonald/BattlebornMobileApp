@@ -66,6 +66,17 @@ def signup():
 
     return render_template('signup.html', title='Sign Up', form=form)
 
+#Verify Account Page
+@app.route('/verify_account/<string:username>', methods=['GET'])
+def verify_account(username):
+    user = User.query.filter_by(username=username).first_or_404()
+    user.active = True
+    db.session.commit()
+    flash('Your email has been confirmed! You can now login.', 'success')
+    return render_template('confirmAccount.html')
+
+
+
 
 #Verify Email Page
 @app.route('/verify_email/<string:username>', methods=['GET'])
