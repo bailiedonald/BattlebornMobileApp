@@ -1,12 +1,14 @@
-import os, random, string
-from flask import render_template, url_for, flash, redirect, jsonify, request, send_file
+import os, random, string, shutil
+from flask import render_template, url_for, flash, redirect, jsonify, request, send_file, send_from_directory
 from battlebornmobile import app, db, bcrypt, mail, client
 from battlebornmobile.forms import SignUpForm, LoginForm, PetForm, AppointmentForm, ResetPasswordForm, UpdateProfileForm, UpdateProfilePictureForm
 from battlebornmobile.models import User, Pet, Appointment
+from datetime import datetime
 from flask_login import login_user, current_user, logout_user, login_required
 from flask_mail import Mail, Message
 from werkzeug.utils import secure_filename
 from twilio.rest import Client
+
 
 
 #index Page
@@ -43,6 +45,15 @@ def signup():
     form = SignUpForm()
     if form.validate_on_submit():
 
+        # # Process the user's sign-up information and generate a verification token
+        # email = form.email.data
+        # username = form.username.data
+
+        # # Send the verification email to the user's email address
+        # msg = Message('Verify your email address', sender=app.config['MAIL_USERNAME'], recipients=[email])
+        # msg.body = render_template('verification_email.txt', username=username)
+        # mail.send(msg)
+
         # Update the user's account information to indicate that the email address is not yet verified
         # You can use a database or other storage mechanism to track this information
         hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
@@ -55,6 +66,7 @@ def signup():
 
     return render_template('signup.html', title='Sign Up', form=form)
 
+
 #Verify Email Page
 @app.route('/verify_email/<string:username>', methods=['GET'])
 def verify_email(username):
@@ -63,27 +75,7 @@ def verify_email(username):
     db.session.commit()
     flash('Your email has been confirmed! You can now login.', 'success')
     return redirect(url_for('login'))
-    # if form.validate_on_submit():
-    #     # Process the user's sign-up information and generate a verification token
-    #     email = form.email.data
-    #     username = form.username.data
 
-    #     # Send the verification email to the user's email address
-    #     msg = Message('Verify your email address', sender='spencer@alsetdsgd.com', recipients=[email])
-    #     msg.body = render_template('verification_email.txt', username=form.username.data)
-    #     mail.send(msg)
-
-    #     # Update the user's account information to indicate that the email address is not yet verified
-    #     # You can use a database or other storage mechanism to track this information
-    #     hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
-    #     user = User(username=form.username.data, email=email, password=hashed_password, firstName=form.firstName.data, lastName=form.lastName.data, phoneNumber=form.phoneNumber.data, streetNumber=form.streetNumber.data, city=form.city.data, state=form.state.data, zipcode=form.zipcode.data)
-    #     db.session.add(user)
-    #     db.session.commit()
-
-    #     flash('Please check your email to verify your new account')
-    #     return render_template('confirmEmail.html')
-
-    # return render_template('signup.html', title='Sign Up', form=form)
 
 
 #Login Page
@@ -141,7 +133,7 @@ If you did not make this request then simply ignore this email and no changes wi
             flash('There is no account with that email. You must register first.', 'warning')
     return render_template('password_forgot.html')
 
-# Reset password 
+#Reset password 
 @app.route('/password/reset', methods=['GET', 'POST'])
 def password_reset():
     if current_user.is_authenticated:
@@ -179,6 +171,7 @@ def dashboard():
 
     return render_template("dashboard.html", pets=pets, appointments=appointments)
 
+
 # Profile Update
 @app.route('/profile/update', methods=['GET', 'POST'])
 @login_required
@@ -215,7 +208,7 @@ def profile_update():
     return render_template('profile_update.html', title='Update User Information', form=form)
 
 
-# Profile Picture Update
+#Profile Picture Update
 @app.route('/profile/picture/update', methods=['GET', 'POST'])
 @login_required
 def profile_picture_update():
@@ -242,7 +235,8 @@ def profile_picture_update():
             return render_template("dashboard.html")
     return render_template('profile_picture_update.html', form=form)
 
-# Add Pet Page
+
+#Add Pet Page
 @app.route("/pet/add", methods=['GET', 'POST'])
 @login_required
 def add_pet():
@@ -256,6 +250,19 @@ def add_pet():
             pic_path = os.path.join(app.root_path, 'static/pet_pics', pic_filename)
             form.pet_pic.data.save(pic_path)
             pet.pet_pic = pic_filename
+        
+        # Save PDF record to filesystem and update pet record field
+        if form.pet_record.data:
+            pdf_filename = secure_filename(current_user.username + '_' + form.pet_name.data + '.' + form.pet_record.data.filename.split('.')[-1])
+            pdf_path = os.path.join(app.root_path, 'static/pet_records', pdf_filename)
+            form.pet_record.data.save(pdf_path)
+            pet.pdf_record = pdf_filename
+        else:
+            # Copy default pdf record if no file is uploaded
+            default_pdf_path = os.path.join(app.root_path, 'static/pet_records/new_record.pdf')
+            filename = f"{current_user.id}_{pet.pet_name}_record.pdf"
+            pet.pdf_record = filename
+            shutil.copyfile(default_pdf_path, os.path.join(app.root_path, 'static/pet_records', pet.pdf_record))
 
         # Add Pet to Pet Database
         db.session.add(pet)
@@ -265,6 +272,51 @@ def add_pet():
         return redirect(url_for('dashboard'))
 
     return render_template('add_pet.html', form=form)
+
+
+#Upload Pet PDF_Record
+@app.route('/staff/records/update_pet_record/<int:pet_id>', methods=['GET', 'POST'])
+def update_pet_record(pet_id):
+    # Get the pet object from the database using the pet_id
+    pet = Pet.query.filter_by(id=pet_id).first()
+
+    if not pet:
+        flash('Pet record not found', 'error')
+        return redirect(url_for('customer_records'))
+
+    if request.method == 'POST':
+        # Handle the form submission
+        if 'pdf_file' not in request.files:
+            flash('No PDF file selected', 'error')
+            return redirect(request.url)
+
+        file = request.files['pdf_file']
+
+        if not file.filename:
+            flash('No PDF file selected', 'error')
+            return redirect(request.url)
+
+        # Save the PDF file to the server
+        filename = f"{pet.owner_id}_{pet.pet_name}_record.pdf"
+        file.save(os.path.join(app.root_path, 'static/pet_records/', filename))
+
+        # Update the pet's PDF record in the database
+        pet.pdf_record = filename
+        db.session.commit()
+
+        flash('PDF record updated successfully', 'success')
+        return redirect(url_for('records'))
+
+    # Render the update pet record form
+    return render_template('update_pet_record.html', pet=pet)
+
+
+#View PDF
+@app.route('/view_pdf/<int:id>')
+def view_pdf(id):
+    pet = Pet.query.get_or_404(id)
+    pdf_path = os.path.join(app.root_path, 'static/pet_records', pet.pdf_record)
+    return send_file(pdf_path, attachment_filename=pet.pdf_record)
 
 
 #Appointment Request Page
@@ -309,15 +361,15 @@ def cancel_appointment(id):
     return render_template("appointment_cancel.html", appointment=appointment, form=form)
 
 
-# All Unscheduled Appointments
-@app.route('/appointments/unscheduled')
-@login_required
-def unscheduled_appointments():
-    appointments = Appointment.query.filter_by(scheduled=False).all()
-    return render_template('appointment_unscheduled.html', appointments=appointments)
+# #All Unscheduled Appointments
+# @app.route('/appointments/unscheduled')
+# @login_required
+# def unscheduled_appointments():
+#     appointments = Appointment.query.filter_by(scheduled=False).all()
+#     return render_template('appointment_unscheduled.html', appointments=appointments)
 
 
-# Schedule Each Appointment
+#Schedule Each Appointment
 @app.route('/appointments/schedule/<int:id>', methods=['POST'])
 @login_required
 def schedule_appointment(id):
@@ -346,11 +398,13 @@ def schedule_appointment(id):
 def confirm_appointment():
     return render_template("appointment_confirm.html")
 
+
 #All Appointments
 @app.route('/appointments')
 @login_required
 def appointments():
     return render_template("appointments.html")
+
 
 #Scheduler
 @app.route('/staff/scheduler')
@@ -395,6 +449,7 @@ def updateAccess(user_id):
         flash ("Access Denied Admin Only.")
         return render_template("dashboard.html")
 
+
 #Staff Dashboard
 @app.route('/staff/dashboard')
 @login_required
@@ -406,34 +461,18 @@ def staffdashboard():
         flash ("Access Denied Staff Only.")
         return render_template("dashboard.html")
 
-# Update Pet Record
-@app.route('/staff/records/update_pdf/<int:pet_id>', methods=['POST'])
-@login_required
-def update_pdf(pet_id):
-    pet = Pet.query.get_or_404(pet_id)
-    user = pet.owner
-    pdf_file = request.files['pdf_file']
-    if pdf_file:
-        # Modify filename to include user ID and pet ID
-        filename = f"{user.id}_{pet.id}_pet_record.pdf"
-        pdf_path = os.path.join('static/pdf_records', filename)
-        pdf_file.save(pdf_path)
-        pet.record = filename
-        db.session.commit()
-        flash('PDF record updated successfully!', 'success')
-    else:
-        flash('Please select a file to upload!', 'danger')
-    return redirect(url_for('records'))
-
-
 
 #Staff View Customer Records
 @app.route('/staff/records', methods={"GET", "POST"})
 @login_required
 def records():
-    users = User.query.all()
-    pets = Pet.query.all()
-    return render_template('records.html', users=users)
+    try:
+        users = User.query.all()
+        pets = Pet.query.all()
+        return render_template('records.html', users=users)
+    except Exception as e:
+        flash(f'An error occurred: {e}', 'danger')
+        return redirect(url_for('dashboard'))
 
 
 #Staff Search Customer Records
@@ -466,7 +505,6 @@ def calendar():
     return render_template('calendar.html')
 
 
-
 #Calendar Event class
 class Event(db.Model):
         
@@ -481,7 +519,6 @@ class Event(db.Model):
 
 #Calendar events
 @app.route('/events')
-
 def events():
     events = Appointment.query.all()
     event_list = []
@@ -497,7 +534,6 @@ def events():
 if __name__ == '__main__':
     app.run(debug=True)
     
-
 
 #SMS Notification Page
 @app.route('/sms/send', methods=['GET', 'POST'])
@@ -520,7 +556,6 @@ def smsSend():
         return 'Method not allowed', 405
 
 
-
 # Example view function that sends a SMS message
 @app.route('/sendtext', methods=['GET', 'POST'])
 def send_sms():
@@ -533,3 +568,149 @@ def send_sms():
 
     return render_template("dashboardadmin.html"), 'SMS sent!'
 
+
+
+
+#####################
+#########
+######
+###
+##
+#
+#
+#
+# This is the stuff that we were talking about Donnie.. If you need help with understanding it, let me know..
+
+# import os
+# import sqlite3
+# import random
+# from flask import Flask, render_template, request, flash, redirect, url_for
+# from twilio.rest import Client
+# from dotenv import load_dotenv
+
+# load_dotenv()
+
+# # Initialize the Flask app
+# app = Flask(__name__)
+
+# account_Sid = os.environ.get("ACCOUNT_SID")
+# auth_Token = os.environ.get("AUTH_TOKEN")
+# verify_service_id = os.environ.get("TWILIO_VERIFY_SERVICE_ID")
+# my_phone_number = os.environ.get("TWILIO_PHONE_NUMBER")
+
+# def init_db():
+#     conn = sqlite3.connect('users.db')
+#     c = conn.cursor()
+#     c.execute('''
+#         CREATE TABLE IF NOT EXISTS users (
+#         id INTEGER PRIMARY KEY,
+#         phone_number TEXT,
+#         verification_sid TEXT,
+#         verified INTEGER DEFAULT 0
+#     )''')
+#     conn.commit()
+#     conn.close()
+
+# init_db()
+
+# # Initialize the Twilio client
+# client = Client(account_sid, auth_token)
+
+# # Define the start_verification function
+# def start_verification(to, channel='sms'):
+#     if channel not in ('sms', 'call', 'whatsapp'):
+#         channel = 'sms'
+
+#     service = verify_service_id
+
+#     verification = client.verify \
+#         .v2.services(service) \
+#         .verifications \
+#         .create(to=to, channel=channel)
+    
+#     return verification.sid
+
+# # Create a function to store a user's phone number and verification SID in the database
+# def store_verification_sid(phone_number, verification_sid):
+#     conn = sqlite3.connect('users.db')
+#     c = conn.cursor()
+#     c.execute('INSERT INTO users (phone_number, verification_sid) VALUES (?, ?)',
+#               (phone_number, verification_sid))
+#     conn.commit()
+#     conn.close()
+
+# # Create the route that displays the phone number form
+# @app.route('/')
+# def enter_phone_number():
+#     return render_template('enterphonenumber.html')
+
+# # Create the route that handles the phone number form submission
+# @app.route('/send_verification_code', methods=['POST'])
+# def send_verification_code():
+#     phone_number = request.form['phone_number']
+    
+#     # Initiate a new verification using Twilio Verify
+#     verification_sid = start_verification(phone_number)
+    
+#     # Store the verification SID in the database
+#     store_verification_sid(phone_number, verification_sid)
+    
+#     # Render the verification code form
+#     return render_template('verify_code.html')
+
+# # Create the route that displays the verification code form
+# @app.route('/verify_code', methods=['GET'])
+# def verify_code():
+#     return render_template('verify_code.html')
+
+# @app.route('/check_verification_code', methods=['POST'])
+# def check_verification_code():
+#     phone_number = request.form['phone_number']
+#     verification_code = request.form['verification_code']
+
+#     # Retrieve the verification SID from the database
+#     conn = sqlite3.connect('users.db')
+#     c = conn.cursor()
+#     c.execute('SELECT verification_sid FROM users WHERE phone_number = ?', (phone_number,))
+#     result = c.fetchone()
+#     conn.close()
+
+#     verification_sid = result[0] if result else None
+
+#     # Verify the verification code using the Twilio Verify API
+#     if verification_sid:
+#         verification_check = client.verify.v2.services(verify_service_id).verification_checks.create(to=phone_number, code=verification_code)
+
+#         # Check if the verification was successful
+#         if verification_check.status == 'approved':
+#             # Update the user's verified status in the database
+#             conn = sqlite3.connect('users.db')
+#             c = conn.cursor()
+#             c.execute('UPDATE users SET verified = 1 WHERE phone_number = ?', (phone_number,))
+#             conn.commit()
+#             conn.close()
+
+#             # Display a confirmation page
+#             return render_template('confirmed.html')
+
+#         # Display a denial page if verification failed
+#         else:
+#             return render_template('denied.html')
+
+#     # Display a denial page if no verification SID found
+#     else:
+#         return render_template('denied.html')
+
+
+#     # Create the index page
+# @app.route('/index')
+# def index():
+#     return render_template('index.html')
+
+# # Create the login page
+# @app.route('/login')
+# def login():
+#     return render_template('login.html')
+
+# if __name__ == '__main__':
+#     app.run()

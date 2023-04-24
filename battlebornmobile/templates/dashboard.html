@@ -1,15 +1,6 @@
 {% extends 'layout.html' %}
 {% block content %}
 
-{% for message in get_flashed_messages() %}
-	
-	<div class="alert alert-warning alert-dismissible fade show" role="alert">
-	  {{ message }}
-	  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-	</div>
-
-	
-{% endfor %}
 
 	<h1>{{ current_user.firstName | capitalize }} {{ current_user.lastName | capitalize }}'s Dashboard</h1>
 	<br/>
@@ -70,14 +61,20 @@
                     <div class="row">
                         <div class="col-8">
                             <li>                        
+
+                                - {{ appointment.pet_name }} 
+                                - {{ appointment.service }} 
+                                - {{ appointment.dateSheduled }} 
+                                - {{ appointment.timeSheduled }} 
                             {% if not appointment.scheduled %}
                                 **Pending Approval** 
                             {% else %}
                                 **Approved** 
                             {% endif %} - {{ appointment.pet_name }} - {{ appointment.service }} - {{ appointment.dateSheduled }} - {{ appointment.timeSheduled }} -
                                 <a href="/appointment/cancel/{{ appointment.id }}">Cancel Appointment</a> - 
+
                             </li>
-                            <li>=======================================================================</li>
+                            <li>===============================================================</li>
                         </div>  
                     </div>
                 {% endfor %}                
@@ -98,23 +95,32 @@
             <div class="container">                            
                 <ul style="list-style-type:none;">
                     {% for pet in pets %}
-                        <div class="row">
-                            <div class="col-8">
-                                <li>
-                                {% if pet.pet_pic != 'animals.jpeg' %}
-                                    <img src="{{ url_for('static', filename='pet_pics/' + pet.pet_pic) }}" width="200" align="Left">
-                                {% else %}
-                                    <img src="{{ url_for('static', filename='images/animals.jpeg') }}" width="200" align="Left">
-                                {% endif %}
-                                </li>
-                                <li>    Name: {{ pet.pet_name }}</li>
-                                <li>    Species: {{ pet.pet_species }}  -  Breed: {{ pet.pet_breed }} 
-                                <li>   Color: {{ pet.pet_color }}</li>
-                                <li>    Date of Birth: {{ pet.pet_dob }}</li>
-                                <li>    Height: {{ pet.pet_hieght }} ft Weight: {{ pet.pet_weight }} lbs</li>
+                            <div class="row">
+                                <div class="col-4">
+                                    {% if pet.pet_pic != 'animals.jpeg' %}
+                                        <img src="{{ url_for('static', filename='pet_pics/' + pet.pet_pic) }}" width="200" align="Left">
+                                    {% else %}
+                                        <img src="{{ url_for('static', filename='images/animals.jpeg') }}" width="200" align="Left">
+                                    {% endif %}
+                                </div>
+                                <div class="col-4">
+                                    <ul>
+                                        <li>Name: {{ pet.pet_name }}</li>
+                                        <li>Species: {{ pet.pet_species }} - Breed: {{ pet.pet_breed }}</li>
+                                        <li>Color: {{ pet.pet_color }}</li>
+                                        <li>Date of Birth: {{ pet.pet_dob }}</li>
+                                        <li>Height: {{ pet.pet_hieght }} ft Weight: {{ pet.pet_weight }} lbs</li>
+                                    </ul>
+                                </div>
+                                <div class="col-4">
+                                    <ul>
+                                        <a href="/view_pdf/{{ pet.id }}" target="_blank">
+                                            View Pet Record
+                                        </a>                                        
+                                    </ul>
+                                </div>
                             </div>
-                        </div>
-                        <br>
+                            <br>
                     {% endfor %}
                 </ul>
             </div>
