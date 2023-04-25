@@ -1,14 +1,19 @@
-
 {% extends 'layout.html' %}
 
 {% block content %}
 <h1>Confirm Account to Complete Account Registration</h1>
-<p>confirm your account either by email or text </p>
+<p>Confirm your account either by email or text:</p>
 <br>
-<p>radial send text to confirm</p>
-<p>radial send email to confirm</p>
-<p>submit button</p>
+<form method="POST" action="">
+    <div>
+        <input type="radio" id="email" name="method" value="email">
+        <label for="email">Send Email</label>
+    </div>
+    <div>
+        <input type="radio" id="phoneNumber" name="method" value="phoneNumber">
+        <label for="phoneNumber">Send Text</label>
+    </div>
+    <button type="submit">Submit Button</button>
+</form>
 {% endblock %}
-
-
 

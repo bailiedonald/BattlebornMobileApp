@@ -94,10 +94,10 @@ from battlebornmobile import views
 # app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD')
 
 # # Twilio credentials
-# Account_Sid = os.environ.get('Account_Sid')
-# Auth_Token = os.environ.get('Auth_Token')
-# verify_service_id = os.environ.get("TWILIO_VERIFY_SERVICE_ID")
-# my_phone_number = os.environ.get("TWILIO_PHONE_NUMBER")
+Account_Sid = os.environ.get('Account_Sid')
+Auth_Token = os.environ.get('Auth_Token')
+verify_service_id = os.environ.get("TWILIO_VERIFY_SERVICE_ID")
+my_phone_number = os.environ.get("TWILIO_PHONE_NUMBER")
 
 
 # # Initialize the Twilio client
