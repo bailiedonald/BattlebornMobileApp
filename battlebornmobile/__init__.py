@@ -30,15 +30,15 @@ app.config['MAIL_USERNAME'] = 'spencer@alsetdsgd.com'
 app.config['MAIL_PASSWORD'] = 'Spring22'
 
 #Twilio credentials
-Account_Sid = os.environ.get("ACCOUNT_SID")
-Auth_Token = os.environ.get("AUTH_TOKEN")
-verify_service_id = os.environ.get("TWILIO_VERIFY_SERVICE_ID")
-my_phone_number = os.environ.get("TWILIO_PHONE_NUMBER")
+#Account_Sid = os.environ.get("ACCOUNT_SID")
+#Auth_Token = os.environ.get("AUTH_TOKEN")
+#verify_service_id = os.environ.get("TWILIO_VERIFY_SERVICE_ID")
+#my_phone_number = os.environ.get("TWILIO_PHONE_NUMBER")
 
-#Account_Sid = "your_account_sid"
-#Auth_Token = "your_auth_token"
-#verify_service_id = "your_verify_service_id"
-#my_phone_number = "your_phone_number"
+Account_Sid = "your_account_sid"
+Auth_Token = "your_auth_token"
+verify_service_id = "your_verify_service_id"
+my_phone_number = "your_phone_number"
 
 
 #Initialize the Twilio client
