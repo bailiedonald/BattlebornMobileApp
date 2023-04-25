@@ -84,7 +84,7 @@ class Appointment(db.Model, UserMixin):
     zipcode = db.Column(db.String(5))
     weekday = db.Column(db.String(10))
     timeSlot = db.Column(db.String(20))
-    dateSheduled= db.Column(db.String(30))
+    dateSheduled = db.Column(db.String(30))
     timeSheduled = db.Column(db.String(20))
     scheduled = db.Column(db.Boolean, default=False, nullable=False)
     completed = db.Column(db.Boolean, default=False, nullable=False)
@@ -92,6 +92,21 @@ class Appointment(db.Model, UserMixin):
     #Link to Pet Owner in user Database
     pet_id = db.Column(db.Integer, db.ForeignKey('pet.id'))
     owner_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    
+    def convert_to_iso_format(self, date_string, time_string):
+        # Convert the date string to a datetime object
+        date = datetime.strptime(date_string, "%Y-%m-%d")
 
+        # Convert the time string to a datetime object
+        time = datetime.strptime(time_string, "%H:%M:%S")
+
+        # Combine the date and time objects into a datetime object
+        date_time = datetime.combine(date, time)
+
+        # Convert the datetime object to an ISO-formatted string
+        iso_string = date_time.isoformat()
+
+        return iso_string
+    
     def __repr__(self):
         return f"Pet('{self.id}', '{self.scheduled}', '{self.cancelled}', '{self.owner_id}')"

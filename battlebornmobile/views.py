@@ -1,5 +1,5 @@
 import os, random, string, shutil
-from flask import render_template, url_for, flash, redirect, jsonify, request, send_file, send_from_directory
+from flask import render_template, url_for, flash, redirect, jsonify, abort, request, send_file, send_from_directory
 from battlebornmobile import app, db, bcrypt, mail, client
 from battlebornmobile.forms import SignUpForm, LoginForm, PetForm, AppointmentForm, ResetPasswordForm, UpdateProfileForm, UpdateProfilePictureForm
 from battlebornmobile.models import User, Pet, Appointment
@@ -95,7 +95,7 @@ def login():
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data.lower()).first()
-        if user and bcrypt.check_password_hash(user.password, form.password.data):
+        if user and bcrypt.check_password_hash(user.password, form.password.data) and user.active:
             login_user(user, remember=form.remember.data)
             next_page = request.args.get('next')
             staff = current_user.StaffAccess
@@ -129,12 +129,12 @@ def password_forgot():
             # send email with password reset instructions
             msg = Message('Password Reset Request', sender='noreply@example.com', recipients=[user.email])
             msg.body = f'''To reset your password, visit the following link:
-{url_for('password_reset', _external=True)}
+            {url_for('password_reset', _external=True)}
 
-Your new temporary password is: {new_password}
+            Your new temporary password is: {new_password}
 
-If you did not make this request then simply ignore this email and no changes will be made.
-'''
+            If you did not make this request then simply ignore this email and no changes will be made.
+            '''
             mail.send(msg)
             flash('An email has been sent with instructions to reset your password.', 'success')
             return redirect(url_for('login'))
@@ -285,6 +285,7 @@ def add_pet():
 
 #Upload Pet PDF_Record
 @app.route('/staff/records/update_pet_record/<int:pet_id>', methods=['GET', 'POST'])
+@login_required
 def update_pet_record(pet_id):
     # Get the pet object from the database using the pet_id
     pet = Pet.query.filter_by(id=pet_id).first()
@@ -322,6 +323,7 @@ def update_pet_record(pet_id):
 
 #View PDF
 @app.route('/view_pdf/<int:id>')
+@login_required
 def view_pdf(id):
     pet = Pet.query.get_or_404(id)
     pdf_path = os.path.join(app.root_path, 'static/pet_records', pet.pdf_record)
@@ -417,7 +419,7 @@ def appointments():
 
 #Scheduler
 @app.route('/staff/scheduler')
-@login_required
+#@login_required
 def scheduler():
     appointments = Appointment.query.filter_by(scheduled=False).all()
 #     tappointments = Appointment.query.filter_by(dateSheduled=todaydate).all()
@@ -427,7 +429,7 @@ def scheduler():
 
 #Admin User Access Table
 @app.route('/admin/useraccess')
-#@login_required
+@login_required
 def userAccess():
     admin = current_user.AdminAccess
     if admin:
@@ -498,6 +500,7 @@ def search():
 
 #Update User Page
 @app.route('/update/<int:user_id>', methods=['GET', 'POST'])
+@login_required
 def update_user(user_id):
     user = User.query.get(user_id)
     if request.method == 'POST':
@@ -510,6 +513,7 @@ def update_user(user_id):
 
 #Calendar Page
 @app.route('/calendar')
+@login_required
 def calendar():
     return render_template('calendar.html')
 
@@ -528,16 +532,17 @@ class Event(db.Model):
 
 #Calendar events
 @app.route('/events')
+@login_required
 def events():
     events = Appointment.query.all()
     event_list = []
     for event in events:
         if event.scheduled:
             event_list.append({
-                'title': event.pet_name,
-                'start': event.dateSheduled,
-                'time': event.timeSheduled
-        })
+                'title': event.firstName + ' '  + event.lastName,
+                'start': event.convert_to_iso_format(event.dateSheduled, event.timeSheduled),
+                'customText' : event.service
+            })
     return jsonify(event_list)
 
 if __name__ == '__main__':
@@ -546,6 +551,7 @@ if __name__ == '__main__':
 
 #SMS Notification Page
 @app.route('/sms/send', methods=['GET', 'POST'])
+@login_required
 def smsSend():
     if request.method == 'POST':
         phone_number = request.form.get('phoneNumber')
@@ -567,6 +573,7 @@ def smsSend():
 
 # Example view function that sends a SMS message
 @app.route('/sendtext', methods=['GET', 'POST'])
+@login_required
 def send_sms():
     message = client.messages.create(
         messaging_service_sid='MGdc049f1edc574951803c83a97cd37602',
