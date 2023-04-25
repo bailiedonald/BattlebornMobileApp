@@ -32,18 +32,23 @@
    
 </head>
 <body>
-  <div>
-    <center>
-      <h1>Battleborn Mobile Veterinary Hospital</h1>
-      <hl></hl>
-    </center>
-  </div>
-
+<br>
+{% for message in get_flashed_messages() %}
+	
+	<div class="alert alert-warning alert-dismissible fade show" role="alert">
+	  {{ message }}
+	  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+	</div>
+	
+{% endfor %}
   <br/>
     {% include 'navbar.html' %}
   <br/>
 
   <div class="container-fluid">
+    <br>
+    <br>
+    <br>
     {% block content %}
 
     {% endblock %}
