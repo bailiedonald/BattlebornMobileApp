@@ -498,42 +498,84 @@ hr.border {
 
 
 
-.test2{
-  margin: 0;
-  padding:0;
-  box-sizing: border-box;
+/*Login*/
+.login {
   position: relative;
-  width: 100%;
-  height: 100vh;
+  overflow: hidden;
 }
 
-.test2 .imgSection{
-  position: absolute;
-  width: 50%;
-  height: 100%;
-}
-
-.test2 .imgSection:before{
-  content: '';
+.login img {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(225deg,#FFA300,#003366,#00d80e);
-  z-index: 1;
-  mix-blend-mode: screen;
-}
-.test2 .imgSection img{
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  object-fit: cover;
+  z-index: -1;
 }
 
+.login .border-top{
+  padding-bottom: 100px;
+}
 
+.login legend{
+  color: white;
+  font-size: 70px;
+  justify-content: center;
+  padding-bottom: 20px;
+  padding-top: 60px;
+  display: flex;
+}
 
+.login .content-section{
+  max-width: 800px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: white;
+  font-size: 25px;
+}
 
+.login .form-control {
+  width: 500px;
+  height: 40px;
+  border-radius: 30px;
+  background: rgba(255, 255, 255, 0.3);
+  border-color: rgba(255, 255, 255, 0.3);
+  
+}
 
+.login .form-check{
+  font-size: 18px;
+}
+
+.login .btn {
+  background-color: white;
+  border: none;
+  border-radius: 30px;
+  height: 50px;
+  width: 500px;
+  color: black;
+  font-size: 20px;
+  text-align: center;
+}
+.login .btn:hover{
+background-color: #003366;
+border-color: white;
+}
+
+.login small a {
+  color: white; 
+}
+
+.login .account-q {
+  color: #ececec;
+  font-size: 17px;
+}
+
+.login .sign-up{
+  font-size: 18px;
+}
 
