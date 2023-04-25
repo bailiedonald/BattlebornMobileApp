@@ -8,7 +8,9 @@ from flask_login import login_user, current_user, logout_user, login_required
 from flask_mail import Mail, Message
 from werkzeug.utils import secure_filename
 from twilio.rest import Client
+from dotenv import load_dotenv
 
+load_dotenv()
 
 
 #index Page
@@ -62,16 +64,30 @@ def signup():
         db.session.commit()
 
         flash('Please check your email to verify your new account')
-        return redirect(url_for('verify_account'))
+        return redirect(url_for('verifyAccount'))
 
     return render_template('signup.html', title='Sign Up', form=form)
 
-#Verify Account Page
-@app.route('/verify_account', methods=['GET'])
+@app.route('/verify_account', methods=['POST'])
 def verify_account():
+    phoneNumber = request.form['phoneNumber']
+    verificationCode = request.form['verificationCode']
 
-    flash('Thank you for signing up please verify your account.', 'success')
-    return render_template('confirmAccount.html')
+    # Verify the verification code using Twilio Verify
+    verification_check = client.verify.services('<YOUR_TWILIO_SERVICE_SID>').verification_checks.create(to=phoneNumber, code=verificationCode)
+
+    # If verification was successful, generate and store an auth code for the user
+    if verification_check.status == 'approved':
+        verification_sid, code = start_verification(phoneNumber)
+        store_auth_code(phoneNumber, code, verification_sid)
+        user = User.query.filter_by(phoneNumber=phoneNumber).first()
+        user.active = True
+        db.session.commit()
+        flash('Your phone number has been confirmed! You can now login.', 'success')
+        return redirect(url_for('login'))
+    else:
+        flash('Invalid verification code. Please try again.', 'error')
+        return redirect(url_for('confirmAccount'))
 
 
 
@@ -419,7 +435,7 @@ def appointments():
 
 #Scheduler
 @app.route('/staff/scheduler')
-@login_required
+#@login_required
 def scheduler():
     appointments = Appointment.query.filter_by(scheduled=False).all()
 #     tappointments = Appointment.query.filter_by(dateSheduled=todaydate).all()
@@ -539,10 +555,10 @@ def events():
     for event in events:
         if event.scheduled:
             event_list.append({
-                'title': event.pet_name,
-                'start': event.dateSheduled,
-                'time': event.timeSheduled
-        })
+                'title': event.firstName + ' '  + event.lastName,
+                'start': event.convert_to_iso_format(event.dateSheduled, event.timeSheduled),
+                'customText' : event.service
+            })
     return jsonify(event_list)
 
 if __name__ == '__main__':
@@ -609,10 +625,10 @@ def send_sms():
 # # Initialize the Flask app
 # app = Flask(__name__)
 
-# account_Sid = os.environ.get("ACCOUNT_SID")
-# auth_Token = os.environ.get("AUTH_TOKEN")
-# verify_service_id = os.environ.get("TWILIO_VERIFY_SERVICE_ID")
-# my_phone_number = os.environ.get("TWILIO_PHONE_NUMBER")
+account_Sid = os.environ.get("ACCOUNT_SID")
+auth_Token = os.environ.get("AUTH_TOKEN")
+verify_service_id = os.environ.get("TWILIO_VERIFY_SERVICE_ID")
+my_phone_number = os.environ.get("TWILIO_PHONE_NUMBER")
 
 # def init_db():
 #     conn = sqlite3.connect('users.db')
@@ -672,12 +688,12 @@ def send_sms():
 #     store_verification_sid(phone_number, verification_sid)
     
 #     # Render the verification code form
-#     return render_template('verify_code.html')
+#     return render_template('verify_account.html')
 
 # # Create the route that displays the verification code form
-# @app.route('/verify_code', methods=['GET'])
-# def verify_code():
-#     return render_template('verify_code.html')
+# @app.route('/verify_account', methods=['GET'])
+# def verify_account():
+#     return render_template('verify_account.html')
 
 # @app.route('/check_verification_code', methods=['POST'])
 # def check_verification_code():
@@ -730,3 +746,43 @@ def send_sms():
 
 # if __name__ == '__main__':
 #     app.run()
+
+def store_auth_code(phoneNumber, auth_code, verification_sid):
+    """Store the authentication code and verification SID for the given phone number"""
+    user = User.query.filter_by(phoneNumber=phoneNumber).first()
+    if user:
+        user.auth_code = auth_code
+        user.verification_sid = verification_sid
+    else:
+        user = User(phoneNumber=phoneNumber, auth_code=auth_code, verification_sid=verification_sid)
+        db.session.add(user)
+    db.session.commit()
+
+
+
+# Define the start_verification function
+def start_verification(to, channel='sms'):
+    if channel not in ('sms', 'call', 'whatsapp'):
+        channel = 'sms'
+
+    service = verify_service_id
+
+    verification = client.verify \
+        .v2.services(service) \
+        .verifications \
+        .create(to=to, channel=channel)
+
+    # Retrieve the verification code from the Twilio API response
+    code = None
+    if verification.status == 'pending':
+        checks = client.verify \
+            .v2.services(service) \
+            .verification_checks \
+            .list(to=to)
+        for check in checks:
+            if check.status == 'approved':
+                code = check.to
+                break
+
+    return verification.sid, code
+
