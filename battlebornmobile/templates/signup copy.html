@@ -6,34 +6,34 @@
             <fieldset class="form-group">
                 <legend class="border-bottom mb-4">Join Today</legend>
                 <div>
-                <div class="form-group">
-                    {{ form.username.label(class="form-control-label") }}
-                    {% if form.username.errors %}
-                        {{ form.username(class="form-control form-control-lg is-invalid") }}
-                        <div class="invalid-feedback">
-                            {% for error in form.username.errors %}
-                                <span>{{ error }}</span>
-                            {% endfor %}
-                        </div>
-                    {% else %}
-                        {{ form.username(class="form-control form-control-lg") }}
-                    {% endif %}
-                </div>
-                <div class="form-group">
-                    {{ form.email.label(class="form-control-label") }}
-                    {% if form.email.errors %}
-                        {{ form.email(class="form-control form-control-lg is-invalid") }}
-                        <div class="invalid-feedback">
-                            {% for error in form.email.errors %}
-                                <span>{{ error }}</span>
-                            {% endfor %}
-                        </div>
-                    {% else %}
-                        {{ form.email(class="form-control form-control-lg") }}
-                    {% endif %}
+                    <div class="form-group">
+                        {{ form.username.label(class="form-control-label") }}
+                        {% if form.username.errors %}
+                            {{ form.username(class="form-control form-control-lg is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.username.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.username(class="form-control form-control-lg") }}
+                        {% endif %}
+                    </div>
+                    <div class="form-group">
+                        {{ form.email.label(class="form-control-label") }}
+                        {% if form.email.errors %}
+                            {{ form.email(class="form-control form-control-lg is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.email.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.email(class="form-control form-control-lg") }}
+                        {% endif %}
 
-                </div>        
-            </div>                                   
+                    </div>        
+                </div>                                   
 				<div class="form-group row">
                     <div class="col-md-6">
                         {{ form.firstName.label(class="form-label") }}
@@ -43,11 +43,13 @@
                         {{ form.lastName.label(class="form-label") }}
                         {{ form.lastName(class="form-control") }}
                     </div>
-                    </div>
+                </div>
+                <div class="col-md-6">
+
                 {{ form.phoneNumber.label(class="form-label") }}
 		        {{ form.phoneNumber(class="form-control") }}
 		        <br/>
-            </div>
+                </div>
             <div>
             </div>
                 {{ form.streetNumber.label(class="form-label") }}
@@ -93,7 +95,6 @@
                     {% endif %}
                 </div>
             </fieldset>
-        </div>
 
             <div class="form-group">
                 {{ form.submit(class="btn btn-outline-info") }}
