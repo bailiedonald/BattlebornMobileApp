@@ -499,3 +499,16 @@ border-color: white;
   font-size: 18px;
 }
 
+/*dashboard*/
+.dashboard .appointmentstatus{
+  padding-bottom: 10px;
+  padding-top: 10px;
+  padding-right: 28px;
+
+}
+
+.dashboard .btn:hover {
+  background-color: rgb(223, 223, 223);
+}
+
+
