@@ -1,13 +1,14 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, BooleanField, DateField, SelectField, IntegerField, DateTimeField, FileField
+from wtforms import StringField, DateField, FileField, SubmitField
+from wtforms import validators, StringField, PasswordField, SubmitField, BooleanField, DateField, SelectField, IntegerField, DateTimeField, FileField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
-from flask_wtf.file import FileAllowed
+from flask_wtf.file import FileAllowed, FileRequired
 from battlebornmobile.models import User, Pet, Appointment
 from flask_login import current_user
 import random, string
 
 
-# This is a form
+#SignUpForm
 class SignUpForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired(), Length(min=2, max=20)])
     email = StringField('Email', validators=[DataRequired(), Email()])
@@ -33,6 +34,7 @@ class SignUpForm(FlaskForm):
             raise ValidationError('That email is taken. Please choose a different one.')
 
 
+#LoginForm
 class LoginForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired(), Email()])
     password = PasswordField('Password', validators=[DataRequired()])
@@ -41,12 +43,14 @@ class LoginForm(FlaskForm):
 
 
 class ResetPasswordForm(FlaskForm):
-    reset_password = StringField('Password Sent in Email', validators=[DataRequired(), Email()])
-    new_password = PasswordField('New Password', validators=[DataRequired()])
-    confirm_password = PasswordField('Confirm New Password', validators=[DataRequired(), EqualTo('new_password')])
+    email = StringField('Email', validators=[validators.DataRequired(), validators.Email()])
+    temp_password = PasswordField('Current Password', validators=[validators.DataRequired()])
+    new_password = PasswordField('New Password', validators=[validators.DataRequired(), validators.EqualTo('confirm_password', message='Passwords must match')])
+    confirm_password = PasswordField('Confirm New Password', validators=[validators.DataRequired()])
     submit = SubmitField('Reset Password')
 
 
+#PetForm
 class PetForm(FlaskForm):
     pet_name = StringField("Pet Name", validators=[DataRequired()])
     pet_dob = DateField("Pet Birthday", validators=[DataRequired()])
@@ -56,9 +60,11 @@ class PetForm(FlaskForm):
     pet_height = StringField("Pet Height")
     pet_weight = StringField("Pet Weight")
     pet_pic = FileField("Pet Picture", validators=[FileAllowed(['jpg', 'jpeg', 'png'])])
+    pet_record = FileField("Pet Record", validators=[FileAllowed(['pdf'])])
     submit = SubmitField('Add Pet')
 
 
+#AppointmentForm
 class AppointmentForm(FlaskForm):
     id = IntegerField('User ID')
     pet_name = SelectField('Pet', coerce=str, validators=[DataRequired()]) 
@@ -72,7 +78,7 @@ class AppointmentForm(FlaskForm):
     city = StringField('City', validators=[DataRequired()])
     state = StringField('State', validators=[DataRequired()])
     zipcode = StringField('Zip Code', validators=[DataRequired()])
-    submit = SubmitField('Make Appointment')
+    submit = SubmitField('Request Appointment')
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -91,8 +97,7 @@ class AppointmentForm(FlaskForm):
             raise ValidationError('Pet does not exist.')
 
 
-
-
+#RecordsForm
 class RecordsForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired(), Email()])
     firstName = StringField('First Name', validators=[DataRequired()])
@@ -104,6 +109,8 @@ class RecordsForm(FlaskForm):
     zipcode = StringField('Zip Code', validators=[DataRequired()])  
     submit = SubmitField('Submit')
 
+
+#SearchForm
 class SearchForm(FlaskForm):
     searched = StringField("Searched", validators=[DataRequired()])
     username = StringField('Username', validators=[DataRequired(), Length(min=2, max=20)])
@@ -120,6 +127,7 @@ class SearchForm(FlaskForm):
     submit = SubmitField("Submit")
 
 
+#UpdateProfileForm
 class UpdateProfileForm(FlaskForm):
     username = StringField("Username", validators=[DataRequired(), Length(min=2, max=20)])
     email = StringField("Email", validators=[DataRequired(), Email()])
@@ -132,5 +140,17 @@ class UpdateProfileForm(FlaskForm):
     zipcode = StringField("Zipcode")
     submit = SubmitField("Update")
 
+
+#UpdateProfilePictureForm
 class UpdateProfilePictureForm(FlaskForm):
     profile_picture = FileField('Update Profile Picture', validators=[FileAllowed(['jpg', 'jpeg', 'png'])])
+
+
+#VerificationCodeInoDayForm
+class VerificationCodeInoDayForm(FlaskForm):
+    phoneNumber = StringField("Phone Number", validators=[Length(max=20)])
+
+
+#VerificationCodeActualForm
+class VerificationCodeActualForm(FlaskForm):
+    phoneNumber = StringField("Phone Number", validators=[Length(max=20)])

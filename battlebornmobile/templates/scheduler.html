@@ -1,5 +1,4 @@
 {% extends 'layout.html' %}
-
 {% block content %}
 
 <style>
@@ -60,6 +59,22 @@
 
     <div class="col-7">
       {% include 'calendar.html' %}
+      <div class="card-body">     
+        <p class="card-text">
+            <div class="container">                           
+               <ul style="list-style-type:none;">
+                   {% for appointment in appointments %}
+                   <div class="row">
+                       <div class="col-8">
+                           <li> - {{ appointment.pet_name }} - {{ appointment.service }} - {{ appointment.dateSheduled }} - {{ appointment.timeSheduled }} - </li>
+                           <li>==========================================================</li>
+                       </div>  
+                   </div>
+               {% endfor %}                
+               </ul>
+            </div>
+        </p>
+    </div>
     </div>
 
   </div>
