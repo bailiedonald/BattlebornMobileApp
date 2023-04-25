@@ -64,7 +64,7 @@ def signup():
         db.session.commit()
 
         flash('Please check your email to verify your new account')
-        return redirect(url_for('verifyAccount'))
+        return redirect(url_for('verify_account'))
 
     return render_template('signup.html', title='Sign Up', form=form)
 
@@ -122,6 +122,7 @@ def login():
         else:
             flash('Login Unsuccessful. Please check email and password', 'danger')
     return render_template('login.html', title='Login', form=form)
+
 
 #Logout Page
 @app.route("/logout")
