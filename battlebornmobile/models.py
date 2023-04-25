@@ -93,20 +93,20 @@ class Appointment(db.Model, UserMixin):
     pet_id = db.Column(db.Integer, db.ForeignKey('pet.id'))
     owner_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     
-    def convert_to_iso_format(self, date_string, time_string):
+    #def convert_to_iso_format(self, date_string, time_string):
         # Convert the date string to a datetime object
-        date = datetime.strptime(date_string, "%Y-%m-%d")
+     #   date = datetime.strptime(date_string, "%Y-%m-%d")
 
         # Convert the time string to a datetime object
-        time = datetime.strptime(time_string, "%H:%M:%S")
+      #  time = datetime.strptime(time_string, "%H:%M:%S")
 
         # Combine the date and time objects into a datetime object
-        date_time = datetime.combine(date, time)
+       # date_time = datetime.combine(date, time)
 
         # Convert the datetime object to an ISO-formatted string
-        iso_string = date_time.isoformat()
+        #iso_string = date_time.isoformat()
 
-        return iso_string
+        #return iso_string
     
     def __repr__(self):
         return f"Pet('{self.id}', '{self.scheduled}', '{self.cancelled}', '{self.owner_id}')"

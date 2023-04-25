@@ -4,9 +4,12 @@
     <meta charset='utf-8' />
     <title>Calendar Example</title>
     <link href='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.css' rel='stylesheet' />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/js/bootstrap.min.js"></script>
     <script src='https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js'></script>
     <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js'></script>
     <script src='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.js'></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.3.1/js/bootstrap.min.js'></script>  
     <script>
       $(document).ready(function() {
         $('#calendar').fullCalendar({
@@ -16,8 +19,9 @@
             element.find('.fc-title').append("<br/>" + event.customText);
           },
           eventClick: function(event) {
-            window.location.href = event.url;
-            return false;
+            $('#modalTitle').html(event.title + ' - ' + event.st);
+            $('#modalBody').html( event.dateSheduled + ' ' + event.timeSheduled + '\n' + event.streetNumber + ' ' + event.city + ' ' + event.zipcode);
+            $('#myModal').modal('show');
           },
           editable:true,
           header:{
@@ -31,6 +35,22 @@
     </script>
 </head>
 <body>
+  <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="modalTitle" aria-hidden="true" style = "text-align" >
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalTitle"></h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <h1 class="modal-body" id="modalBody"></h1>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
     <div id='calendar'></div>
 </body>
 </html>
