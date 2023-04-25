@@ -129,12 +129,12 @@ def password_forgot():
             # send email with password reset instructions
             msg = Message('Password Reset Request', sender='noreply@example.com', recipients=[user.email])
             msg.body = f'''To reset your password, visit the following link:
-{url_for('password_reset', _external=True)}
+            {url_for('password_reset', _external=True)}
 
-Your new temporary password is: {new_password}
+            Your new temporary password is: {new_password}
 
-If you did not make this request then simply ignore this email and no changes will be made.
-'''
+            If you did not make this request then simply ignore this email and no changes will be made.
+            '''
             mail.send(msg)
             flash('An email has been sent with instructions to reset your password.', 'success')
             return redirect(url_for('login'))
