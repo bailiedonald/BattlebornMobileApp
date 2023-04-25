@@ -68,6 +68,8 @@ def signup():
 
     return render_template('signup.html', title='Sign Up', form=form)
 
+
+#Verify Account Page
 @app.route('/verify_account', methods=['POST'])
 def verify_account():
     phoneNumber = request.form['phoneNumber']
