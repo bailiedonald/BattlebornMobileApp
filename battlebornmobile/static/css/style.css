@@ -174,32 +174,80 @@ hr.border {
 
 
 /*About us page formatting*/
-.aboutus {
-  padding: 15vmin 0;
- }
 
 
- .aboutus .row .col-mid-6 .matt img{
-  opacity: 0.8;
-  width: 80%;
-  border-radius: 0.2em;
- }
+ .aboutus{
+  margin: 0;
+  padding: 0px, 0px;
+ 
 
- .aboutus .row .col-md-6:last-child{
+}
+
+.aboutus .body{
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(0deg, #e6e6e6, #ffffff);
+  padding: 20px 0px 20px 0px;
+  margin: 0;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.aboutus .container{
   position: relative;
- }
+  
+  width: 100%;
+  background: #fff;
+  padding: 0 0;
+  box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+}
 
- .aboutus .row .col-md-6 .panel{
+.aboutus .container .form-content{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.aboutus .container .form{
+  height: 100%;
+  width: 100%;
+  background: #fff;
+
+}
+
+.aboutus .container .cover{
   position: absolute;
-  top: 17vmin;
-  left: 80vmin;
-  right: -100vmin;
-  background: white;
-  border-radius: 1px;
-  text-align:left;
-  padding: 0vmin 5vmin 5vmin 5vmin;
-  box-shadow: 20px 0px 35px rgba(0,0,0,0.2);
- }
+  height: 100%;
+  width: 100%;
+}
+
+.aboutus .container .cover img{
+  position: absolute;
+  height: 120%;
+  width: 115%;
+  object-fit: cover;
+  top: -4.23rem;
+  right: -2rem;
+  transform: scale(0.83); 
+}
+
+.aboutus .text {
+  position: absolute;
+  top: 30%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  z-index: 1;
+  color: white;
+}
+
+@media (max-width: 992px) {
+  .test .imgSection {
+    display: none;
+  }
+}
 
 /*Services*/
 .services {

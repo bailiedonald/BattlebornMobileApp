@@ -1,57 +1,57 @@
 {% extends 'layout.html' %}
 {% block content %}
 <section class="aboutus">
-<div>
-<div class="container text-center">
-    <div class="row">
-        <div class =col-md-6>
-            <div class ="Matt">
-                <img src="{{ url_for('static', filename='images/matt.jpeg' ) }} " alt="Matt">
-            </div>
-        
-            <div class =cold-md-6>
-                <div class="panel text-left">
-                   <p class="pt-4">
-                        <h1>Dr. Matt McSweeny</h1>
-                   </p> 
-                   <p>
-                    Experienced Veterinarians, Compassionate Care, A Personal Approach
-                    <br/>
-                    Dr. Matt is Fear Free certified
-                    </p>
-                <p>
-                    Education: Doctorate of Veterinary Medicine, from Colorado State University</p>
-              
-                <p>
-                    Dr. Matt McSweeney grew up in Gardnerville, Nevada and graduated from Douglas High School. 
-                    After graduation, he enlisted in the Air Force and worked as a mechanic for the 335th Fighter Wing stationed out of Greensboro, NC. 
-                    After his four-year enlistment, he moved back to Nevada to attend college at the University of Nevada, Reno, receiving his BS in animal science with high distinction. 
-                    Matt then attended veterinary school at Colorado State University.
-                </p>
-                <p>
-                    Matt returned to western Nevada to raise his son next to the beautiful Sierra Nevada and the Great Basin Desert. 
-                    He started with Lone Mountain in June 2009. In 2010, he met his wife, Cameron and they now have 2 children, Delaney and Orion. 
-                    Matt and his family enjoy rugby, skiing, fishing, camping, traveling, barbecues, movies, and spending time with friends and family.
-                </p>
-              
-                <p>
-                    Dr Matt currently has 3 dogs, 
-                    <br/>Bodie: a Rottweiler, Indy: a American Bulldog,Jack Jack: a Frenchy
-                    <br/>Along with 5 cats:
-                    <br/>Walter, Peanut, Samara, Marshmellow, and Tina Purrner.
-                    <br/>He also has 3 goats: 
-                    <br/>Charlie, Summer, and Daisy.
-                </p>
-            </div>
-                </div> 
+    <div class="body">
+        <div class="container">
+            <div class="row">
+                    <div class="col-md-6">
+                        <div class="imgSection">
+                            <div class="cover">
+                                <img src={{ url_for('static', filename='images/matt.jpeg' ) }}>
+                            </div>
+                        </div>  
+                    
+                    </div>
 
-            </div>
-        </div>
-    </div>
-</div>     
+                    <div class="col-md-6">
+                    <div class="content-section" style="margin: 10px;">
+                        <h2>Dr. Matt McSweeney</h2>
+                        <p>
+                            Experienced Veterinarians, Compassionate Care, A Personal Approach
+                            <br/>
+                            Dr. Matt is Fear Free certified
+                            </p>
+                        <p>
+                            Education: Doctorate of Veterinary Medicine, from Colorado State University</p>
+                      
+                        <p>
+                            Dr. Matt McSweeney grew up in Gardnerville, Nevada and graduated from Douglas High School. 
+                            After graduation, he enlisted in the Air Force and worked as a mechanic for the 335th Fighter Wing stationed out of Greensboro, NC. 
+                            After his four-year enlistment, he moved back to Nevada to attend college at the University of Nevada, Reno, receiving his BS in animal science with high distinction. 
+                            Matt then attended veterinary school at Colorado State University.
+                        </p>
+                        <p>
+                            Matt returned to western Nevada to raise his son next to the beautiful Sierra Nevada and the Great Basin Desert. 
+                            He started with Lone Mountain in June 2009. In 2010, he met his wife, Cameron and they now have 2 children, Delaney and Orion. 
+                            Matt and his family enjoy rugby, skiing, fishing, camping, traveling, barbecues, movies, and spending time with friends and family.
+                        </p>
+                      
+                        <p>
+                            Dr Matt currently has 3 dogs, 
+                            <br/>Bodie: a Rottweiler, Indy: a American Bulldog,Jack Jack: a Frenchy
+                            <br/>Along with 5 cats:
+                            <br/>Walter, Peanut, Samara, Marshmellow, and Tina Purrner.
+                            <br/>He also has 3 goats: 
+                            <br/>Charlie, Summer, and Daisy.
+                        </p>
+                    </div>
+                </div>
     
-
-
+            
+                    
+            </div>
+        </div>    
+    </div>
 </section>
      
  <!--Footer-->
