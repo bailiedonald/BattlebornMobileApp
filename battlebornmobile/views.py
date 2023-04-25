@@ -417,7 +417,7 @@ def appointments():
 
 #Scheduler
 @app.route('/staff/scheduler')
-@login_required
+#@login_required
 def scheduler():
     appointments = Appointment.query.filter_by(scheduled=False).all()
 #     tappointments = Appointment.query.filter_by(dateSheduled=todaydate).all()
@@ -534,10 +534,10 @@ def events():
     for event in events:
         if event.scheduled:
             event_list.append({
-                'title': event.pet_name,
-                'start': event.dateSheduled,
-                'time': event.timeSheduled
-        })
+                'title': event.firstName + ' '  + event.lastName,
+                'start': event.convert_to_iso_format(event.dateSheduled, event.timeSheduled),
+                'customText' : event.service
+            })
     return jsonify(event_list)
 
 if __name__ == '__main__':
