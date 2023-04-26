@@ -1,0 +1,34 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+    <h1>Enter Authentication Code</h1>
+    <p>Please enter the authentication code sent to your email or phone:</p>
+    <form method="POST">
+        <div class="form-group">
+            <input type="text" placeholder="Email or Phone Number" required>
+            <input type="text" name="auth_code" class="form-control" placeholder="Authentication Code" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Activate Account</button>
+    </form>
+{% endblock %}
+
+{% block scripts %}
+    <script>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    toastr.{{ category }}('{{ message }}');
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </script>
+{% endblock %}
+
+{% block redirect %}
+    <script>
+        function redirect() {
+            window.location.href = "{{ url_for('login') }}";
+        }
+        setTimeout(redirect, 5000);
+    </script>
+{% endblock %}
