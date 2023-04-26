@@ -306,6 +306,7 @@ hr.border {
   padding: 0;
   margin: 0;
   box-sizing: border-box;
+  padding-bottom: 20px;
  
 }
 
@@ -478,11 +479,13 @@ hr.border {
   left: 0;
   width: 100%;
   height: 100%;
+
   z-index: -1;
+
 }
 
 .login .border-top{
-  padding-bottom: 100px;
+  padding-bottom: 10px;
 }
 
 .login legend{
