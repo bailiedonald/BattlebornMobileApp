@@ -64,6 +64,7 @@ def signup():
         db.session.commit()
 
         flash('Please check your email to verify your new account')
+
         return redirect(url_for('verify_email'))
 
     return render_template('signup.html', title='Sign Up', form=form)
@@ -77,6 +78,12 @@ def signup():
 
 
 
+
+#Verify Account Page
+@app.route('/verify_account', methods=['GET', 'POST'])
+def verify_account():
+    phoneNumber = request.form['phoneNumber']
+    verificationCode = request.form['verificationCode']
 
 
 
@@ -113,6 +120,7 @@ def login():
         else:
             flash('Login Unsuccessful. Please check email and password', 'danger')
     return render_template('login.html', title='Login', form=form)
+
 
 #Logout Page
 @app.route("/logout")
@@ -209,7 +217,7 @@ def profile_update():
         if staff == True:
             return render_template("dashboardstaff.html")
         else:
-            flash ("Access Denied Staff Only.")
+            flash ("Your New Photo Is Ready")
             return render_template("dashboard.html")
     elif request.method == 'GET':
         form.username.data = current_user.username
@@ -245,9 +253,9 @@ def profile_picture_update():
 
         flash('Your profile picture has been updated!', 'success')
         if staff == True:
-            return render_template("dashboardstaff.html")
+            return redirect(url_for('index'))
         else:
-            flash ("Access Denied Staff Only.")
+            flash ("Your Account Has Been Updated.")
             return render_template("dashboard.html")
     return render_template('profile_picture_update.html', form=form)
 
@@ -547,7 +555,8 @@ def events():
         if event.scheduled:
             event_list.append({
                 'title': event.firstName + ' '  + event.lastName,
-                'start': event.convert_to_iso_format(event.dateSheduled, event.timeSheduled),
+                'start': event.dateSheduled + 'T' + event.timeSheduled + ':00',
+                #'start': event.convert_to_iso_format(event.dateSheduled, event.timeSheduled),
                 'customText' : event.service
             })
     return jsonify(event_list)
