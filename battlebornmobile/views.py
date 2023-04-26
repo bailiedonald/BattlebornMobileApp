@@ -559,7 +559,7 @@ def events():
         if event.scheduled:
             event_list.append({
                 'title': event.firstName + ' '  + event.lastName,
-                'start': event.dateSheduled  + 'T' + event.timeSheduled + ':00',
+                'start': event.dateSheduled + 'T' + event.timeSheduled + ':00',
                 #'start': event.convert_to_iso_format(event.dateSheduled, event.timeSheduled),
                 'customText' : event.service
             })
