@@ -1,7 +1,7 @@
 {% extends 'layout.html' %}
 {% block content %}
 
-
+<!--
 	<h1>{{ current_user.firstName | capitalize }} {{ current_user.lastName | capitalize }}'s Dashboard</h1>
 	<br/>
 
@@ -125,22 +125,23 @@
     </div>
 </div>
 </div>
-   
-<!--
+   --> 
+
+<!--Header-->
 <section class="dashboard">
     <div class="container py-5">
         <div class="row">
           <div class="col">
-            <nav aria-label="breadcrumb" class="bg-light rounded-3 p-3 mb-4">
-              <ol class="breadcrumb mb-0">
-                <li class="breadcrumb-item active" aria-current="page">Welcome {{ current_user.firstName | capitalize }} {{ current_user.lastName | capitalize }} to Your Dashboard</li>
-              </ol>
+            <nav aria-label="breadcrumb" class="bg-light rounded-3 p-3 mb-4" style="text-align: center;">
+              
+                <h1>Welcome {{ current_user.firstName | capitalize }} {{ current_user.lastName | capitalize }} to Your Dashboard</h1>
+              
             </nav>
           </div>
         </div>
 
        
-    
+        <!--Customer Tag Information-->
         <div class="row">
           <div class="col-lg-4">
             <div class="card mb-4">
@@ -150,42 +151,70 @@
                     {% else %}
                     <img src="{{ url_for('static', filename='images/default.jpeg')}}" alt="avatar" class="rounded-circle img-fluid" style="width: 150px;">
                     {% endif %} 
-                    <h5 class="my-3">John Smith</h5>
-                    <p class="text-muted mb-1">Full Stack Developer</p>
-                    <p class="text-muted mb-4">Bay Area, San Francisco, CA</p>
+                    <h5 class="my-3">{{ current_user.firstName }} {{ current_user.lastName }}</h5>
+                    <p class="text-muted mb-1">Customer</p>
+                    <p class="text-muted mb-4">{{ current_user.city }}, {{ current_user.state }}</p>
                     <div class="d-flex justify-content-center mb-2">
-                  <button type="button" class="btn btn-primary">Follow</button>
-                  <button type="button" class="btn btn-outline-primary ms-1">Message</button>
+                  <a href="{{ url_for('profile_update') }}" class="btn btn-primary" style="background-color: #003366; border-color: #003366;">Update Profile</a>
+                  <a href="/profile/picture/update" class="btn btn-outline-primary ms-1" style="color: #003366; border-color: #003366;">Update Profile Picture</a>
                 </div>
               </div>
             </div>
+
+
+            <!--Appointment Information-->
             <div class="card mb-4 mb-lg-0">
               <div class="card-body p-0">
                 <ul class="list-group list-group-flush rounded-3">
                   <li class="list-group-item d-flex justify-content-between align-items-center p-3">
-                    <i class="fas fa-globe fa-lg text-warning"></i>
-                    <p class="mb-0">https://mdbootstrap.com</p>
+                    <div class="d-flex justify-content-center flex-column align-items-center">
+                      <h2 align="center">Your Upcoming Appointments</h2>
+                      <br>
+                      <a href="/appointment/request">
+                          <button type="button" class="btn btn-success" style="background-color: #FFA300; border-color: #FFA300;">Request an Appointment</button>
+                      </a>
+                      <br>  
+                  </div>
                   </li>
-                  <li class="list-group-item d-flex justify-content-between align-items-center p-3">
-                    <i class="fab fa-github fa-lg" style="color: #333333;"></i>
-                    <p class="mb-0">mdbootstrap</p>
-                  </li>
-                  <li class="list-group-item d-flex justify-content-between align-items-center p-3">
-                    <i class="fab fa-twitter fa-lg" style="color: #55acee;"></i>
-                    <p class="mb-0">@mdbootstrap</p>
-                  </li>
-                  <li class="list-group-item d-flex justify-content-between align-items-center p-3">
-                    <i class="fab fa-instagram fa-lg" style="color: #ac2bac;"></i>
-                    <p class="mb-0">mdbootstrap</p>
-                  </li>
-                  <li class="list-group-item d-flex justify-content-between align-items-center p-3">
-                    <i class="fab fa-facebook-f fa-lg" style="color: #3b5998;"></i>
-                    <p class="mb-0">mdbootstrap</p>
-                  </li>
+
+                  
+                  <div class="appointmentstatus">
+                    <div class="container" >                           
+                      <ul style="list-style-type:none;">
+                        
+                        {% for appointment in appointments %}
+                          <div class="row">
+                            <div class="d-flex justify-content-center flex-column align-items-center">
+                                                     
+                                {% if not appointment.scheduled %}
+                                  <h5 align="center">**Pending Approval** </h5>
+                                {% else %}
+                                  **Approved** 
+                                {% endif %} 
+                                <ui>
+                                  <li> Name: {{ appointment.pet_name }}</li>
+                                  <li> Service: {{ appointment.service }}</li>
+                                  <li> Date: {{ appointment.dateSheduled }}</li>
+                                  <li> Time: {{ appointment.timeSheduled }}</li>
+                                </ui>
+                                <br>
+                                <a href="/appointment/cancel/{{ appointment.id }}" align="center">Cancel Appointment </a> 
+
+                              
+                            </div>  
+                          </div>
+                        {% endfor %}                
+                      </ul>
+                    </div>
+                  </div>
+                
+                  
                 </ul>
               </div>
             </div>
           </div>
+
+          <!--Customer Information-->
           <div class="col-lg-8">
             <div class="card mb-4">
               <div class="card-body">
@@ -235,78 +264,81 @@
                 </div>
               </div>
             </div>
-            <div class="row">
-              <div class="col-md-6">
-                <div class="card mb-4 mb-md-0">
-                  <div class="card-body">
-                    <p class="mb-4"><span class="text-primary font-italic me-1">assigment</span> Project Status
-                    </p>
-                    <p class="mb-1" style="font-size: .77rem;">Web Design</p>
-                    <div class="progress rounded" style="height: 5px;">
-                      <div class="progress-bar" role="progressbar" style="width: 80%" aria-valuenow="80"
-                        aria-valuemin="0" aria-valuemax="100"></div>
+
+
+
+
+
+
+            <!--Pet Information-->
+              <div class="card mb-5">
+                <div class="card-body">
+                  <div class="row">
+                    <h2 align="Center">Your Pets</h2>
+                    <a href="/pet/add" align="Center">
+                    <button type="button" class="btn btn-success" style="background-color: #FFA300; border-color: #FFA300;">Add a Pet</button>
+                    </a>
+                  </div>
+                  <hr>
+
+                  
+                  <div class="row">
+                    {% for pet in pets %}
+                    <div class="col-md-6">
+                      <div class="card mb-4 mb-md-0">
+                        <div class="card-body">
+                          <div class="container">                            
+                            <ul style="list-style-type:none;">
+                                
+                                        <div class="row">
+                                            <div class="col-4">
+                                                {% if pet.pet_pic != 'animals.jpeg' %}
+                                                    <img src="{{ url_for('static', filename='pet_pics/' + pet.pet_pic) }}" width="200" align="Left">
+                                                {% else %}
+                                                    <img src="{{ url_for('static', filename='images/animals.jpeg') }}" width="200" align="Left">
+                                                {% endif %}
+                                            </div>
+                                            <br>
+                                                <ul>
+                                                    <li>Name: {{ pet.pet_name }}</li>
+                                                    <li>Species: {{ pet.pet_species }}
+                                                    <li>Breed: {{ pet.pet_breed }}</li>
+                                                    <li>Color: {{ pet.pet_color }}</li>
+                                                    <li>Date of Birth: {{ pet.pet_dob }}</li>
+                                                    <li>Height: {{ pet.pet_hieght }} ft Weight: {{ pet.pet_weight }} lbs</li>
+                                                </ul>
+                                            
+                                            
+                                                <ul>
+                                                    <a href="/view_pdf/{{ pet.id }}" target="_blank">
+                                                        View Pet Record
+                                                    </a>                                        
+                                                </ul>
+                                            
+                                        </div>
+                                        
+                                
+                            </ul>
+                        </div>
+                        </div>
+                      </div>
                     </div>
-                    <p class="mt-4 mb-1" style="font-size: .77rem;">Website Markup</p>
-                    <div class="progress rounded" style="height: 5px;">
-                      <div class="progress-bar" role="progressbar" style="width: 72%" aria-valuenow="72"
-                        aria-valuemin="0" aria-valuemax="100"></div>
+                    {% endfor %}
                     </div>
-                    <p class="mt-4 mb-1" style="font-size: .77rem;">One Page</p>
-                    <div class="progress rounded" style="height: 5px;">
-                      <div class="progress-bar" role="progressbar" style="width: 89%" aria-valuenow="89"
-                        aria-valuemin="0" aria-valuemax="100"></div>
-                    </div>
-                    <p class="mt-4 mb-1" style="font-size: .77rem;">Mobile Template</p>
-                    <div class="progress rounded" style="height: 5px;">
-                      <div class="progress-bar" role="progressbar" style="width: 55%" aria-valuenow="55"
-                        aria-valuemin="0" aria-valuemax="100"></div>
-                    </div>
-                    <p class="mt-4 mb-1" style="font-size: .77rem;">Backend API</p>
-                    <div class="progress rounded mb-2" style="height: 5px;">
-                      <div class="progress-bar" role="progressbar" style="width: 66%" aria-valuenow="66"
-                        aria-valuemin="0" aria-valuemax="100"></div>
-                    </div>
+                    
+
                   </div>
                 </div>
               </div>
-              <div class="col-md-6">
-                <div class="card mb-4 mb-md-0">
-                  <div class="card-body">
-                    <p class="mb-4"><span class="text-primary font-italic me-1">assigment</span> Project Status
-                    </p>
-                    <p class="mb-1" style="font-size: .77rem;">Web Design</p>
-                    <div class="progress rounded" style="height: 5px;">
-                      <div class="progress-bar" role="progressbar" style="width: 80%" aria-valuenow="80"
-                        aria-valuemin="0" aria-valuemax="100"></div>
-                    </div>
-                    <p class="mt-4 mb-1" style="font-size: .77rem;">Website Markup</p>
-                    <div class="progress rounded" style="height: 5px;">
-                      <div class="progress-bar" role="progressbar" style="width: 72%" aria-valuenow="72"
-                        aria-valuemin="0" aria-valuemax="100"></div>
-                    </div>
-                    <p class="mt-4 mb-1" style="font-size: .77rem;">One Page</p>
-                    <div class="progress rounded" style="height: 5px;">
-                      <div class="progress-bar" role="progressbar" style="width: 89%" aria-valuenow="89"
-                        aria-valuemin="0" aria-valuemax="100"></div>
-                    </div>
-                    <p class="mt-4 mb-1" style="font-size: .77rem;">Mobile Template</p>
-                    <div class="progress rounded" style="height: 5px;">
-                      <div class="progress-bar" role="progressbar" style="width: 55%" aria-valuenow="55"
-                        aria-valuemin="0" aria-valuemax="100"></div>
-                    </div>
-                    <p class="mt-4 mb-1" style="font-size: .77rem;">Backend API</p>
-                    <div class="progress rounded mb-2" style="height: 5px;">
-                      <div class="progress-bar" role="progressbar" style="width: 66%" aria-valuenow="66"
-                        aria-valuemin="0" aria-valuemax="100"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+            
+
+
+
+            
           </div>
         </div>
       </div>
     </section>
     
-</section> -->  
+</section> 
 {% endblock %}
