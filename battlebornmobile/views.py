@@ -86,10 +86,6 @@ def send_email(to, code):
 
 #send_text function
 def send_text(to, code):
-    # Use the Twilio API to send a text message with the authentication code
-    account_sid = os.environ.get('TWILIO_ACCOUNT_SID')
-    auth_token = os.environ.get('TWILIO_AUTH_TOKEN')
-    client = Client(account_sid, auth_token)
     message = client.messages.create(
         body=f'Your authentication code is: {code}',
         from_=app.config['TWILIO_PHONE_NUMBER'],
