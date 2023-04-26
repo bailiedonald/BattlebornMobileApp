@@ -97,7 +97,7 @@ def send_text(to, code):
     )
 
 
-#Confirm Account Page
+# Confirm Account Page
 @app.route('/account/confirm', methods=['GET', 'POST'])
 def confirm_account():
     if request.method == 'POST':
@@ -118,26 +118,24 @@ def confirm_account():
             return redirect(url_for('auth_code'))
         else:
             flash('Invalid email or phone number. Please try again.', 'danger')
-            return redirect(url_for('confirm_account'))
 
-    return redirect(url_for('confirm_account'))
+    # render confirm_account template with the flashed messages
+    return render_template('confirm_account.html')
 
 
-
-# Enter Auth Code route
-@app.route('/account/code', methods=['GET', 'POST'])
+# Auth Code Page
+@app.route('/account/auth_code', methods=['GET', 'POST'])
 def auth_code():
     if request.method == 'POST':
-        auth_code = request.form['auth_code']
-        user = User.query.filter_by(auth_code=auth_code).first()
-        if user:
-            user.active = True
-            db.session.commit()
-            flash('Your account has been activated!', 'success')
-            return redirect(url_for('login'))
-        else:
-            flash('Invalid authentication code. Please try again.', 'danger')
-    return render_template('auth_code.html', title='Enter Auth Code')
+        auth_code = request.form.get('auth_code')
+        if auth_code:
+            # check if auth_code is correct and redirect to account page if it is
+            if check_auth_code(auth_code):
+                return redirect(url_for('account'))
+            else:
+                flash('Invalid authentication code. Please try again.', 'danger')
+    # render auth_code template with the flashed messages
+    return render_template('auth_code.html')
 
 
 
