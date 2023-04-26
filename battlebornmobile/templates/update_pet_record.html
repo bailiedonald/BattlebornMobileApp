@@ -6,6 +6,9 @@
 
 <form action="{{ url_for('update_pet_record', pet_id=pet.id) }}" method="post" enctype="multipart/form-data">
     <button type="submit" class="btn btn-primary">Update Record</button>
+    <a href="/staff/records" align="Center">
+        <button type="button" class="btn btn-primary"">Cancel</button>
+    </a>
     <div class="form-group">
         <label for="pet_name">Pet Name</label>
         <input type="text" class="form-control" id="pet_name" name="pet_name" value="{{ pet.pet_name }}">

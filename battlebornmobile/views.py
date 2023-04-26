@@ -64,13 +64,13 @@ def signup():
         db.session.commit()
 
         flash('Please check your email to verify your new account')
-        return redirect(url_for('verify_account'))
+        return render_template('verify_account.html')
 
     return render_template('signup.html', title='Sign Up', form=form)
 
 
 #Verify Account Page
-@app.route('/verify_account', methods=['POST'])
+@app.route('/verify_account', methods=['GET', 'POST'])
 def verify_account():
     phoneNumber = request.form['phoneNumber']
     verificationCode = request.form['verificationCode']
@@ -221,7 +221,7 @@ def profile_update():
         if staff == True:
             return render_template("dashboardstaff.html")
         else:
-            flash ("Access Denied Staff Only.")
+            flash ("Your New Photo Is Ready")
             return render_template("dashboard.html")
     elif request.method == 'GET':
         form.username.data = current_user.username
@@ -257,9 +257,9 @@ def profile_picture_update():
 
         flash('Your profile picture has been updated!', 'success')
         if staff == True:
-            return render_template("dashboardstaff.html")
+            return redirect(url_for('index'))
         else:
-            flash ("Access Denied Staff Only.")
+            flash ("Your Account Has Been Updated.")
             return render_template("dashboard.html")
     return render_template('profile_picture_update.html', form=form)
 
