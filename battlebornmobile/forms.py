@@ -15,6 +15,7 @@ class SignUpForm(FlaskForm):
     firstName = StringField('First Name', validators=[DataRequired()])
     lastName = StringField('Last Name', validators=[DataRequired()])
     phoneNumber = StringField('Phone Number')
+    auth_code = StringField('auth_code')
     streetNumber = StringField('Address', validators=[DataRequired()])
     city = StringField('City', validators=[DataRequired()])
     state = StringField('State', validators=[DataRequired()])
@@ -154,3 +155,4 @@ class VerificationCodeInoDayForm(FlaskForm):
 #VerificationCodeActualForm
 class VerificationCodeActualForm(FlaskForm):
     phoneNumber = StringField("Phone Number", validators=[Length(max=20)])
+    auth_code = StringField('verification-code', validators=[Length(max=6)])
