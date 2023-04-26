@@ -19,8 +19,15 @@
             element.find('.fc-title').append("<br/>" + event.customText);
           },
           eventClick: function(event) {
-            $('#modalTitle').html(event.title + ' - ' + event.st);
-            $('#modalBody').html( event.dateSheduled + ' ' + event.timeSheduled + '\n' + event.streetNumber + ' ' + event.city + ' ' + event.zipcode);
+            $('#modalTitle').html(event.title);
+            $('#modalBody').html(
+              '<ul>' +
+                '<li> Pet: ' + event.pet_name + '</li>' +
+                '<li> Service: ' + event.customText + '</li>' +
+                '<li> Time: ' + event.time_unformatted + '</li>' +
+                '<li> Address: ' + event.address + '</li>' +
+              '</ul>'
+              );
             $('#myModal').modal('show');
           },
           editable:true,
@@ -35,18 +42,16 @@
     </script>
 </head>
 <body>
-  <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="modalTitle" aria-hidden="true" style = "text-align" >
+  <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="modalTitle" aria-hidden="true">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title" id="modalTitle"></h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
+          
         </div>
-        <h1 class="modal-body" id="modalBody"></h1>
+        <h6 class="modal-body" id="modalBody"></h6>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          
         </div>
       </div>
     </div>
