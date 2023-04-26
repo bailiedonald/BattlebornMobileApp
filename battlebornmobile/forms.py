@@ -15,7 +15,7 @@ class SignUpForm(FlaskForm):
     firstName = StringField('First Name', validators=[DataRequired()])
     lastName = StringField('Last Name', validators=[DataRequired()])
     phoneNumber = StringField('Phone Number')
-    auth_code = StringField('auth_code')
+    auth_code = StringField('auth_code', validators=[Length(max=6)])
     streetNumber = StringField('Address', validators=[DataRequired()])
     city = StringField('City', validators=[DataRequired()])
     state = StringField('State', validators=[DataRequired()])
@@ -42,7 +42,7 @@ class LoginForm(FlaskForm):
     remember = BooleanField('Remember Me')
     submit = SubmitField('Login')
 
-
+#ResetPasswordForm
 class ResetPasswordForm(FlaskForm):
     email = StringField('Email', validators=[validators.DataRequired(), validators.Email()])
     temp_password = PasswordField('Current Password', validators=[validators.DataRequired()])

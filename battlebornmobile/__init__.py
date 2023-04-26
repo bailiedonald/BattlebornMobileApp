@@ -28,6 +28,8 @@ app.config['MAIL_USE_SSL'] = True
 app.config['MAIL_USE_TLS'] = False
 app.config['MAIL_USERNAME'] = 'spencer@alsetdsgd.com'
 app.config['MAIL_PASSWORD'] = 'Spring22'
+app.config['MAIL_DEFAULT_SENDER'] = ('Battle Born Mobile', 'spencer@alsetdsgd.com')
+
 
 #Twilio credentials
 Account_Sid = os.environ.get("ACCOUNT_SID")

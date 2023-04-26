@@ -1,5 +1,5 @@
 import os, random, string, shutil
-from flask import render_template, url_for, flash, redirect, jsonify, abort, request, send_file, send_from_directory
+from flask import Flask, current_app, render_template, url_for, flash, redirect, jsonify, abort, request, send_file, send_from_directory
 from battlebornmobile import app, db, bcrypt, mail, client
 from battlebornmobile.forms import SignUpForm, LoginForm, PetForm, AppointmentForm, ResetPasswordForm, UpdateProfileForm, UpdateProfilePictureForm, VerificationCodeActualForm
 from battlebornmobile.models import User, Pet, Appointment
@@ -10,26 +10,29 @@ from werkzeug.utils import secure_filename
 from twilio.rest import Client
 
 
-
 #index Page
 @app.route('/')
 def index():
     return render_template("index.html",title='Home')
+
 
 #About Us Page
 @app.route('/about')
 def about():
     return render_template("about.html")
 
+
 #Services
 @app.route('/services')
 def services():
     return render_template("services.html")
 
+
 #Contact
 @app.route('/contact')
 def contact():
     return render_template("contact.html")
+
 
 #Layout
 @app.route('/layout')
@@ -45,36 +48,90 @@ def signup():
 
     form = SignUpForm()
     if form.validate_on_submit():
-
-        # # Process the user's sign-up information and generate a verification token
-        # email = form.email.data
-        # username = form.username.data
-
-        # # Send the verification email to the user's email address
-        # msg = Message('Verify your email address', sender=app.config['MAIL_USERNAME'], recipients=[email])
-        # msg.body = render_template('verification_email.txt', username=username)
-        # mail.send(msg)
-
-
+            
         # Update the user's account information to indicate that the email address is not yet verified
         # You can use a database or other storage mechanism to track this information
         hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
         user = User(username=form.username.data.lower(), email=form.email.data.lower(), password=hashed_password, firstName=form.firstName.data, lastName=form.lastName.data, phoneNumber=form.phoneNumber.data, streetNumber=form.streetNumber.data, city=form.city.data, state=form.state.data, zipcode=form.zipcode.data)
+        
+        # generate a new password and update user's password
+        auth_code = ''.join(random.choices(string.digits, k=6))
+        user.auth_code = auth_code
+                
+        # Process the user's sign-up information and generate a verification token
+        email = form.email.data
+        username = form.username.data
+
+        #Add to Database 
         db.session.add(user)
         db.session.commit()
 
         flash('Please check your email to verify your new account')
 
-        return redirect(url_for('verify_email'))
+        return redirect(url_for('confirm_account'))
 
     return render_template('signup.html', title='Sign Up', form=form)
-        
 
 
-        
+#send_email function
+def send_email(to, code):
+    # Use an external email service to send an email with the authentication code
+    # Here's an example using the Flask-Mail extension:
+    mail = current_app.extensions.get('mail')
+    message = Message(
+        subject='Authentication Code',
+        recipients=[to],
+        body=f'Your authentication code is: {code}'
+    )
+
+#send_text function
+def send_text(to, code):
+    message = client.messages.create(
+        body=f'Your authentication code is: {code}',
+        from_=app.config['TWILIO_PHONE_NUMBER'],
+        to=to
+    )
 
 
+# Confirm Account Page
+@app.route('/account/confirm', methods=['GET', 'POST'])
+def confirm_account():
+    if request.method == 'POST':
+        method = request.form.get('method')
+        email_or_phone = request.form.get('email_or_phone')
+        user = None
 
+        if method == 'email':
+            user = User.query.filter_by(email=email_or_phone).first()
+        elif method == 'phoneNumber':
+            user = User.query.filter_by(phoneNumber=email_or_phone).first()
+        if user:
+            if method == 'email':
+                send_email(user.email, user.auth_code)
+            elif method == 'phoneNumber':
+                send_text(user.phoneNumber, user.auth_code)
+            flash('An authentication code has been sent to your {}.'.format(method), 'success')
+            return redirect(url_for('auth_code'))
+        else:
+            flash('Invalid email or phone number. Please try again.', 'danger')
+
+    # render confirm_account template with the flashed messages
+    return render_template('confirm_account.html')
+
+
+# Auth Code Page
+@app.route('/account/auth_code', methods=['GET', 'POST'])
+def auth_code():
+    if request.method == 'POST':
+        auth_code = request.form.get('auth_code')
+        if auth_code:
+            # check if auth_code is correct and redirect to account page if it is
+            if check_auth_code(auth_code):
+                return redirect(url_for('account'))
+            else:
+                flash('Invalid authentication code. Please try again.', 'danger')
+    # render auth_code template with the flashed messages
+    return render_template('auth_code.html')
 
 
 
@@ -86,10 +143,6 @@ def verify_account():
     verificationCode = request.form['verificationCode']
 
 
-
-
-
-
 #Verify Email Page
 @app.route('/verify_email/<string:username>', methods=['GET'])
 def verify_email(username):
@@ -98,7 +151,6 @@ def verify_email(username):
     db.session.commit()
     flash('Your email has been confirmed! You can now login.', 'success')
     return redirect(url_for('login'))
-
 
 
 #Login Page

@@ -1,0 +1,14 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+    <h1>Enter Authentication Code</h1>
+    <p>Please enter the authentication code sent to your email or phone:</p>
+    <form method="POST">
+        <div class="form-group">
+            <input type="text" class="form-control" placeholder="Email or Phone Number" required>
+            <input type="text" name="auth_code" class="form-control" placeholder="Authentication Code" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Activate Account</button>
+    </form>
+{% endblock %}
+
