@@ -10,26 +10,29 @@ from werkzeug.utils import secure_filename
 from twilio.rest import Client
 
 
-
 #index Page
 @app.route('/')
 def index():
     return render_template("index.html",title='Home')
+
 
 #About Us Page
 @app.route('/about')
 def about():
     return render_template("about.html")
 
+
 #Services
 @app.route('/services')
 def services():
     return render_template("services.html")
 
+
 #Contact
 @app.route('/contact')
 def contact():
     return render_template("contact.html")
+
 
 #Layout
 @app.route('/layout')
@@ -65,18 +68,15 @@ def signup():
 
         flash('Please check your email to verify your new account')
 
-        return redirect(url_for('verify_email'))
+        return redirect(url_for('confirm_account'))
 
     return render_template('signup.html', title='Sign Up', form=form)
-        
 
 
-        
-
-
-
-
-
+#Confirm Account Page
+@app.route('/account/confirm', methods=['GET', 'POST'])
+def confirm_account():
+    return render_template('confirm_account.html')
 
 
 #Verify Account Page
@@ -84,10 +84,6 @@ def signup():
 def verify_account():
     phoneNumber = request.form['phoneNumber']
     verificationCode = request.form['verificationCode']
-
-
-
-
 
 
 #Verify Email Page
@@ -98,7 +94,6 @@ def verify_email(username):
     db.session.commit()
     flash('Your email has been confirmed! You can now login.', 'success')
     return redirect(url_for('login'))
-
 
 
 #Login Page
