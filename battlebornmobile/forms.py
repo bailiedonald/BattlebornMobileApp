@@ -34,6 +34,11 @@ class SignUpForm(FlaskForm):
         if user:
             raise ValidationError('That email is taken. Please choose a different one.')
 
+#AuthCodeForm
+class AuthCodeForm(FlaskForm):
+    email = StringField('Email', validators=[DataRequired()])
+    auth_code = StringField('Authentication Code', validators=[DataRequired()])
+    submit = SubmitField('Submit')
 
 #LoginForm
 class LoginForm(FlaskForm):
