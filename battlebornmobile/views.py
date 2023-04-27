@@ -630,7 +630,10 @@ def events():
                 'title': event.firstName + ' '  + event.lastName,
                 'start': event.dateSheduled + 'T' + event.timeSheduled + ':00',
                 #'start': event.convert_to_iso_format(event.dateSheduled, event.timeSheduled),
-                'customText' : event.service
+                'customText' : event.service,
+                'pet_name' : event.pet_name,
+                'address' : event.streetNumber + ', ' + event.city + ', ' + event.zipcode,
+                'time_unformatted' : event.dateSheduled + ' at ' + event.timeSheduled
             })
     return jsonify(event_list)
 
