@@ -4,7 +4,7 @@
     <h1>Confirm Account to Complete Account Registration</h1>
     <p>Confirm your account either by email or text:</p>
     <br>
-    <form method="POST" action="{{ url_for('confirm_account') }}">
+    <!-- <form method="POST" action="{{ url_for('confirm_account') }}">
         <div>
             <input type="radio" id="email" name="method" value="email">
             <label for="email">Send Email</label>
@@ -16,6 +16,14 @@
             <input type="tel" name="email_or_phone" placeholder="Enter your phone number">
         </div>
         <button type="submit">Submit Button</button>
-    </form>
-    
+    </form> -->
+
+    <form method="POST" action="{{ url_for('confirm_account') }}">
+    <input type="radio" name="method" value="email" checked> Email<br>
+    <input type="radio" name="method" value="phoneNumber"> Phone Number<br>
+    <input type="text" name="email_or_phone" placeholder="Enter email or phone number"><br>
+    <input type="submit" value="Send Code">
+  </form>
+  
 {% endblock %}
+

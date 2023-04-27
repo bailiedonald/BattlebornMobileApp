@@ -92,16 +92,14 @@ def send_email(to, auth_code, username):
 
 
 #send_text function
-def send_text(to, auth_code, username):
-    # Use the Twilio API to send a text message with the authentication code
-    account_sid = os.environ.get('TWILIO_ACCOUNT_SID')
-    auth_token = os.environ.get('TWILIO_AUTH_TOKEN')
-    client = Client(account_sid, auth_token)
+def send_text(phone_number, auth_code):
+    my_phone_number = os.environ.get("TWILIO_PHONE_NUMBER")
     message = client.messages.create(
-        body=f'Your authentication code is: {auth_code}',
-        from_=os.environ.get('TWILIO_PHONE_NUMBER'),
-        to=to
+        body='Your authentication code is {}'.format(auth_code),
+        from_=my_phone_number,
+        to=phone_number
     )
+    return message.sid
 
 
 #Confirm Account
@@ -155,23 +153,21 @@ def auth_code():
     return render_template('auth_code.html', title='Auth Code', form=form)
 
 
+# #Verify Account Page
+# @app.route('/verify_account', methods=['GET', 'POST'])
+# def verify_account():
+#     phoneNumber = request.form['phoneNumber']
+#     verificationCode = request.form['verificationCode']
 
 
-#Verify Account Page
-@app.route('/verify_account', methods=['GET', 'POST'])
-def verify_account():
-    phoneNumber = request.form['phoneNumber']
-    verificationCode = request.form['verificationCode']
-
-
-#Verify Email Page
-@app.route('/verify_email/<string:username>', methods=['GET'])
-def verify_email(username):
-    user = User.query.filter_by(username=username).first_or_404()
-    user.active = True
-    db.session.commit()
-    flash('Your email has been confirmed! You can now login.', 'success')
-    return redirect(url_for('login'))
+# #Verify Email Page
+# @app.route('/verify_email/<string:username>', methods=['GET'])
+# def verify_email(username):
+#     user = User.query.filter_by(username=username).first_or_404()
+#     user.active = True
+#     db.session.commit()
+#     flash('Your email has been confirmed! You can now login.', 'success')
+#     return redirect(url_for('login'))
 
 
 #Login Page
@@ -229,6 +225,7 @@ def password_forgot():
         else:
             flash('There is no account with that email. You must register first.', 'warning')
     return render_template('password_forgot.html')
+
 
 #Reset password 
 @app.route('/password/reset', methods=['GET', 'POST'])
@@ -435,7 +432,7 @@ def appointment():
     return render_template('appointment_request.html', title='MakeAppointment', form=form)
 
 
-#Appointment Cancel RouteF
+#Appointment Cancel Route
 @app.route("/appointment/cancel/<int:id>", methods=["GET", "POST"])
 @login_required
 def cancel_appointment(id):
@@ -530,6 +527,7 @@ def userAccess():
     else:
         flash("Access Denied: Admin Only")
         return render_template("dashboard.html")
+
 
 #Admin Edit User Access Table
 @app.route('/admin/useraccess/<int:user_id>', methods=['POST'])
@@ -651,7 +649,7 @@ def smsSend():
         try:
             message = client.messages.create(
                 body=message,
-                from_='+17752405149',  
+                from_='+1775#######',  
                 to=phone_number
             )
             flash('Notification sent successfully.', 'success')
@@ -670,8 +668,8 @@ def send_sms():
     message = client.messages.create(
         messaging_service_sid='MGdc049f1edc574951803c83a97cd37602',
         body='Good Bye, World!',
-        from_='+17752405149',
-        to='+17753763523')
+        from_='+1775#######',
+        to='+1775#######')
     flash('Notification sent successfully.', 'success')
 
     return render_template("dashboardadmin.html"), 'SMS sent!'
