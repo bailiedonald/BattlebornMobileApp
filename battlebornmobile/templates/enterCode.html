@@ -1,0 +1,37 @@
+{% extends "layout.html" %}
+
+{% block content %}
+    <title>Verify Your Account</title>
+    <style>
+        .verification-code-input {
+            width: 300px; /* change this value to adjust the width */
+            height: 40px;
+            margin: 0 5px;
+            padding: 5px;
+            font-size: 20px;
+            text-align: center;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            outline: none;
+        }
+    </style>
+    <body>
+        <h1>Verify Your Account</h1>
+        <form method="POST" action="{{ url_for('verify_phone_number') }}">
+            <input type="hidden" name="phone_number" value="{{ phoneNumber }}">
+            <br>
+            <label for="verification-code">Verification Code:</label>
+            <input type="text" name="verification-code" maxlength="6" class="verification-code-input" required>
+            <br><br>
+            <button type="submit">Verify</button>
+        </form>
+        <script>
+            const input = document.querySelector('.verification-code-input');
+            input.addEventListener('input', function(e) {
+                if (this.value.length == this.maxLength) {
+                    this.blur();
+                }
+            });
+        </script>
+    </body>
+{% endblock content %}

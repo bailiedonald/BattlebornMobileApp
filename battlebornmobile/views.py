@@ -1,16 +1,13 @@
 import os, random, string, shutil
-from flask import render_template, url_for, flash, redirect, jsonify, abort, request, send_file, send_from_directory
+from flask import Flask, current_app, render_template, url_for, flash, redirect, jsonify, abort, request, send_file, send_from_directory
 from battlebornmobile import app, db, bcrypt, mail, client
-from battlebornmobile.forms import SignUpForm, LoginForm, PetForm, AppointmentForm, ResetPasswordForm, UpdateProfileForm, UpdateProfilePictureForm
+from battlebornmobile.forms import SignUpForm, AuthCodeForm, LoginForm, PetForm, AppointmentForm, ResetPasswordForm, UpdateProfileForm, UpdateProfilePictureForm, VerificationCodeActualForm
 from battlebornmobile.models import User, Pet, Appointment
 from datetime import datetime
 from flask_login import login_user, current_user, logout_user, login_required
 from flask_mail import Mail, Message
 from werkzeug.utils import secure_filename
 from twilio.rest import Client
-from dotenv import load_dotenv
-
-load_dotenv()
 
 
 #index Page
@@ -18,25 +15,30 @@ load_dotenv()
 def index():
     return render_template("index.html",title='Home')
 
+
 #About Us Page
 @app.route('/about')
 def about():
     return render_template("about.html")
+
 
 #Services
 @app.route('/services')
 def services():
     return render_template("services.html")
 
+
 #Contact
 @app.route('/contact')
 def contact():
     return render_template("contact.html")
 
+
 #Layout
 @app.route('/layout')
 def layout():
     return render_template("layout.html")
+
 
 #SignUp Page
 @app.route("/signup", methods=['GET', 'POST'])
@@ -46,7 +48,16 @@ def signup():
 
     form = SignUpForm()
     if form.validate_on_submit():
-
+          
+        # Update the user's account information to indicate that the email address is not yet verified
+        # You can use a database or other storage mechanism to track this information
+        hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+        user = User(username=form.username.data.lower(), email=form.email.data.lower(), password=hashed_password, firstName=form.firstName.data, lastName=form.lastName.data, phoneNumber=form.phoneNumber.data, streetNumber=form.streetNumber.data, city=form.city.data, state=form.state.data, zipcode=form.zipcode.data)
+        
+        # generate a new password and update user's password
+        auth_code = ''.join(random.choices(string.digits, k=6))
+        user.auth_code = auth_code
+                
         # # Process the user's sign-up information and generate a verification token
         # email = form.email.data
         # username = form.username.data
@@ -56,42 +67,101 @@ def signup():
         # msg.body = render_template('verification_email.txt', username=username)
         # mail.send(msg)
 
-        # Update the user's account information to indicate that the email address is not yet verified
-        # You can use a database or other storage mechanism to track this information
-        hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
-        user = User(username=form.username.data.lower(), email=form.email.data.lower(), password=hashed_password, firstName=form.firstName.data, lastName=form.lastName.data, phoneNumber=form.phoneNumber.data, streetNumber=form.streetNumber.data, city=form.city.data, state=form.state.data, zipcode=form.zipcode.data)
+        #Add to Database 
         db.session.add(user)
         db.session.commit()
 
         flash('Please check your email to verify your new account')
-        return redirect(url_for('verify_account'))
+
+        return redirect(url_for('confirm_account'))
 
     return render_template('signup.html', title='Sign Up', form=form)
 
 
+#send_email function
+def send_email(to, auth_code, username):
+    confirm_link = url_for('auth_code', _external=True)
+    mail = current_app.extensions.get('mail')
+    message = Message(
+        subject='Authentication Code',
+        recipients=[to],
+        html=render_template('email.txt', username=username, auth_code=auth_code, confirm_link=confirm_link),
+        sender=app.config['MAIL_DEFAULT_SENDER']
+    )
+    mail.send(message)
+
+
+#send_text function
+def send_text(to, auth_code, username):
+    # Use the Twilio API to send a text message with the authentication code
+    account_sid = os.environ.get('TWILIO_ACCOUNT_SID')
+    auth_token = os.environ.get('TWILIO_AUTH_TOKEN')
+    client = Client(account_sid, auth_token)
+    message = client.messages.create(
+        body=f'Your authentication code is: {auth_code}',
+        from_=os.environ.get('TWILIO_PHONE_NUMBER'),
+        to=to
+    )
+
+
+#Confirm Account
+@app.route('/account/confirm', methods=['GET', 'POST'])
+def confirm_account():
+    if request.method == 'POST':
+        method = request.form.get('method')
+        email_or_phone = request.form.get('email_or_phone')
+        user = None
+
+        if method == 'email':
+            user = User.query.filter_by(email=email_or_phone).first()
+        elif method == 'phoneNumber':
+            user = User.query.filter_by(phoneNumber=email_or_phone).first()
+
+        if user:
+            if method == 'email':
+                send_email(user.email, user.auth_code, user.username)
+            elif method == 'phoneNumber':
+                send_text(user.phoneNumber, user.auth_code)
+
+            flash('An authentication code has been sent to your {}.'.format(method), 'success')
+            return redirect(url_for('auth_code'))
+        else:
+            flash('Invalid email or phone number. Please try again.', 'danger')
+            return redirect(url_for('confirm_account'))
+
+    # Add this return statement for the case when the method is 'GET'
+    return render_template('confirm_account.html', title='Confirm Account')
+
+
+# Enter Auth Code route
+@app.route('/account/code', methods=['GET', 'POST'])
+def auth_code():
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
+
+    form = AuthCodeForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data.lower()).first()
+        if user and user.auth_code == form.auth_code.data:
+            user.active = True
+            user.auth_code = None
+            db.session.commit()
+            login_user(user)
+            flash('Your account has been activated!', 'success')
+            return redirect(url_for('index'))
+        else:
+            flash('Invalid authentication code or email. Please try again.', 'danger')
+
+    return render_template('auth_code.html', title='Auth Code', form=form)
+
+
+
+
 #Verify Account Page
-@app.route('/verify_account', methods=['POST'])
+@app.route('/verify_account', methods=['GET', 'POST'])
 def verify_account():
     phoneNumber = request.form['phoneNumber']
     verificationCode = request.form['verificationCode']
-
-    # Verify the verification code using Twilio Verify
-    verification_check = client.verify.services('<YOUR_TWILIO_SERVICE_SID>').verification_checks.create(to=phoneNumber, code=verificationCode)
-
-    # If verification was successful, generate and store an auth code for the user
-    if verification_check.status == 'approved':
-        verification_sid, code = start_verification(phoneNumber)
-        store_auth_code(phoneNumber, code, verification_sid)
-        user = User.query.filter_by(phoneNumber=phoneNumber).first()
-        user.active = True
-        db.session.commit()
-        flash('Your phone number has been confirmed! You can now login.', 'success')
-        return redirect(url_for('login'))
-    else:
-        flash('Invalid verification code. Please try again.', 'error')
-        return redirect(url_for('confirmAccount'))
-
-
 
 
 #Verify Email Page
@@ -102,7 +172,6 @@ def verify_email(username):
     db.session.commit()
     flash('Your email has been confirmed! You can now login.', 'success')
     return redirect(url_for('login'))
-
 
 
 #Login Page
@@ -221,7 +290,7 @@ def profile_update():
         if staff == True:
             return render_template("dashboardstaff.html")
         else:
-            flash ("Access Denied Staff Only.")
+            flash ("Your New Photo Is Ready")
             return render_template("dashboard.html")
     elif request.method == 'GET':
         form.username.data = current_user.username
@@ -257,9 +326,9 @@ def profile_picture_update():
 
         flash('Your profile picture has been updated!', 'success')
         if staff == True:
-            return render_template("dashboardstaff.html")
+            return redirect(url_for('index'))
         else:
-            flash ("Access Denied Staff Only.")
+            flash ("Your Account Has Been Updated.")
             return render_template("dashboard.html")
     return render_template('profile_picture_update.html', form=form)
 
@@ -561,7 +630,10 @@ def events():
                 'title': event.firstName + ' '  + event.lastName,
                 'start': event.dateSheduled + 'T' + event.timeSheduled + ':00',
                 #'start': event.convert_to_iso_format(event.dateSheduled, event.timeSheduled),
-                'customText' : event.service
+                'customText' : event.service,
+                'pet_name' : event.pet_name,
+                'address' : event.streetNumber + ', ' + event.city + ', ' + event.zipcode,
+                'time_unformatted' : event.dateSheduled + ' at ' + event.timeSheduled
             })
     return jsonify(event_list)
 
@@ -628,11 +700,6 @@ def send_sms():
 
 # # Initialize the Flask app
 # app = Flask(__name__)
-
-account_Sid = os.environ.get("ACCOUNT_SID")
-auth_Token = os.environ.get("AUTH_TOKEN")
-verify_service_id = os.environ.get("TWILIO_VERIFY_SERVICE_ID")
-my_phone_number = os.environ.get("TWILIO_PHONE_NUMBER")
 
 # def init_db():
 #     conn = sqlite3.connect('users.db')
@@ -751,42 +818,100 @@ my_phone_number = os.environ.get("TWILIO_PHONE_NUMBER")
 # if __name__ == '__main__':
 #     app.run()
 
-def store_auth_code(phoneNumber, auth_code, verification_sid):
-    """Store the authentication code and verification SID for the given phone number"""
-    user = User.query.filter_by(phoneNumber=phoneNumber).first()
-    if user:
-        user.auth_code = auth_code
-        user.verification_sid = verification_sid
-    else:
-        user = User(phoneNumber=phoneNumber, auth_code=auth_code, verification_sid=verification_sid)
-        db.session.add(user)
-    db.session.commit()
 
 
 
-# Define the start_verification function
-def start_verification(to, channel='sms'):
-    if channel not in ('sms', 'call', 'whatsapp'):
+
+"""
+# Initialize the Twilio client
+client = Client(account_Sid, auth_Token)
+
+def send_verification_code(to, channel='sms'):
+    if channel not in ('sms', 'call', 'email'):
         channel = 'sms'
 
     service = verify_service_id
+ 
 
+    # Send the verification code using Twilio Verify
     verification = client.verify \
         .v2.services(service) \
         .verifications \
         .create(to=to, channel=channel)
 
-    # Retrieve the verification code from the Twilio API response
-    code = None
-    if verification.status == 'pending':
-        checks = client.verify \
-            .v2.services(service) \
-            .verification_checks \
-            .list(to=to)
-        for check in checks:
-            if check.status == 'approved':
-                code = check.to
-                break
+    return verification.sid
 
-    return verification.sid, code
+@app.route('/signup', methods=['GET', 'POST'])
+def signup():
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
+
+    form = SignUpForm()
+    if form.validate_on_submit():
+        hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+        user = User(username=form.username.data.lower(), email=form.email.data.lower(), password=hashed_password, firstName=form.firstName.data, lastName=form.lastName.data, phoneNumber=form.phoneNumber.data, streetNumber=form.streetNumber.data, city=form.city.data, state=form.state.data, zipcode=form.zipcode.data)
+
+        db.session.add(user)
+        db.session.commit()
+
+        send_verification_code(user.phoneNumber, 'phoneNumber')
+        
+        # Redirect to the enter code page
+        return redirect(url_for('enter_code', phoneNumber=user.phoneNumber))
+
+    return render_template('signup.html', title='Sign Up', form=form)
+
+@app.route('/enter_code/<phoneNumber>', methods=['GET', 'POST'])
+def enter_code(phoneNumber):
+    if request.method == 'POST':
+        verification_code = request.form.get('verification-code')
+        verify_service_sid = 'VA7ed47f6948af9225236fc25e6b538888'
+        
+
+        # Verify the verification code using Twilio Verify
+        client = Client(account_Sid, auth_Token)
+        verification_check = client.verify \
+            .services(verify_service_sid) \
+            .verification_checks \
+            .create(to=phoneNumber, code=verification_code)
+
+        # If verification was successful, mark the user's phone number as verified
+        if verification_check.status == 'approved':
+            user = User.query.filter_by(phoneNumber=phoneNumber).first()
+            if user:
+                    user.auth_code = verification_code
+                    db.session.commit()
+        else:        
+            flash('Your phone number has been confirmed! You can now login.', 'success')
+            return redirect(url_for('login'))
+        
+    else:
+        flash('Invalid verification code. Please try again.', 'error')
+
+    return render_template('enterCode.html', phoneNumber=phoneNumber)
+
+@app.route('/verify_phone_number', methods=['POST'])
+def verify_phone_number():
+    phoneNumber = request.form['phoneNumber']
+    verificationCode = request.form.get('verification-code')
+
+    client = Client(account_Sid, auth_Token)
+
+    # Verify the verification code using Twilio Verify
+    verification_check = client.verify.services('VA7ed47f6948af9225236fc25e6b538888').verification_checks.create(to=phoneNumber, code=verificationCode)
+
+    # If verification was successful, mark the user's phone number as verified
+    if verification_check.status == 'approved':
+        user = User.query.filter_by(phoneNumber=phoneNumber).first()
+        if user:
+            user.auth_code = verificationCode
+            db.session.commit()
+        else:        
+            flash('Your phone number has been confirmed! You can now login.', 'success')
+            return redirect(url_for('login'))
+        
+    else:
+        flash('Invalid verification code. Please try again.', 'error')
+
+"""
 

@@ -15,6 +15,7 @@ class SignUpForm(FlaskForm):
     firstName = StringField('First Name', validators=[DataRequired()])
     lastName = StringField('Last Name', validators=[DataRequired()])
     phoneNumber = StringField('Phone Number')
+    auth_code = StringField('auth_code', validators=[Length(max=6)])
     streetNumber = StringField('Address', validators=[DataRequired()])
     city = StringField('City', validators=[DataRequired()])
     state = StringField('State', validators=[DataRequired()])
@@ -33,6 +34,11 @@ class SignUpForm(FlaskForm):
         if user:
             raise ValidationError('That email is taken. Please choose a different one.')
 
+#AuthCodeForm
+class AuthCodeForm(FlaskForm):
+    email = StringField('Email', validators=[DataRequired()])
+    auth_code = StringField('Authentication Code', validators=[DataRequired()])
+    submit = SubmitField('Submit')
 
 #LoginForm
 class LoginForm(FlaskForm):
@@ -41,7 +47,7 @@ class LoginForm(FlaskForm):
     remember = BooleanField('Remember Me')
     submit = SubmitField('Login')
 
-
+#ResetPasswordForm
 class ResetPasswordForm(FlaskForm):
     email = StringField('Email', validators=[validators.DataRequired(), validators.Email()])
     temp_password = PasswordField('Current Password', validators=[validators.DataRequired()])
@@ -154,3 +160,4 @@ class VerificationCodeInoDayForm(FlaskForm):
 #VerificationCodeActualForm
 class VerificationCodeActualForm(FlaskForm):
     phoneNumber = StringField("Phone Number", validators=[Length(max=20)])
+    auth_code = StringField('verification-code', validators=[Length(max=6)])

@@ -1,0 +1,21 @@
+{% extends 'layout.html' %}
+{% block content %}
+
+    <h1>Confirm Account to Complete Account Registration</h1>
+    <p>Confirm your account either by email or text:</p>
+    <br>
+    <form method="POST" action="{{ url_for('confirm_account') }}">
+        <div>
+            <input type="radio" id="email" name="method" value="email">
+            <label for="email">Send Email</label>
+            <input type="email" name="email_or_phone" placeholder="Enter your email">
+        </div>
+        <div>
+            <input type="radio" id="phoneNumber" name="method" value="phoneNumber">
+            <label for="phoneNumber">Send Text</label>
+            <input type="tel" name="email_or_phone" placeholder="Enter your phone number">
+        </div>
+        <button type="submit">Submit Button</button>
+    </form>
+    
+{% endblock %}
