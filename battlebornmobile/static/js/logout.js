@@ -1,5 +1,5 @@
 // Set the inactivity timeout to 30 minutes (in milliseconds)
-const INACTIVITY_TIMEOUT = 30 * 60 * 1000;
+const INACTIVITY_TIMEOUT = 1 * 60 * 1000;
 
 // Set the logout URL
 const LOGOUT_URL = '/logout';
@@ -24,3 +24,5 @@ function logout() {
   // Redirect the user to the logout URL
   window.location.href = LOGOUT_URL;
 }
+
+resetInactivityTimeout();
