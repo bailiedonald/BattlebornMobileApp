@@ -421,7 +421,7 @@ def view_pdf(id):
 def appointment():
     form = AppointmentForm()
     if form.validate_on_submit():
-        appointment = Appointment(owner_id=current_user.id, firstName=form.firstName.data, lastName=form.lastName.data, phoneNumber=form.phoneNumber.data, pet_name=form.pet_name.data, service=form.service.data,  weekday=form.weekday.data, timeSlot=form.timeSlot.data, streetNumber=form.streetNumber.data, city=form.city.data, state=form.state.data, zipcode=form.zipcode.data)
+        appointment = Appointment(owner_id=current_user.id, firstName=form.firstName.data, lastName=form.lastName.data, phoneNumber=form.phoneNumber.data, pet_name=form.pet_name.data, service=form.service.data,  weekday=form.weekday.data, timeSlot=form.timeSlot.data, streetNumber=form.streetNumber.data, city=form.city.data, state=form.state.data, zipcode=form.zipcode.data, cost=form.cost.data)
 
         # Add Appointment to the Appointment Database
         db.session.add(appointment)

@@ -77,6 +77,7 @@ class Appointment(db.Model, UserMixin):
     lastName = db.Column(db.String(30), nullable=True)
     phoneNumber = db.Column(db.String(20), nullable=True)
     pet_name = db.Column(db.String(30))
+    cost = db.Column(db.Integer)
     service =db.Column(db.String(250))
     streetNumber = db.Column(db.String(50))
     city = db.Column(db.String(25))

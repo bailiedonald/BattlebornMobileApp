@@ -78,6 +78,7 @@ class AppointmentForm(FlaskForm):
     lastName = StringField('Last Name', validators=[DataRequired()])
     phoneNumber = StringField('Phone Number')
     service = StringField('Service')
+    cost = IntegerField('Cost')
     weekday = StringField('Weekday', validators=[DataRequired()])
     timeSlot = StringField('Time Slot', validators=[DataRequired()])
     streetNumber = StringField('Address', validators=[DataRequired()])
