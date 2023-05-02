@@ -1,4 +1,4 @@
-import os, random, string, shutil
+import os, re, random, string, shutil
 from flask import Flask, current_app, render_template, url_for, flash, redirect, jsonify, abort, request, send_file, send_from_directory
 from battlebornmobile import app, db, bcrypt, mail, client
 from battlebornmobile.forms import SignUpForm, AuthCodeForm, LoginForm, PetForm, AppointmentForm, ResetPasswordForm, UpdateProfileForm, UpdateProfilePictureForm, VerificationCodeActualForm
@@ -8,6 +8,9 @@ from flask_login import login_user, current_user, logout_user, login_required
 from flask_mail import Mail, Message
 from werkzeug.utils import secure_filename
 from twilio.rest import Client
+from sqlalchemy import or_
+
+
 
 
 #index Page
@@ -39,7 +42,6 @@ def contact():
 def layout():
     return render_template("layout.html")
 
-
 #SignUp Page
 @app.route("/signup", methods=['GET', 'POST'])
 def signup():
@@ -48,11 +50,19 @@ def signup():
 
     form = SignUpForm()
     if form.validate_on_submit():
-          
+        # Format the phone number entered by the user
+        cleaned_phoneNumber = re.sub('[^0-9]', '', form.phoneNumber.data)
+        if cleaned_phoneNumber.startswith('1'):
+            cleaned_phoneNumber = '+' + cleaned_phoneNumber
+        else:
+            cleaned_phoneNumber = '+1' + cleaned_phoneNumber
+
+
+
         # Update the user's account information to indicate that the email address is not yet verified
         # You can use a database or other storage mechanism to track this information
         hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
-        user = User(username=form.username.data.lower(), email=form.email.data.lower(), password=hashed_password, firstName=form.firstName.data, lastName=form.lastName.data, phoneNumber=form.phoneNumber.data, streetNumber=form.streetNumber.data, city=form.city.data, state=form.state.data, zipcode=form.zipcode.data)
+        user = User(username=form.username.data.lower(), email=form.email.data.lower(), password=hashed_password, firstName=form.firstName.data, lastName=form.lastName.data, phoneNumber=cleaned_phoneNumber, streetNumber=form.streetNumber.data, city=form.city.data, state=form.state.data, zipcode=form.zipcode.data)
         
         # generate a new password and update user's password
         auth_code = ''.join(random.choices(string.digits, k=6))
@@ -76,30 +86,6 @@ def signup():
         return redirect(url_for('confirm_account'))
 
     return render_template('signup.html', title='Sign Up', form=form)
-
-
-#send_email function
-def send_email(to, auth_code, username):
-    confirm_link = url_for('auth_code', _external=True)
-    mail = current_app.extensions.get('mail')
-    message = Message(
-        subject='Authentication Code',
-        recipients=[to],
-        html=render_template('email.txt', username=username, auth_code=auth_code, confirm_link=confirm_link),
-        sender=app.config['MAIL_DEFAULT_SENDER']
-    )
-    mail.send(message)
-
-
-#send_text function
-def send_text(phone_number, auth_code):
-    my_phone_number = os.environ.get("TWILIO_PHONE_NUMBER")
-    message = client.messages.create(
-        body='Your authentication code is {}'.format(auth_code),
-        from_=my_phone_number,
-        to=phone_number
-    )
-    return message.sid
 
 
 #Confirm Account
@@ -170,25 +156,30 @@ def auth_code():
 #     return redirect(url_for('login'))
 
 
-#Login Page
+# Login Page
 @app.route("/login", methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated: 
         return redirect(url_for('index'))
     form = LoginForm()
     if form.validate_on_submit():
-        user = User.query.filter_by(email=form.email.data.lower()).first()
-        if user and bcrypt.check_password_hash(user.password, form.password.data) and user.active:
+        user = User.query.filter(or_(User.username == form.username_or_email.data.lower(), User.email == form.username_or_email.data.lower())).first()
+        if user and user.check_password(form.password.data) and user.active:
             login_user(user, remember=form.remember.data)
             next_page = request.args.get('next')
+            admin = current_user.AdminAccess
             staff = current_user.StaffAccess
-            if staff == True:
+            if admin:
+                return render_template("dashboardadmin.html")
+            elif staff and not admin:
                 return render_template("dashboardstaff.html")
             else:
                 return redirect(next_page) if next_page else redirect(url_for('dashboard'))
         else:
-            flash('Login Unsuccessful. Please check email and password', 'danger')
+            flash('Login unsuccessful. Please check email/username and password.', 'danger')
     return render_template('login.html', title='Login', form=form)
+
+
 
 
 #Logout Page
@@ -414,14 +405,25 @@ def view_pdf(id):
     pdf_path = os.path.join(app.root_path, 'static/pet_records', pet.pdf_record)
     return send_file(pdf_path, attachment_filename=pet.pdf_record)
 
-
 #Appointment Request Page
 @app.route("/appointment/request", methods=['GET', 'POST'])
 @login_required
 def appointment():
     form = AppointmentForm()
     if form.validate_on_submit():
-        appointment = Appointment(owner_id=current_user.id, firstName=form.firstName.data, lastName=form.lastName.data, phoneNumber=form.phoneNumber.data, pet_name=form.pet_name.data, service=form.service.data,  weekday=form.weekday.data, timeSlot=form.timeSlot.data, streetNumber=form.streetNumber.data, city=form.city.data, state=form.state.data, zipcode=form.zipcode.data)
+        appointment = Appointment(owner_id=current_user.id, firstName=form.firstName.data, lastName=form.lastName.data, phoneNumber=form.phoneNumber.data, pet_name=form.pet_name.data, service=form.service.data, weekday=form.weekday.data, timeSlot=form.timeSlot.data, streetNumber=form.streetNumber.data, city=form.city.data, state=form.state.data, zipcode=form.zipcode.data)
+
+        # Update appointment cost based on service selected
+        if appointment.service == "Checkup" or appointment.service == "Spay or Neutering":
+            appointment.cost = 50
+        elif appointment.service == "Vaccines":
+            appointment.cost = 20
+        elif appointment.service == "DeWorming":
+            appointment.cost = 30
+        elif appointment.service == "Dental":
+            appointment.cost = 60
+        elif appointment.service == "Surgical":
+            appointment.cost = 500
 
         # Add Appointment to the Appointment Database
         db.session.add(appointment)
@@ -429,6 +431,7 @@ def appointment():
         
         flash('Your request has been received!', 'success')
         return redirect(url_for('dashboard'))
+
     return render_template('appointment_request.html', title='MakeAppointment', form=form)
 
 
@@ -512,10 +515,33 @@ def scheduler():
     return render_template("scheduler.html", appointments=appointments, )
 
 
+#Admin Dashboard
+@app.route('/admin/dashboard')
+@login_required
+def admin_dashboard():
+    admin = current_user.AdminAccess
+    if admin == True:
+        return render_template("dashboardadmin.html")
+    else:
+        flash ("Access Denied Administrators Only.")
+        return render_template("dashboard.html")
+
+#Admin Dashboard
+@app.route('/admin/tools')
+@login_required
+def admin_tools():
+    admin = current_user.AdminAccess
+    if admin == True:
+        return render_template("admin_tools.html")
+    else:
+        flash ("Access Denied Administrators Only.")
+        return render_template("dashboard.html")
+
+
 #Admin User Access Table
 @app.route('/admin/useraccess')
 @login_required
-def userAccess():
+def user_access():
     admin = current_user.AdminAccess
     if admin:
         search_query = request.args.get('q')
@@ -546,6 +572,27 @@ def updateAccess(user_id):
         flash ("Access Denied Admin Only.")
         return render_template("dashboard.html")
 
+#Admin Generate Reports
+@app.route('/admin/reports/generate')
+@login_required
+def reports_generate():
+    admin = current_user.AdminAccess
+    if admin:
+        return render_template('reports_generate.html')
+    else:
+        flash("Access Denied: Admin Only")
+        return render_template("dashboard.html")
+
+#Admin User Access Table
+@app.route('/admin/reports/view')
+@login_required
+def reports_view():
+    admin = current_user.AdminAccess
+    if admin:
+        return render_template('reports_view.html')
+    else:
+        flash("Access Denied: Admin Only")
+        return render_template("dashboard.html")
 
 #Staff Dashboard
 @app.route('/staff/dashboard')

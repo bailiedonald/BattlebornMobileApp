@@ -1,6 +1,6 @@
-import os, random, string
+import os, random, string, re
 from datetime import datetime
-from battlebornmobile import db, login_manager, mail, app
+from battlebornmobile import db, login_manager, mail, app, bcrypt
 from flask_login import UserMixin
 from flask_mail import Mail, Message
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
@@ -47,6 +47,10 @@ class User(db.Model, UserMixin):
         except:
             return None
         return User.query.get(user_id)
+    
+    def check_password(self, password):
+        """Invalid Password Check Your Password and Try Again."""
+        return bcrypt.check_password_hash(self.password, password)
 
 
 class Pet(db.Model, UserMixin):
@@ -77,6 +81,7 @@ class Appointment(db.Model, UserMixin):
     lastName = db.Column(db.String(30), nullable=True)
     phoneNumber = db.Column(db.String(20), nullable=True)
     pet_name = db.Column(db.String(30))
+    cost = db.Column(db.Integer)
     service =db.Column(db.String(250))
     streetNumber = db.Column(db.String(50))
     city = db.Column(db.String(25))

@@ -1,7 +1,5 @@
 {% extends 'layout.html' %}
-
 {% block content %}
-
 {% if current_user.is_authenticated %}
 
 <div class="container">
@@ -37,7 +35,15 @@
 				<div class="form-group row">
 					<div class="col-md-6">			
 						{{ form.service.label(class="form-label") }}
-						{{ form.service(class="form-control") }}
+						<select id="service" name="service">
+							<option value=" "> </option>
+							<option value="Checkup">Checkup</option>
+							<option value="Spay or Neutering">Spay or Neutering</option>
+							<option value="Vaccines">Vaccines</option>
+							<option value="DeWorming">DeWorming</option>
+							<option value="Dental">Dental</option>
+							<option value="Surgical">Surgical</option>
+						</select>
 					</div>
 					</div>
 				</div>
@@ -109,4 +115,5 @@
 
 {% endif %}
 {% endblock %}
+
 
