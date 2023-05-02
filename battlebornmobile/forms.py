@@ -34,15 +34,7 @@ class SignUpForm(FlaskForm):
         user = User.query.filter_by(email=email.data).first()
         if user:
             raise ValidationError('That email is taken. Please choose a different one.')
-    
-    def validate_phoneNumber(self, phoneNumber):
-        # Remove any non-numeric characters from the phone number
-        cleaned_phoneNumber = re.sub('[^0-9]', '', phoneNumber.data)
-        # Add the country code to the phone number if it's not already present
-        if not cleaned_phoneNumber.startswith('+1'):
-            cleaned_phoneNumber = '+1' + cleaned_phoneNumber
-        # Save the cleaned phone number
-        phoneNumber.data = cleaned_phoneNumber
+
 
 #AuthCodeForm
 class AuthCodeForm(FlaskForm):

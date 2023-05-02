@@ -1,4 +1,4 @@
-import os, random, string, shutil
+import os, re, random, string, shutil
 from flask import Flask, current_app, render_template, url_for, flash, redirect, jsonify, abort, request, send_file, send_from_directory
 from battlebornmobile import app, db, bcrypt, mail, client
 from battlebornmobile.forms import SignUpForm, AuthCodeForm, LoginForm, PetForm, AppointmentForm, ResetPasswordForm, UpdateProfileForm, UpdateProfilePictureForm, VerificationCodeActualForm
@@ -49,8 +49,12 @@ def signup():
     if form.validate_on_submit():
         # Format the phone number entered by the user
         cleaned_phoneNumber = re.sub('[^0-9]', '', form.phoneNumber.data)
-        if not cleaned_phoneNumber.startswith('+1'):
+        if cleaned_phoneNumber.startswith('1'):
+            cleaned_phoneNumber = '+' + cleaned_phoneNumber
+        else:
             cleaned_phoneNumber = '+1' + cleaned_phoneNumber
+
+
 
         # Update the user's account information to indicate that the email address is not yet verified
         # You can use a database or other storage mechanism to track this information
@@ -79,6 +83,8 @@ def signup():
         return redirect(url_for('confirm_account'))
 
     return render_template('signup.html', title='Sign Up', form=form)
+
+
 #Confirm Account
 @app.route('/account/confirm', methods=['GET', 'POST'])
 def confirm_account():

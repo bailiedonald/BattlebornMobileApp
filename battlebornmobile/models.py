@@ -1,4 +1,4 @@
-import os, random, string
+import os, random, string, re
 from datetime import datetime
 from battlebornmobile import db, login_manager, mail, app
 from flask_login import UserMixin
