@@ -32,6 +32,7 @@ class User(db.Model, UserMixin):
     pets = db.relationship('Pet', backref= 'owner')
     appointments = db.relationship('Appointment', backref= 'owner')
 
+
     def __repr__(self):
         return f"User('{self.id}', '{self.username}', '{self.email}','{self.firstName}', '{self.lastName}', '{self.phoneNumber}', '{self.streetNumber}', '{self.city}', '{self.state}', '{self.zipcode}', '{self.image_file}')"
     
@@ -115,3 +116,14 @@ class Appointment(db.Model, UserMixin):
     
     def __repr__(self):
         return f"Pet('{self.id}', '{self.scheduled}', '{self.cancelled}', '{self.owner_id}')"
+
+
+#Reports Database
+class Reports(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(100), nullable=False)
+    data = db.Column(db.Text, nullable=False)
+    created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+
+    def __repr__(self):
+        return f"<Report {self.id}>"

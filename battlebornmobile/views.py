@@ -2,7 +2,7 @@ import os, re, random, string, shutil
 from flask import Flask, current_app, render_template, url_for, flash, redirect, jsonify, abort, request, send_file, send_from_directory
 from battlebornmobile import app, db, bcrypt, mail, client
 from battlebornmobile.forms import SignUpForm, AuthCodeForm, LoginForm, PetForm, AppointmentForm, ResetPasswordForm, UpdateProfileForm, UpdateProfilePictureForm, VerificationCodeActualForm
-from battlebornmobile.models import User, Pet, Appointment
+from battlebornmobile.models import User, Pet, Appointment, Reports
 from datetime import datetime
 from flask_login import login_user, current_user, logout_user, login_required
 from flask_mail import Mail, Message
@@ -526,7 +526,8 @@ def admin_dashboard():
         flash ("Access Denied Administrators Only.")
         return render_template("dashboard.html")
 
-#Admin Dashboard
+
+#Admin Tools
 @app.route('/admin/tools')
 @login_required
 def admin_tools():
@@ -549,7 +550,7 @@ def user_access():
             users = User.query.filter(User.lastName.contains(search_query)).all()
         else:
             users = User.query.all()
-        return render_template('userAccess.html', users=users, search_query=search_query)
+        return render_template('user_access.html', users=users, search_query=search_query)
     else:
         flash("Access Denied: Admin Only")
         return render_template("dashboard.html")
@@ -558,7 +559,7 @@ def user_access():
 #Admin Edit User Access Table
 @app.route('/admin/useraccess/<int:user_id>', methods=['POST'])
 @login_required
-def updateAccess(user_id):
+def update_access(user_id):
     admin = current_user.AdminAccess
     if admin == True:
         user = User.query.get_or_404(user_id)
@@ -572,27 +573,68 @@ def updateAccess(user_id):
         flash ("Access Denied Admin Only.")
         return render_template("dashboard.html")
 
-#Admin Generate Reports
-@app.route('/admin/reports/generate')
+
+# User Generate Reports
+@app.route('/user/reports/generate', methods=['GET', 'POST'])
 @login_required
 def reports_generate():
+    if request.method == 'POST':
+        # Get the table name and columns from the form
+        table_name = request.form['table_name']
+        columns = request.form.getlist('columns')
+        
+        # Create the SQL query to retrieve the data
+        columns_str = ', '.join(columns)
+        query_str = f"SELECT {columns_str} FROM {table_name}"
+        query = db.text(query_str)
+        
+        # Execute the query and retrieve the data
+        data = db.engine.execute(query).fetchall()
+        
+        # Format the data as a list of dictionaries
+        report_data = []
+        for row in data:
+            row_dict = {}
+            for i in range(len(columns)):
+                row_dict[columns[i]] = row[i]
+            report_data.append(row_dict)
+        
+        # Save the report to the database
+        report = Reports(
+            title=f"{table_name} Report",
+            data=str(report_data),
+            created_at=datetime.now()
+        )
+        db.session.add(report)
+        db.session.commit()
+        
+        # Display the report to the user
+        return render_template('reports_generate.html', report_data=report_data, columns=columns)
+    else:
+        # Get the names of all the database tables
+        inspector = db.inspect(db.engine)
+        tables = inspector.get_table_names()
+        
+        # Display the form to the user
+        return render_template('reports_generate.html', tables=tables)
+
+
+# Admin View Reports
+@app.route('/admin/reports/view')
+@login_required
+def reports_view():
+    # Check if the user is an admin
     admin = current_user.AdminAccess
     if admin:
-        return render_template('reports_generate.html')
+        # Get the reports from the database
+        reports = Reports.query.all()
+
+        # Display the reports to the admin user
+        return render_template('reports_view.html', reports=reports)
     else:
         flash("Access Denied: Admin Only")
         return render_template("dashboard.html")
 
-#Admin User Access Table
-@app.route('/admin/reports/view')
-@login_required
-def reports_view():
-    admin = current_user.AdminAccess
-    if admin:
-        return render_template('reports_view.html')
-    else:
-        flash("Access Denied: Admin Only")
-        return render_template("dashboard.html")
 
 #Staff Dashboard
 @app.route('/staff/dashboard')
