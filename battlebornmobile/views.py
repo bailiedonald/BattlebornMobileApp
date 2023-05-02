@@ -2,7 +2,7 @@ import os, re, random, string, shutil
 from flask import Flask, current_app, render_template, url_for, flash, redirect, jsonify, abort, request, send_file, send_from_directory
 from battlebornmobile import app, db, bcrypt, mail, client
 from battlebornmobile.forms import SignUpForm, AuthCodeForm, LoginForm, PetForm, AppointmentForm, ResetPasswordForm, UpdateProfileForm, UpdateProfilePictureForm, VerificationCodeActualForm
-from battlebornmobile.models import User, Pet, Appointment
+from battlebornmobile.models import User, Pet, Appointment, Reports
 from datetime import datetime
 from flask_login import login_user, current_user, logout_user, login_required
 from flask_mail import Mail, Message
@@ -526,7 +526,8 @@ def admin_dashboard():
         flash ("Access Denied Administrators Only.")
         return render_template("dashboard.html")
 
-#Admin Dashboard
+
+#Admin Tools
 @app.route('/admin/tools')
 @login_required
 def admin_tools():
@@ -549,7 +550,7 @@ def user_access():
             users = User.query.filter(User.lastName.contains(search_query)).all()
         else:
             users = User.query.all()
-        return render_template('userAccess.html', users=users, search_query=search_query)
+        return render_template('user_access.html', users=users, search_query=search_query)
     else:
         flash("Access Denied: Admin Only")
         return render_template("dashboard.html")
@@ -558,7 +559,7 @@ def user_access():
 #Admin Edit User Access Table
 @app.route('/admin/useraccess/<int:user_id>', methods=['POST'])
 @login_required
-def updateAccess(user_id):
+def update_access(user_id):
     admin = current_user.AdminAccess
     if admin == True:
         user = User.query.get_or_404(user_id)
@@ -567,32 +568,89 @@ def updateAccess(user_id):
         user.AdminAccess = bool(request.form.get('admin_access'))
         db.session.commit()
         flash('User access updated successfully.')
-        return redirect(url_for('userAccess'))
+        return redirect(url_for('user_access'))
     else:
         flash ("Access Denied Admin Only.")
         return render_template("dashboard.html")
 
-#Admin Generate Reports
-@app.route('/admin/reports/generate')
-@login_required
+
+# define columns for each table
+user_columns = ["id", "username", "email", "created_at"]
+pet_columns = ["id", "name", "breed", "owner_id"]
+appointment_columns = ["id", "pet_id", "vet_id", "date", "cost"]
+
+
+# define a function to get the columns for a given table
+def get_columns(table_name):
+    if table_name == "User":
+        return user_columns
+    elif table_name == "Pet":
+        return pet_columns
+    elif table_name == "Appointment":
+        return appointment_columns
+    else:
+        return []
+
+
+#Generate Reports
+@app.route('/reports/generate', methods=['GET', 'POST'])
 def reports_generate():
+    if request.method == 'POST':
+        table_name = request.form['table_name']
+        columns = request.form.getlist('columns')
+
+        # get the selected columns for the given table
+        selected_columns = []
+        for column in columns:
+            if column in get_columns(table_name):
+                selected_columns.append(column)
+
+        # query the database for the selected columns
+        if table_name == "User":
+            results = User.query.with_entities(User.id, User.username, User.email, User.created_at).all()
+        elif table_name == "Pet":
+            results = Pet.query.with_entities(Pet.id, Pet.name, Pet.breed, Pet.owner_id).all()
+        elif table_name == "Appointment":
+            results = Appointment.query.with_entities(Appointment.id, Appointment.pet_id, Appointment.vet_id, Appointment.date, Appointment.cost).all()
+        else:
+            results = []
+
+        # render the results in a template
+        return render_template('reports_generate.html', table_name=table_name, columns=selected_columns, results=results)
+
+    # if method is GET, render the reports page with the select form
+    return render_template('reports_generate.html', user_columns=user_columns, pet_columns=pet_columns, appointment_columns=appointment_columns)
+
+
+# API to get columns of a table
+@app.route('/api/columns/<table_name>')
+@login_required
+def get_columns(table_name):
+    # Get the column names of the table
+    inspector = db.inspect(db.engine)
+    columns = inspector.get_columns(table_name)
+    column_names = [column['name'] for column in columns]
+    
+    # Return the column names as a JSON response
+    return jsonify({'columns': column_names})
+
+
+# Admin View Reports
+@app.route('/admin/reports/view')
+@login_required
+def reports_view():
+    # Check if the user is an admin
     admin = current_user.AdminAccess
     if admin:
-        return render_template('reports_generate.html')
+        # Get the reports from the database
+        reports = Reports.query.all()
+
+        # Display the reports to the admin user
+        return render_template('reports_view.html', reports=reports)
     else:
         flash("Access Denied: Admin Only")
         return render_template("dashboard.html")
 
-#Admin User Access Table
-@app.route('/admin/reports/view')
-@login_required
-def reports_view():
-    admin = current_user.AdminAccess
-    if admin:
-        return render_template('reports_view.html')
-    else:
-        flash("Access Denied: Admin Only")
-        return render_template("dashboard.html")
 
 #Staff Dashboard
 @app.route('/staff/dashboard')

@@ -5,7 +5,11 @@
     table {border-collapse: collapse; width: 100%;}
     th, td {padding: 15px;}
 </style>
-    
+
+<a href="/admin/tools">
+    <button type="button">Admin Tools</button>
+</a>    
+
 <h1>Update User Access</h1>
 
 <h1>Search Results for "{{ search_query }}"</h1>
@@ -28,7 +32,7 @@
             <td> {{ user.firstName }} </td>
             <td> {{ user.email }} </td>
             <td> {{ user.phoneNumber }} </td>
-            <td><form action="{{ url_for('updateAccess', user_id=user.id) }}" method="POST">
+            <td><form action="{{ url_for('update_access', user_id=user.id) }}" method="POST">
                 <label>
                     <input type="checkbox" name="active" {% if user.active %}checked{% endif %}>
                     Active

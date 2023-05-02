@@ -1,6 +1,30 @@
 {% extends 'layout.html' %}
 {% block content %}
+<a href="/admin/tools">
+    <button type="button">Admin Tools</button>
+</a>    
 <h1>View Reports</h1>
-
-
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Report ID</th>
+        <th>Title</th>
+        <th>Table Name</th>
+        <th>Columns</th>
+        <th>Created At</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for report in reports %}
+        <tr>
+          <td>{{ report.id }}</td>
+          <td>{{ report.title }}</td>
+          <td>{{ report.table_name }}</td>
+          <td>{{ report.columns }}</td>
+          <td>{{ report.created_at }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
 {% endblock %}
+

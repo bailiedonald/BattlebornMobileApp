@@ -165,6 +165,15 @@ class UpdateProfileForm(FlaskForm):
     zipcode = StringField("Zipcode")
     submit = SubmitField("Update")
 
+#GenerateReportsForm
+class ReportForm(FlaskForm):
+    title = StringField('Title', validators=[DataRequired()])
+    table_name = StringField('Table Name', validators=[DataRequired()])
+    columns = StringField('Columns', validators=[DataRequired()])
+    filters = StringField('Filters')
+    order_by = StringField('Order By')
+    submit = SubmitField('Generate Report')
+
 
 #UpdateProfilePictureForm
 class UpdateProfilePictureForm(FlaskForm):
