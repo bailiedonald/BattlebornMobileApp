@@ -1,9 +1,10 @@
-import os, random, string
+import os, random, string, re
 from datetime import datetime
-from battlebornmobile import db, login_manager, mail, app
+from battlebornmobile import db, login_manager, mail, app, bcrypt
 from flask_login import UserMixin
 from flask_mail import Mail, Message
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
+from flask import jsonify
 
 
 @login_manager.user_loader
@@ -32,6 +33,7 @@ class User(db.Model, UserMixin):
     pets = db.relationship('Pet', backref= 'owner')
     appointments = db.relationship('Appointment', backref= 'owner')
 
+
     def __repr__(self):
         return f"User('{self.id}', '{self.username}', '{self.email}','{self.firstName}', '{self.lastName}', '{self.phoneNumber}', '{self.streetNumber}', '{self.city}', '{self.state}', '{self.zipcode}', '{self.image_file}')"
     
@@ -47,6 +49,10 @@ class User(db.Model, UserMixin):
         except:
             return None
         return User.query.get(user_id)
+    
+    def check_password(self, password):
+        """Invalid Password Check Your Password and Try Again."""
+        return bcrypt.check_password_hash(self.password, password)
 
 
 class Pet(db.Model, UserMixin):
@@ -77,6 +83,7 @@ class Appointment(db.Model, UserMixin):
     lastName = db.Column(db.String(30), nullable=True)
     phoneNumber = db.Column(db.String(20), nullable=True)
     pet_name = db.Column(db.String(30))
+    cost = db.Column(db.Integer)
     service =db.Column(db.String(250))
     streetNumber = db.Column(db.String(50))
     city = db.Column(db.String(25))
@@ -110,3 +117,14 @@ class Appointment(db.Model, UserMixin):
     
     def __repr__(self):
         return f"Pet('{self.id}', '{self.scheduled}', '{self.cancelled}', '{self.owner_id}')"
+
+
+#Reports Database
+class Reports(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(100), nullable=False)
+    data = db.Column(db.Text, nullable=False)
+    created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+
+    def __repr__(self):
+        return f"<Report {self.id}>"

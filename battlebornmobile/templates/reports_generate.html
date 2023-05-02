@@ -1,0 +1,28 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<a href="/admin/tools">
+  <button type="button">Admin Tools</button>
+</a>    
+
+<h1>User Reports</h1>
+
+<h1>{{ table_name }} Reports</h1>
+
+<table>
+  <tr>
+    {% for column in columns %}
+      <th>{{ column }}</th>
+    {% endfor %}
+  </tr>
+  
+  {% for row in data %}
+    <tr>
+      {% for column in row %}
+        <td>{{ column }}</td>
+      {% endfor %}
+    </tr>
+  {% endfor %}
+</table>
+
+{% endblock %}

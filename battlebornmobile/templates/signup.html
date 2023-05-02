@@ -50,17 +50,18 @@
                                     {{ form.lastName.label(class="form-label") }}
                                     {{ form.lastName(class="form-control") }}
                                 </div>
+                                <div class="col-md-10">
+                                    {{ form.phoneNumber.label(class="form-label") }}
+                                    {{ form.phoneNumber(class="form-control", placeholder="555-123-4567") }} 
+                                </div>
+                                <br>
                             </div>
-                            <div class="col-md-6">
-
-                            {{ form.phoneNumber.label(class="form-label") }}
-                            {{ form.phoneNumber(class="form-control") }}
-                            <br/>
+                        <div class="form-group row">
+                            <div class="col-md-10">			
+                                {{ form.streetNumber.label(class="form-label") }}
+                                {{ form.streetNumber(class="form-control") }}
                             </div>
-                        <div>
                         </div>
-                            {{ form.streetNumber.label(class="form-label") }}
-                            {{ form.streetNumber(class="form-control") }}
                         <div class="form-group row">
                             <div class="col-md-4">			
                                 {{ form.city.label(class="form-label") }}
