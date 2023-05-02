@@ -1,45 +1,28 @@
 {% extends "layout.html" %}
 
 {% block content %}
+<a href="/admin/tools">
+  <button type="button">Admin Tools</button>
+</a>    
 
 <h1>User Reports</h1>
-<form method="post" action="{{ url_for('reports_generate') }}">
-  <input type="hidden" name="table_name" value="User">
-  <select name="columns" multiple>
-    {% for column in user_columns %}
-      <option value="{{ column }}">{{ column }}</option>
-    {% endfor %}
-  </select>
-  <br><br>
-  <button type="submit">Generate Report</button>
-</form>
-<hr>
 
-<h1>Pet Reports</h1>
-<form method="post" action="{{ url_for('reports_generate') }}">
-  <input type="hidden" name="table_name" value="Pet">
-  <select name="columns" multiple>
-    {% for column in pet_columns %}
-      <option value="{{ column }}">{{ column }}</option>
-    {% endfor %}
-  </select>
-  <br><br>
-  <button type="submit">Generate Report</button>
-</form>
-<hr>
+<h1>{{ table_name }} Reports</h1>
 
-<h1>Appointment Reports</h1>
-<form method="post" action="{{ url_for('reports_generate') }}">
-  <input type="hidden" name="table_name" value="Appointment">
-  <select name="columns" multiple>
-    {% for column in appointment_columns %}
-      <option value="{{ column }}">{{ column }}</option>
+<table>
+  <tr>
+    {% for column in columns %}
+      <th>{{ column }}</th>
     {% endfor %}
-  </select>
-  <br><br>
-  <button type="submit">Generate Report</button>
-</form>
-<hr>
-
+  </tr>
+  
+  {% for row in data %}
+    <tr>
+      {% for column in row %}
+        <td>{{ column }}</td>
+      {% endfor %}
+    </tr>
+  {% endfor %}
+</table>
 
 {% endblock %}
