@@ -1,10 +1,18 @@
 {% extends 'layout.html' %}
 {% block content %}
-{% if current_user.is_authenticated %}
-
-<h1>Add A Pet</h1>
+<style>
+.center {
+	margin: auto;
+	width: 50%;
+	border: 3px solid navy;
+	padding: 10px;
+  }{% if current_user.is_authenticated %}
+</style>
+<div class="col-5, center">
+<h1   class="center">Add A Pet</h1>
 	<br/>
-<div class="shadow p-3 mb-5 bg-body rounded">
+
+	<div class="shadow p-3 mb-5 bg-body rounded">
 	<form method="POST" enctype="multipart/form-data">
 		{{ form.hidden_tag() }}
 
@@ -12,6 +20,11 @@
 		{{ form.pet_name(class="form-control") }}
 		<br/>
 		
+		<!-- <div class="form-group">
+			<label for="dateScheduled">Date scheduled:</label>
+			<input type="date" class="form-control" id="dateScheduled" name="dateScheduled" value="">
+		</div> -->
+
 		{{ form.pet_dob.label(class="form-label") }}
 		{{ form.pet_dob(class="form-control") }}
 		<br/>
@@ -44,7 +57,7 @@
 
 
 	</form>
-
+	</div>
 </div>
 {% else %}
 <h2>Must Be Logged In...</h2>
