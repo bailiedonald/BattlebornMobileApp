@@ -167,8 +167,11 @@ def login():
         if user and user.check_password(form.password.data) and user.active:
             login_user(user, remember=form.remember.data)
             next_page = request.args.get('next')
+            admin = current_user.AdminAccess
             staff = current_user.StaffAccess
-            if staff == True:
+            if admin:
+                return render_template("dashboardadmin.html")
+            elif staff and not admin:
                 return render_template("dashboardstaff.html")
             else:
                 return redirect(next_page) if next_page else redirect(url_for('dashboard'))
@@ -512,10 +515,33 @@ def scheduler():
     return render_template("scheduler.html", appointments=appointments, )
 
 
+#Admin Dashboard
+@app.route('/admin/dashboard')
+@login_required
+def admin_dashboard():
+    admin = current_user.AdminAccess
+    if admin == True:
+        return render_template("dashboardadmin.html")
+    else:
+        flash ("Access Denied Administrators Only.")
+        return render_template("dashboard.html")
+
+#Admin Dashboard
+@app.route('/admin/tools')
+@login_required
+def admin_tools():
+    admin = current_user.AdminAccess
+    if admin == True:
+        return render_template("admin_tools.html")
+    else:
+        flash ("Access Denied Administrators Only.")
+        return render_template("dashboard.html")
+
+
 #Admin User Access Table
 @app.route('/admin/useraccess')
 @login_required
-def userAccess():
+def user_access():
     admin = current_user.AdminAccess
     if admin:
         search_query = request.args.get('q')
@@ -546,6 +572,27 @@ def updateAccess(user_id):
         flash ("Access Denied Admin Only.")
         return render_template("dashboard.html")
 
+#Admin Generate Reports
+@app.route('/admin/reports/generate')
+@login_required
+def reports_generate():
+    admin = current_user.AdminAccess
+    if admin:
+        return render_template('reports_generate.html')
+    else:
+        flash("Access Denied: Admin Only")
+        return render_template("dashboard.html")
+
+#Admin User Access Table
+@app.route('/admin/reports/view')
+@login_required
+def reports_view():
+    admin = current_user.AdminAccess
+    if admin:
+        return render_template('reports_view.html')
+    else:
+        flash("Access Denied: Admin Only")
+        return render_template("dashboard.html")
 
 #Staff Dashboard
 @app.route('/staff/dashboard')
