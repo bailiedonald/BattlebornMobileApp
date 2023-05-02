@@ -405,6 +405,7 @@ def view_pdf(id):
     pdf_path = os.path.join(app.root_path, 'static/pet_records', pet.pdf_record)
     return send_file(pdf_path, attachment_filename=pet.pdf_record)
 
+
 #Appointment Request Page
 @app.route("/appointment/request", methods=['GET', 'POST'])
 @login_required
@@ -574,81 +575,33 @@ def update_access(user_id):
         return render_template("dashboard.html")
 
 
-# define columns for each table
-user_columns = ["username", "email"]
-pet_columns = ["name", "breed", "owner_id"]
-appointment_columns = ["pet_name", "date", "cost"]
-
-
-# define a function to get the columns for a given table
-def get_columns(table_name):
-    if table_name == "User":
-        return user_columns
-    elif table_name == "Pet":
-        return pet_columns
-    elif table_name == "Appointment":
-        return appointment_columns
-    else:
-        return []
-
-
 #Generate Reports
-@app.route('/reports/generate', methods=['GET', 'POST'])
-def reports_generate():
+@app.route('/admin/reports/generate', methods=['GET', 'POST'])
+def generate_reports():
     if request.method == 'POST':
         table_name = request.form['table_name']
         columns = request.form.getlist('columns')
-
-        # get the selected columns for the given table
-        selected_columns = []
-        for column in columns:
-            if column in get_columns(table_name):
-                selected_columns.append(column)
-
-        # query the database for the selected columns
-        if table_name == "User":
-            results = User.query.with_entities(User.username, User.email).all()
-        elif table_name == "Pet":
-            results = Pet.query.with_entities(Pet.name, Pet.breed, Pet.owner_id).all()
-        elif table_name == "Appointment":
-            results = Appointment.query.with_entities(Appointment.pet_name, Appointment.dateSheduled, Appointment.cost).all()
+        if table_name == 'User':
+            data = User.query.with_entities(*columns).all()
+        elif table_name == 'Pet':
+            data = Pet.query.with_entities(*columns).all()
+        elif table_name == 'Appointment':
+            data = Appointment.query.with_entities(*columns).all()
         else:
-            results = []
-
-        # render the results in a template
-        return render_template('reports_generate.html', table_name=table_name, columns=selected_columns, results=results)
-
-    # if method is GET, render the reports page with the select form
-    return render_template('reports_generate.html', user_columns=user_columns, pet_columns=pet_columns, appointment_columns=appointment_columns)
-
-
-# API to get columns of a table
-@app.route('/api/columns/<table_name>')
-@login_required
-def get_columns(table_name):
-    # Get the column names of the table
-    inspector = db.inspect(db.engine)
-    columns = inspector.get_columns(table_name)
-    column_names = [column['name'] for column in columns]
-    
-    # Return the column names as a JSON response
-    return jsonify({'columns': column_names})
+            data = None
+        return render_template('reports_generate.html', data=data)
+    return render_template('reports_generate.html', user_columns=User.__table__.columns.keys(), pet_columns=Pet.__table__.columns.keys(), appointment_columns=Appointment.__table__.columns.keys())
 
 
 # Admin View Reports
 @app.route('/admin/reports/view')
 @login_required
 def reports_view():
-    # Check if the user is an admin
     admin = current_user.AdminAccess
-    if admin:
-        # Get the reports from the database
-        reports = Reports.query.all()
-
-        # Display the reports to the admin user
-        return render_template('reports_view.html', reports=reports)
+    if admin == True:
+        return render_template("reports_view.html")
     else:
-        flash("Access Denied: Admin Only")
+        flash ("Access Denied Administrators Only.")
         return render_template("dashboard.html")
 
 
