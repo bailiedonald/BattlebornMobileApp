@@ -575,9 +575,9 @@ def update_access(user_id):
 
 
 # define columns for each table
-user_columns = ["id", "username", "email", "created_at"]
-pet_columns = ["id", "name", "breed", "owner_id"]
-appointment_columns = ["id", "pet_id", "vet_id", "date", "cost"]
+user_columns = ["username", "email"]
+pet_columns = ["name", "breed", "owner_id"]
+appointment_columns = ["pet_name", "date", "cost"]
 
 
 # define a function to get the columns for a given table
@@ -607,11 +607,11 @@ def reports_generate():
 
         # query the database for the selected columns
         if table_name == "User":
-            results = User.query.with_entities(User.id, User.username, User.email, User.created_at).all()
+            results = User.query.with_entities(User.username, User.email).all()
         elif table_name == "Pet":
-            results = Pet.query.with_entities(Pet.id, Pet.name, Pet.breed, Pet.owner_id).all()
+            results = Pet.query.with_entities(Pet.name, Pet.breed, Pet.owner_id).all()
         elif table_name == "Appointment":
-            results = Appointment.query.with_entities(Appointment.id, Appointment.pet_id, Appointment.vet_id, Appointment.date, Appointment.cost).all()
+            results = Appointment.query.with_entities(Appointment.pet_name, Appointment.dateSheduled, Appointment.cost).all()
         else:
             results = []
 
