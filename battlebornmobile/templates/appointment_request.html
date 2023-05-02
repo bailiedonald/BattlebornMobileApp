@@ -116,28 +116,4 @@
 {% endif %}
 {% endblock %}
 
-<script>
-	function updateAppointmentCost() {
-		var service = document.getElementById("service").value;
-		var cost = document.getElementById("cost");
-		if (service == "Checkup" || service == "Spay or Neutering") {
-			cost.value = "50";
-		} else if (service == "Vaccines") {
-			cost.value = "20";
-		} else if (service == "DeWorming") {
-			cost.value = "30";
-		} else if (service == "Dental") {
-			cost.value = "60";
-		} else if (service == "Surgical") {
-			cost.value = "500";
-		} else {
-			cost.value = "";
-		}
-	}
-	
-	// Attach event listener to service dropdown
-	document.getElementById("service").addEventListener("change", updateAppointmentCost);
-	
-	// Call updateAppointmentCost function once on page load
-	updateAppointmentCost();
-	</script>
+

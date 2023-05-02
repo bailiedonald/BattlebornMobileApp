@@ -39,7 +39,6 @@ def contact():
 def layout():
     return render_template("layout.html")
 
-
 #SignUp Page
 @app.route("/signup", methods=['GET', 'POST'])
 def signup():
@@ -48,11 +47,15 @@ def signup():
 
     form = SignUpForm()
     if form.validate_on_submit():
-          
+        # Format the phone number entered by the user
+        cleaned_phoneNumber = re.sub('[^0-9]', '', form.phoneNumber.data)
+        if not cleaned_phoneNumber.startswith('+1'):
+            cleaned_phoneNumber = '+1' + cleaned_phoneNumber
+
         # Update the user's account information to indicate that the email address is not yet verified
         # You can use a database or other storage mechanism to track this information
         hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
-        user = User(username=form.username.data.lower(), email=form.email.data.lower(), password=hashed_password, firstName=form.firstName.data, lastName=form.lastName.data, phoneNumber=form.phoneNumber.data, streetNumber=form.streetNumber.data, city=form.city.data, state=form.state.data, zipcode=form.zipcode.data)
+        user = User(username=form.username.data.lower(), email=form.email.data.lower(), password=hashed_password, firstName=form.firstName.data, lastName=form.lastName.data, phoneNumber=cleaned_phoneNumber, streetNumber=form.streetNumber.data, city=form.city.data, state=form.state.data, zipcode=form.zipcode.data)
         
         # generate a new password and update user's password
         auth_code = ''.join(random.choices(string.digits, k=6))
@@ -76,32 +79,6 @@ def signup():
         return redirect(url_for('confirm_account'))
 
     return render_template('signup.html', title='Sign Up', form=form)
-
-
-#send_email function
-def send_email(to, auth_code, username):
-    confirm_link = url_for('auth_code', _external=True)
-    mail = current_app.extensions.get('mail')
-    message = Message(
-        subject='Authentication Code',
-        recipients=[to],
-        html=render_template('email.txt', username=username, auth_code=auth_code, confirm_link=confirm_link),
-        sender=app.config['MAIL_DEFAULT_SENDER']
-    )
-    mail.send(message)
-
-
-#send_text function
-def send_text(phone_number, auth_code):
-    my_phone_number = os.environ.get("TWILIO_PHONE_NUMBER")
-    message = client.messages.create(
-        body='Your authentication code is {}'.format(auth_code),
-        from_=my_phone_number,
-        to=phone_number
-    )
-    return message.sid
-
-
 #Confirm Account
 @app.route('/account/confirm', methods=['GET', 'POST'])
 def confirm_account():
@@ -414,14 +391,25 @@ def view_pdf(id):
     pdf_path = os.path.join(app.root_path, 'static/pet_records', pet.pdf_record)
     return send_file(pdf_path, attachment_filename=pet.pdf_record)
 
-
 #Appointment Request Page
 @app.route("/appointment/request", methods=['GET', 'POST'])
 @login_required
 def appointment():
     form = AppointmentForm()
     if form.validate_on_submit():
-        appointment = Appointment(owner_id=current_user.id, firstName=form.firstName.data, lastName=form.lastName.data, phoneNumber=form.phoneNumber.data, pet_name=form.pet_name.data, service=form.service.data,  weekday=form.weekday.data, timeSlot=form.timeSlot.data, streetNumber=form.streetNumber.data, city=form.city.data, state=form.state.data, zipcode=form.zipcode.data, cost=form.cost.data)
+        appointment = Appointment(owner_id=current_user.id, firstName=form.firstName.data, lastName=form.lastName.data, phoneNumber=form.phoneNumber.data, pet_name=form.pet_name.data, service=form.service.data, weekday=form.weekday.data, timeSlot=form.timeSlot.data, streetNumber=form.streetNumber.data, city=form.city.data, state=form.state.data, zipcode=form.zipcode.data)
+
+        # Update appointment cost based on service selected
+        if appointment.service == "Checkup" or appointment.service == "Spay or Neutering":
+            appointment.cost = 50
+        elif appointment.service == "Vaccines":
+            appointment.cost = 20
+        elif appointment.service == "DeWorming":
+            appointment.cost = 30
+        elif appointment.service == "Dental":
+            appointment.cost = 60
+        elif appointment.service == "Surgical":
+            appointment.cost = 500
 
         # Add Appointment to the Appointment Database
         db.session.add(appointment)
@@ -429,6 +417,7 @@ def appointment():
         
         flash('Your request has been received!', 'success')
         return redirect(url_for('dashboard'))
+
     return render_template('appointment_request.html', title='MakeAppointment', form=form)
 
 
