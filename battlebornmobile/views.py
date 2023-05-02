@@ -574,66 +574,65 @@ def update_access(user_id):
         return render_template("dashboard.html")
 
 
-# User Generate Reports
-@app.route('/user/reports/generate', methods=['GET', 'POST'])
-@login_required
+# define columns for each table
+user_columns = ["id", "username", "email", "created_at"]
+pet_columns = ["id", "name", "breed", "owner_id"]
+appointment_columns = ["id", "pet_id", "vet_id", "date", "cost"]
+
+
+# define a function to get the columns for a given table
+def get_columns(table_name):
+    if table_name == "User":
+        return user_columns
+    elif table_name == "Pet":
+        return pet_columns
+    elif table_name == "Appointment":
+        return appointment_columns
+    else:
+        return []
+
+
+#Generate Reports
+@app.route('/reports/generate', methods=['GET', 'POST'])
 def reports_generate():
     if request.method == 'POST':
-        # Get the table name and columns from the form
         table_name = request.form['table_name']
         columns = request.form.getlist('columns')
-        
-        # Create the SQL query to retrieve the data
-        columns_str = ', '.join(columns)
-        query_str = f"SELECT {columns_str} FROM {table_name}"
-        query = db.text(query_str)
-        
-        # Execute the query and retrieve the data
-        data = db.engine.execute(query).fetchall()
-        
-        # Format the data as a list of dictionaries
-        report_data = []
-        for row in data:
-            row_dict = {}
-            for i in range(len(columns)):
-                row_dict[columns[i]] = row[i]
-            report_data.append(row_dict)
-        
-        # Save the report to the database
-        report = Reports(
-            title=f"{table_name} Report",
-            data=str(report_data),
-            created_at=datetime.now()
-        )
-        db.session.add(report)
-        db.session.commit()
-        
-        # Display the report to the user
-        return render_template('reports_generate.html', report_data=report_data, columns=columns)
-    else:
-        # Get the names of all the database tables
-        inspector = db.inspect(db.engine)
-        tables = inspector.get_table_names()
-        
-        # Display the form to the user
-        return render_template('reports_generate.html', tables=tables)
+
+        # get the selected columns for the given table
+        selected_columns = []
+        for column in columns:
+            if column in get_columns(table_name):
+                selected_columns.append(column)
+
+        # query the database for the selected columns
+        if table_name == "User":
+            results = User.query.with_entities(User.id, User.username, User.email, User.created_at).all()
+        elif table_name == "Pet":
+            results = Pet.query.with_entities(Pet.id, Pet.name, Pet.breed, Pet.owner_id).all()
+        elif table_name == "Appointment":
+            results = Appointment.query.with_entities(Appointment.id, Appointment.pet_id, Appointment.vet_id, Appointment.date, Appointment.cost).all()
+        else:
+            results = []
+
+        # render the results in a template
+        return render_template('reports_generate.html', table_name=table_name, columns=selected_columns, results=results)
+
+    # if method is GET, render the reports page with the select form
+    return render_template('reports_generate.html', user_columns=user_columns, pet_columns=pet_columns, appointment_columns=appointment_columns)
 
 
-# Admin View Reports
-@app.route('/admin/reports/view')
+# API to get columns of a table
+@app.route('/api/columns/<table_name>')
 @login_required
-def reports_view():
-    # Check if the user is an admin
-    admin = current_user.AdminAccess
-    if admin:
-        # Get the reports from the database
-        reports = Reports.query.all()
-
-        # Display the reports to the admin user
-        return render_template('reports_view.html', reports=reports)
-    else:
-        flash("Access Denied: Admin Only")
-        return render_template("dashboard.html")
+def get_columns(table_name):
+    # Get the column names of the table
+    inspector = db.inspect(db.engine)
+    columns = inspector.get_columns(table_name)
+    column_names = [column['name'] for column in columns]
+    
+    # Return the column names as a JSON response
+    return jsonify({'columns': column_names})
 
 
 #Staff Dashboard

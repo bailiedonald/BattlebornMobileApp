@@ -4,6 +4,7 @@ from battlebornmobile import db, login_manager, mail, app, bcrypt
 from flask_login import UserMixin
 from flask_mail import Mail, Message
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
+from flask import jsonify
 
 
 @login_manager.user_loader
