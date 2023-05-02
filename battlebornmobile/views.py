@@ -8,6 +8,9 @@ from flask_login import login_user, current_user, logout_user, login_required
 from flask_mail import Mail, Message
 from werkzeug.utils import secure_filename
 from twilio.rest import Client
+from sqlalchemy import or_
+
+
 
 
 #index Page
@@ -153,15 +156,15 @@ def auth_code():
 #     return redirect(url_for('login'))
 
 
-#Login Page
+# Login Page
 @app.route("/login", methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated: 
         return redirect(url_for('index'))
     form = LoginForm()
     if form.validate_on_submit():
-        user = User.query.filter_by(email=form.email.data.lower()).first()
-        if user and bcrypt.check_password_hash(user.password, form.password.data) and user.active:
+        user = User.query.filter(or_(User.username == form.username_or_email.data.lower(), User.email == form.username_or_email.data.lower())).first()
+        if user and user.check_password(form.password.data) and user.active:
             login_user(user, remember=form.remember.data)
             next_page = request.args.get('next')
             staff = current_user.StaffAccess
@@ -170,8 +173,10 @@ def login():
             else:
                 return redirect(next_page) if next_page else redirect(url_for('dashboard'))
         else:
-            flash('Login Unsuccessful. Please check email and password', 'danger')
+            flash('Login unsuccessful. Please check email/username and password.', 'danger')
     return render_template('login.html', title='Login', form=form)
+
+
 
 
 #Logout Page

@@ -1,12 +1,11 @@
 import random, string, os, re
 from flask_wtf import FlaskForm
-from wtforms import StringField, DateField, FileField, SubmitField
-from wtforms import validators, StringField, PasswordField, SubmitField, BooleanField, DateField, SelectField, IntegerField, DateTimeField, FileField
+from wtforms import Form, validators, StringField, PasswordField, SubmitField, BooleanField, DateField, SelectField, IntegerField, DateTimeField, FileField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
 from flask_wtf.file import FileAllowed, FileRequired
 from battlebornmobile.models import User, Pet, Appointment
 from flask_login import current_user
-
+from sqlalchemy import or_
 
 
 #SignUpForm
@@ -42,12 +41,29 @@ class AuthCodeForm(FlaskForm):
     auth_code = StringField('Authentication Code', validators=[DataRequired()])
     submit = SubmitField('Submit')
 
-#LoginForm
+
+# LoginForm
 class LoginForm(FlaskForm):
-    email = StringField('Email', validators=[DataRequired(), Email()])
+    username_or_email = StringField('Username or Email', validators=[DataRequired()])
     password = PasswordField('Password', validators=[DataRequired()])
     remember = BooleanField('Remember Me')
     submit = SubmitField('Login')
+
+    def validate(self):
+        if not Form.validate(self):
+            return False
+
+        user = User.query.filter(or_(User.username == self.username_or_email.data.lower(), User.email == self.username_or_email.data.lower())).first()
+        if not user:
+            self.username_or_email.errors.append('Invalid username or email')
+            return False
+
+        if not user.check_password(self.password.data):
+            self.password.errors.append('Invalid password')
+            return False
+
+        return True
+
 
 #ResetPasswordForm
 class ResetPasswordForm(FlaskForm):
