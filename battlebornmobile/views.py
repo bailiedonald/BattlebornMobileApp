@@ -567,7 +567,7 @@ def updateAccess(user_id):
         user.AdminAccess = bool(request.form.get('admin_access'))
         db.session.commit()
         flash('User access updated successfully.')
-        return redirect(url_for('userAccess'))
+        return redirect(url_for('user_access'))
     else:
         flash ("Access Denied Admin Only.")
         return render_template("dashboard.html")
