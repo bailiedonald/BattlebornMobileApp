@@ -635,6 +635,23 @@ def get_columns(table_name):
     return jsonify({'columns': column_names})
 
 
+# Admin View Reports
+@app.route('/admin/reports/view')
+@login_required
+def reports_view():
+    # Check if the user is an admin
+    admin = current_user.AdminAccess
+    if admin:
+        # Get the reports from the database
+        reports = Reports.query.all()
+
+        # Display the reports to the admin user
+        return render_template('reports_view.html', reports=reports)
+    else:
+        flash("Access Denied: Admin Only")
+        return render_template("dashboard.html")
+
+
 #Staff Dashboard
 @app.route('/staff/dashboard')
 @login_required
