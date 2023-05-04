@@ -48,6 +48,7 @@ MarkupSafe==1.1.1
 mysql-connector-python==8.0.32
 packaging==23.0
 passlib==1.7.4
+pdfkit==1.0.0
 phonenumbers==8.13.8
 Pillow==9.3.0
 pluggy==1.0.0
@@ -78,6 +79,7 @@ unittest2==1.1.0
 uritemplate==4.1.1
 urllib3==1.26.15
 Werkzeug==1.0.1
+wkhtmltopdf==0.2
 wtf==0.1
 WTForms==3.0.1
 zipp==3.15.0
