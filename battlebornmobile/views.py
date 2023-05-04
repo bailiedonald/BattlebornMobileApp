@@ -2,7 +2,7 @@ import os, re, random, string, shutil, pdfkit
 from flask import Flask, current_app, render_template, make_response, url_for, flash, redirect, jsonify, abort, request, send_file, send_from_directory
 from battlebornmobile import app, db, bcrypt, mail, client
 from battlebornmobile.forms import SignUpForm, AuthCodeForm, LoginForm, PetForm, AppointmentForm, ResetPasswordForm, UpdateProfileForm, UpdateProfilePictureForm, VerificationCodeActualForm
-from battlebornmobile.models import User, Pet, Appointment, Reports
+from battlebornmobile.models import User, Pet, Appointment
 from datetime import datetime
 from flask_login import login_user, current_user, logout_user, login_required, UserMixin
 from flask_mail import Mail, Message
@@ -580,14 +580,8 @@ def generate_reports():
     if request.method == 'POST':
         # Extract the selected date from the form data
         selected_date = request.form.get('selected_date')
-        # Determine which report was requested based on the button that was pressed
-        report_type = request.form.get('report_type')
-        if report_type == 'Appointments':
-            # Redirect to the appointments report
-            return redirect(url_for('reports_date', date_scheduled=selected_date))
-        elif report_type == 'Pets':
-            # Redirect to the pets report
-            return redirect(url_for('reports_species', pet_species=selected_species))
+        # Redirect to the appropriate URL that includes the date
+        return redirect(url_for('reports_date', date_scheduled=selected_date))
     else:
         return render_template('reports_generate.html')
 
@@ -613,33 +607,6 @@ def reports_date(date_scheduled):
         response.headers['Content-Disposition'] = 'attachment; filename=apppointments_date.pdf'
 
         return response
-
-
-#Pet species Reports Template
-@app.route('/reports/pets/<pet_species>', methods=['GET', 'POST'])
-def reports_species(pet_species):
-    if request.method == 'POST':
-        # Extract the selected species from the form data
-        selected_species = request.form.get('selected_species')
-        # Redirect to the appropriate URL that includes the species
-        return redirect(url_for('reports_species', pet_species=selected_species))
-    else:
-        # Join the Pet and User tables on the owner_id foreign key
-        pets = db.session.query(Pet, User.firstName, User.lastName).join(User).filter(Pet.pet_species == pet_species).all()
-        if not pets:
-            # Display a flash message if there are no pets of the selected species
-            flash("No pets of this species found.")
-            return redirect(url_for('generate_reports'))
-
-        rendered = render_template("reports_species.html", pets=pets)
-        pdf = pdfkit.from_string(rendered, False)
-
-        response = make_response(pdf)
-        response.headers['Content-Type'] = 'application/pdf'
-        response.headers['Content-Disposition'] = 'attachment; filename=pets_species.pdf'
-
-        return response
-
 
 
 # # Admin View Reports

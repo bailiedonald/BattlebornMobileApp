@@ -11,7 +11,6 @@
 <body>
   <h1>Generate Reports</h1>
   <hr style="height:4px;border-width:0;color:gray;background-color:black">
-  
   <h3>Print all scheduled appointments for selected date:</h3>
   <form method="POST" action="{{ url_for('generate_reports') }}">
       <label for="selected_date">Select a date:</label>
@@ -21,29 +20,6 @@
   {% if appointments %}
       <p><a href="{{ url_for('reports_date', date_scheduled=date_scheduled) }}" target="_blank">Open PDF in new tab</a></p>
   {% endif %}
-  
-  <hr style="height:4px;border-width:0;color:gray;background-color:black">
-  
-  <h3>Print all owners with speciess:</h3>
-  <form method="POST" action="{{ url_for('generate_reports') }}">
-      <label for="selected_species">Select a species:</label>
-		</br>
-		<select id="pet_species" name="pet_species">
-			<option value=" "> </option>
-			<option value="Dog">Dog</option>
-			<option value="Cat">Cat</option>
-			<option value="Horse">Horse</option>
-			<option value="Pig">Pig</option>
-			<option value="Goat">Goat</option>
-			<option value="Chicken">Chicken</option>
-			<option value="Other">Other</option>
-		</select>
-      <input type="submit" value="Generate">
-  </form>
-  {% if appointments %}
-      <p><a href="{{ url_for('reports_species', pet_species=pet_species) }}" target="_blank">Open PDF in new tab</a></p>
-  {% endif %}
- 
   <hr style="height:4px;border-width:0;color:gray;background-color:black">
 </body>
 </html>
