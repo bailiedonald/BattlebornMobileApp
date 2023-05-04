@@ -16,7 +16,7 @@
 			<form method="POST" action="{{ url_for('update_appointment', id=appointment.id) }}">
 				<div class="form-group">
 				  <label for="dateSheduled">Date scheduled:</label>
-				  <input type="date" class="form-control" id="dateSheduled" name="dateSheduled" value="{{ appointment.dateSheduled }}">
+				  <input type="date" id="pet_dob" name="selected_date">
 				</div>
 				<div class="form-group">
 				  <label for="timeSheduled">Time scheduled:</label>

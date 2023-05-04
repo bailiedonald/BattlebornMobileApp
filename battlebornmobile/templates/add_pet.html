@@ -28,12 +28,23 @@
 		{{ form.pet_name(class="form-control") }}
 		<br/>
 
-		{{ form.pet_dob.label(class="form-label") }}
-		{{ form.pet_dob(class="form-control") }}
+		<label for="selected_date">Pet's Birthdate:</label>
 		<br/>
-		
+		<input type="date" id="pet_dob" name="pet_dob">
+		<br/>
+
 		{{ form.pet_species.label(class="form-label") }}
-		{{ form.pet_species(class="form-control") }}
+		</br>
+		<select id="pet_species" name="pet_species">
+			<option value=" "> </option>
+			<option value="Dog">Dog</option>
+			<option value="Cat">Cat</option>
+			<option value="Horse">Horse</option>
+			<option value="Pig">Pig</option>
+			<option value="Goat">Goat</option>
+			<option value="Chicken">Chicken</option>
+			<option value="Other">Other</option>
+		</select>
 		<br/>
 		
 		{{ form.pet_breed.label(class="form-label") }}
