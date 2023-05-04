@@ -586,10 +586,7 @@ def listOfAppointments():
   headerRowBackgroundColor = '#ffeeee'
   evenRowsBackgroundColor = '#ffeeff'
   oddRowsBackgroundColor = '#ffffff'
-  return Reporter.generateFromSql(db.session, reportTitle, sqlQuery, columnsToBeSummarized, 
-                                  "ltr", fontName, "Total Biiled Appointments", True,
-                                  headerRowBackgroundColor, evenRowsBackgroundColor, oddRowsBackgroundColor
-                                  )
+  return Reporter.generateFromSql(db.session, reportTitle, sqlQuery, columnsToBeSummarized, "ltr", fontName, "Total Biiled Appointments", True, headerRowBackgroundColor, evenRowsBackgroundColor, oddRowsBackgroundColor)
    
 # class Appointment(db.Model, UserMixin):
 #     id = db.Column(db.Integer, primary_key=True)
