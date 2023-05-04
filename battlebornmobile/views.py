@@ -6,7 +6,7 @@ from battlebornmobile.models import User, Pet, Appointment, Reports
 from datetime import datetime
 from flask_login import current_user, login_required, login_user, logout_user
 from flask_mail import Mail, Message
-from flask_sqlalchemy_report import Reporter
+from flask_sqlalchemy_report import Reporter 
 from sqlalchemy import or_
 from twilio.rest import Client
 from werkzeug.utils import secure_filename
@@ -614,6 +614,23 @@ def listOfAppointments():
 #     pet_id = db.Column(db.Integer, db.ForeignKey('pet.id'))
 #     owner_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     
+
+
+
+@app.route('/listOfPersons', methods=['GET'])
+def listOfPersons():
+  reportTitle = "Employee List"
+  sqlQuery = "SELECT FirstName as 'First Name', LastName as 'Last Name', phone as 'Phone Number', salary as 'Salary' FROM persons"
+  columnsToBeSummarized = ['Salary']
+  fontName = "Arial"
+  headerRowBackgroundColor = '#ffeeee'
+  evenRowsBackgroundColor = '#ffeeff'
+  oddRowsBackgroundColor = '#ffffff'
+  return Reporter.generateFromSql(db.session, reportTitle, sqlQuery, columnsToBeSummarized, 
+                                  "ltr", fontName, "Total Salary", True,
+                                  headerRowBackgroundColor, evenRowsBackgroundColor, oddRowsBackgroundColor
+                                  )
+   
 
 #Generate Reports
 @app.route('/admin/reports/generate', methods=['GET', 'POST'])
