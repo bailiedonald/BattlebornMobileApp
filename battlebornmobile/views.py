@@ -1,15 +1,16 @@
-import os, random, re, shutil, string
-from flask import Flask, abort, current_app, flash, jsonify, redirect, render_template, request, send_file, send_from_directory, url_for
+import os, re, random, string, shutil
+from flask import Flask, current_app, render_template, url_for, flash, redirect, jsonify, abort, request, send_file, send_from_directory
 from battlebornmobile import app, db, bcrypt, mail, client
 from battlebornmobile.forms import SignUpForm, AuthCodeForm, LoginForm, PetForm, AppointmentForm, ResetPasswordForm, UpdateProfileForm, UpdateProfilePictureForm, VerificationCodeActualForm
 from battlebornmobile.models import User, Pet, Appointment, Reports
 from datetime import datetime
-from flask_login import current_user, login_required, login_user, logout_user
+from flask_login import login_user, current_user, logout_user, login_required, UserMixin
 from flask_mail import Mail, Message
 from flask_sqlalchemy_report import Reporter 
 from sqlalchemy import or_
 from twilio.rest import Client
 from werkzeug.utils import secure_filename
+
 
 
 #index Page
@@ -573,24 +574,23 @@ def update_access(user_id):
         flash ("Access Denied Admin Only.")
         return render_template("dashboard.html")
 
-#Reports 
 
-#Test Reports
+
+#Generate Appointment Reports
 @app.route('/listOfAppointments', methods=['GET'])
 def listOfAppointments():
-  reportTitle = "Appointment List"
-  sqlQuery = 'SELECT firstName as "First Name", lastName as "Last Name", phoneNumber as "Phone Number", pet_name as "Pet Name", cost as "Payment" FROM appointments'
+  reportTitle = "Appointments List"
+  sqlQuery = 'SELECT firstName as "First Name", lastName as "Last Name", phoneNumber as "Phone Number", pet_name as "Pet Name", cost as "Payments" FROM Appointment'
   columnsToBeSummarized = ['Salary']
   fontName = "Arial"
   headerRowBackgroundColor = '#ffeeee'
   evenRowsBackgroundColor = '#ffeeff'
   oddRowsBackgroundColor = '#ffffff'
   return Reporter.generateFromSql(db.session, reportTitle, sqlQuery, columnsToBeSummarized, 
-                                  "ltr", fontName, "Total Cost", True,
+                                  "ltr", fontName, "Total Biiled Appointments", True,
                                   headerRowBackgroundColor, evenRowsBackgroundColor, oddRowsBackgroundColor
                                   )
    
-
 # class Appointment(db.Model, UserMixin):
 #     id = db.Column(db.Integer, primary_key=True)
 #     firstName = db.Column(db.String(30), nullable=True)
@@ -613,24 +613,6 @@ def listOfAppointments():
 #     #Link to Pet Owner in user Database
 #     pet_id = db.Column(db.Integer, db.ForeignKey('pet.id'))
 #     owner_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    
-
-
-
-@app.route('/listOfPersons', methods=['GET'])
-def listOfPersons():
-  reportTitle = "Employee List"
-  sqlQuery = "SELECT FirstName as 'First Name', LastName as 'Last Name', phone as 'Phone Number', salary as 'Salary' FROM persons"
-  columnsToBeSummarized = ['Salary']
-  fontName = "Arial"
-  headerRowBackgroundColor = '#ffeeee'
-  evenRowsBackgroundColor = '#ffeeff'
-  oddRowsBackgroundColor = '#ffffff'
-  return Reporter.generateFromSql(db.session, reportTitle, sqlQuery, columnsToBeSummarized, 
-                                  "ltr", fontName, "Total Salary", True,
-                                  headerRowBackgroundColor, evenRowsBackgroundColor, oddRowsBackgroundColor
-                                  )
-   
 
 #Generate Reports
 @app.route('/admin/reports/generate', methods=['GET', 'POST'])
@@ -788,21 +770,6 @@ def send_sms():
     flash('Notification sent successfully.', 'success')
 
     return render_template("dashboardadmin.html"), 'SMS sent!'
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
