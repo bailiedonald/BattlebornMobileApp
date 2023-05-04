@@ -574,12 +574,16 @@ def update_access(user_id):
         return render_template("dashboard.html")
 
 #Reports Template
-@app.route('/<firstName>,<date>')
-def reports_template():
-    return render_template("report_template.html")
+@app.route('/<lastName>,<pet_name>,<date_scheduled>') #Test Link http://127.0.0.1:5001/Bailie/Lucy/2023
+def reports_template(lastName, pet_name, date_scheduled):
+    rendered = render_template("report_template.html", lastName=lastName, pet_name=pet_name, date_scheduled=datedate_scheduled)
+    pdf = pdfkit.from_string(rendered, False)
 
+    response = make_response(pdf)
+    response.headers['Content-Type'] = 'application/pdf'
+    response.headers['Content-Disposition'] = 'inline'; filename=output.pdf
 
-
+    return response
 
 #Generate Reports
 @app.route('/admin/reports/generate', methods=['GET', 'POST'])
