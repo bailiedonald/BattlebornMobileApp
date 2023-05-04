@@ -575,11 +575,11 @@ def update_access(user_id):
 
 #Reports 
 
-#Test Reports
-@app.route('/listOfAppointments', methods=['GET'])
+#Appointment Reports
+@app.route('/listOfAppointments', methods=['GET', 'POST'])
 def listOfAppointments():
   reportTitle = "Appointment List"
-  sqlQuery = 'SELECT firstName as "First Name", lastName as "Last Name", phoneNumber as "Phone Number", pet_name as "Pet Name", cost as "Payment" FROM appointments'
+  sqlQuery = 'SELECT firstName as "First Name", lastName as "Last Name", phoneNumber as "Phone Number", pet_name as "Pet Name", cost as "Payment" FROM Appointment'
   columnsToBeSummarized = ['Salary']
   fontName = "Arial"
   headerRowBackgroundColor = '#ffeeee'
