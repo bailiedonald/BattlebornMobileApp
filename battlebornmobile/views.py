@@ -1,12 +1,11 @@
-import os, re, random, string, shutil
-from flask import Flask, current_app, render_template, url_for, flash, redirect, jsonify, abort, request, send_file, send_from_directory
+import os, re, random, string, shutil, pdfkit
+from flask import Flask, current_app, render_template, make_response, url_for, flash, redirect, jsonify, abort, request, send_file, send_from_directory
 from battlebornmobile import app, db, bcrypt, mail, client
 from battlebornmobile.forms import SignUpForm, AuthCodeForm, LoginForm, PetForm, AppointmentForm, ResetPasswordForm, UpdateProfileForm, UpdateProfilePictureForm, VerificationCodeActualForm
-from battlebornmobile.models import User, Pet, Appointment, Reports
+from battlebornmobile.models import User, Pet, Appointment
 from datetime import datetime
 from flask_login import login_user, current_user, logout_user, login_required, UserMixin
 from flask_mail import Mail, Message
-from flask_sqlalchemy_report import Reporter 
 from sqlalchemy import or_
 from twilio.rest import Client
 from werkzeug.utils import secure_filename
@@ -575,73 +574,51 @@ def update_access(user_id):
         return render_template("dashboard.html")
 
 
-
-#Generate Appointment Reports
-@app.route('/listOfAppointments', methods=['GET'])
-def listOfAppointments():
-  reportTitle = "Appointments List"
-  sqlQuery = 'SELECT firstName as "First Name", lastName as "Last Name", phoneNumber as "Phone Number", pet_name as "Pet Name", cost as "Payments" FROM Appointment'
-  columnsToBeSummarized = ['Salary']
-  fontName = "Arial"
-  headerRowBackgroundColor = '#ffeeee'
-  evenRowsBackgroundColor = '#ffeeff'
-  oddRowsBackgroundColor = '#ffffff'
-  return Reporter.generateFromSql(db.session, reportTitle, sqlQuery, columnsToBeSummarized, 
-                                  "ltr", fontName, "Total Biiled Appointments", True,
-                                  headerRowBackgroundColor, evenRowsBackgroundColor, oddRowsBackgroundColor
-                                  )
-   
-# class Appointment(db.Model, UserMixin):
-#     id = db.Column(db.Integer, primary_key=True)
-#     firstName = db.Column(db.String(30), nullable=True)
-#     lastName = db.Column(db.String(30), nullable=True)
-#     phoneNumber = db.Column(db.String(20), nullable=True)
-#     pet_name = db.Column(db.String(30))
-#     cost = db.Column(db.Integer)
-#     service =db.Column(db.String(250))
-#     streetNumber = db.Column(db.String(50))
-#     city = db.Column(db.String(25))
-#     state = db.Column(db.String(15))
-#     zipcode = db.Column(db.String(5))
-#     weekday = db.Column(db.String(10))
-#     timeSlot = db.Column(db.String(20))
-#     dateSheduled = db.Column(db.String(30))
-#     timeSheduled = db.Column(db.String(20))
-#     scheduled = db.Column(db.Boolean, default=False, nullable=False)
-#     completed = db.Column(db.Boolean, default=False, nullable=False)
-#     cancelled = db.Column(db.Boolean, default=False, nullable=False)
-#     #Link to Pet Owner in user Database
-#     pet_id = db.Column(db.Integer, db.ForeignKey('pet.id'))
-#     owner_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-
 #Generate Reports
 @app.route('/admin/reports/generate', methods=['GET', 'POST'])
 def generate_reports():
     if request.method == 'POST':
-        table_name = request.form['table_name']
-        columns = request.form.getlist('columns')
-        if table_name == 'User':
-            data = User.query.with_entities(*columns).all()
-        elif table_name == 'Pet':
-            data = Pet.query.with_entities(*columns).all()
-        elif table_name == 'Appointment':
-            data = Appointment.query.with_entities(*columns).all()
-        else:
-            data = None
-        return render_template('reports_generate.html', data=data)
-    return render_template('reports_generate.html', user_columns=User.__table__.columns.keys(), pet_columns=Pet.__table__.columns.keys(), appointment_columns=Appointment.__table__.columns.keys())
-
-
-# Admin View Reports
-@app.route('/admin/reports/view')
-@login_required
-def reports_view():
-    admin = current_user.AdminAccess
-    if admin == True:
-        return render_template("reports_view.html")
+        # Extract the selected date from the form data
+        selected_date = request.form.get('selected_date')
+        # Redirect to the appropriate URL that includes the date
+        return redirect(url_for('reports_date', date_scheduled=selected_date))
     else:
-        flash ("Access Denied Administrators Only.")
-        return render_template("dashboard.html")
+        return render_template('reports_generate.html')
+
+
+#Daily Reports Template
+@app.route('/reports/<date_scheduled>', methods=['GET', 'POST'])
+def reports_date(date_scheduled):
+    if request.method == 'POST':
+        # Extract the selected date from the form data
+        selected_date = request.form.get('selected_date')
+        # Redirect to the appropriate URL that includes the date
+        return redirect(url_for('reports_date', date_scheduled=selected_date))
+    else:
+        appointments = Appointment.query.filter_by(dateSheduled=date_scheduled).all()
+        if not appointments:
+            # Display a flash message if there are no appointments scheduled
+            flash("No appointments scheduled for this date.")
+        rendered = render_template("reports_date.html", appointments=appointments)
+        pdf = pdfkit.from_string(rendered, False)
+
+        response = make_response(pdf)
+        response.headers['Content-Type'] = 'application/pdf'
+        response.headers['Content-Disposition'] = 'attachment; filename=apppointments_date.pdf'
+
+        return response
+
+
+# # Admin View Reports
+# @app.route('/admin/reports/view')
+# @login_required
+# def reports_view():
+#     admin = current_user.AdminAccess
+#     if admin == True:
+#         return render_template("reports_view.html")
+#     else:
+#         flash ("Access Denied Administrators Only.")
+#         return render_template("dashboard.html")
 
 
 #Staff Dashboard
