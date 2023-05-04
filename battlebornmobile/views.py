@@ -1,15 +1,16 @@
-import os, random, re, shutil, string
-from flask import Flask, abort, current_app, flash, jsonify, redirect, render_template, request, send_file, send_from_directory, url_for
+import os, re, random, string, shutil
+from flask import Flask, current_app, render_template, url_for, flash, redirect, jsonify, abort, request, send_file, send_from_directory
 from battlebornmobile import app, db, bcrypt, mail, client
 from battlebornmobile.forms import SignUpForm, AuthCodeForm, LoginForm, PetForm, AppointmentForm, ResetPasswordForm, UpdateProfileForm, UpdateProfilePictureForm, VerificationCodeActualForm
 from battlebornmobile.models import User, Pet, Appointment, Reports
 from datetime import datetime
-from flask_login import current_user, login_required, login_user, logout_user
+from flask_login import login_user, current_user, logout_user, login_required
 from flask_mail import Mail, Message
-from flask_sqlalchemy_report import Reporter
-from sqlalchemy import or_
-from twilio.rest import Client
 from werkzeug.utils import secure_filename
+from twilio.rest import Client
+from sqlalchemy import or_
+
+
 
 
 #index Page
@@ -574,7 +575,6 @@ def update_access(user_id):
         return render_template("dashboard.html")
 
 
-
 #Generate Reports
 @app.route('/admin/reports/generate', methods=['GET', 'POST'])
 def generate_reports():
@@ -731,21 +731,6 @@ def send_sms():
     flash('Notification sent successfully.', 'success')
 
     return render_template("dashboardadmin.html"), 'SMS sent!'
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
