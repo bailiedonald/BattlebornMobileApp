@@ -1,5 +1,5 @@
-import os, re, random, string, shutil
-from flask import Flask, current_app, render_template, url_for, flash, redirect, jsonify, abort, request, send_file, send_from_directory
+import os, re, random, string, shutil, pdfkit
+from flask import Flask, current_app, render_template, make_response, url_for, flash, redirect, jsonify, abort, request, send_file, send_from_directory
 from battlebornmobile import app, db, bcrypt, mail, client
 from battlebornmobile.forms import SignUpForm, AuthCodeForm, LoginForm, PetForm, AppointmentForm, ResetPasswordForm, UpdateProfileForm, UpdateProfilePictureForm, VerificationCodeActualForm
 from battlebornmobile.models import User, Pet, Appointment, Reports
@@ -572,6 +572,13 @@ def update_access(user_id):
     else:
         flash ("Access Denied Admin Only.")
         return render_template("dashboard.html")
+
+#Reports Template
+@app.route('/<firstName>,<date>')
+def reports_template():
+    return render_template("report_template.html")
+
+
 
 
 #Generate Reports
