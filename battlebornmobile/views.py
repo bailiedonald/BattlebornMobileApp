@@ -6,9 +6,10 @@ from battlebornmobile.models import User, Pet, Appointment, Reports
 from datetime import datetime
 from flask_login import login_user, current_user, logout_user, login_required
 from flask_mail import Mail, Message
-from werkzeug.utils import secure_filename
-from twilio.rest import Client
+from flask_sqlalchemy_report import Reporter 
 from sqlalchemy import or_
+from twilio.rest import Client
+from werkzeug.utils import secure_filename
 
 
 
@@ -574,6 +575,23 @@ def update_access(user_id):
         flash ("Access Denied Admin Only.")
         return render_template("dashboard.html")
 
+
+
+
+@app.route('/listOfPersons', methods=['GET'])
+def listOfPersons():
+  reportTitle = "Employee List"
+  sqlQuery = "SELECT FirstName as 'First Name', LastName as 'Last Name', phone as 'Phone Number', salary as 'Salary' FROM persons"
+  columnsToBeSummarized = ['Salary']
+  fontName = "Arial"
+  headerRowBackgroundColor = '#ffeeee'
+  evenRowsBackgroundColor = '#ffeeff'
+  oddRowsBackgroundColor = '#ffffff'
+  return Reporter.generateFromSql(db.session, reportTitle, sqlQuery, columnsToBeSummarized, 
+                                  "ltr", fontName, "Total Salary", True,
+                                  headerRowBackgroundColor, evenRowsBackgroundColor, oddRowsBackgroundColor
+                                  )
+   
 
 #Generate Reports
 @app.route('/admin/reports/generate', methods=['GET', 'POST'])
