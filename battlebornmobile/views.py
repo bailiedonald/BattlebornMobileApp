@@ -573,47 +573,7 @@ def update_access(user_id):
         flash ("Access Denied Admin Only.")
         return render_template("dashboard.html")
 
-#Reports 
 
-#Appointment Reports
-@app.route('/listOfAppointments', methods=['GET', 'POST'])
-def listOfAppointments():
-  reportTitle = "Appointment List"
-  sqlQuery = 'SELECT firstName as "First Name", lastName as "Last Name", phoneNumber as "Phone Number", pet_name as "Pet Name", cost as "Payment" FROM Appointment'
-  columnsToBeSummarized = ['Salary']
-  fontName = "Arial"
-  headerRowBackgroundColor = '#ffeeee'
-  evenRowsBackgroundColor = '#ffeeff'
-  oddRowsBackgroundColor = '#ffffff'
-  return Reporter.generateFromSql(db.session, reportTitle, sqlQuery, columnsToBeSummarized, 
-                                  "ltr", fontName, "Total Cost", True,
-                                  headerRowBackgroundColor, evenRowsBackgroundColor, oddRowsBackgroundColor
-                                  )
-   
-
-# class Appointment(db.Model, UserMixin):
-#     id = db.Column(db.Integer, primary_key=True)
-#     firstName = db.Column(db.String(30), nullable=True)
-#     lastName = db.Column(db.String(30), nullable=True)
-#     phoneNumber = db.Column(db.String(20), nullable=True)
-#     pet_name = db.Column(db.String(30))
-#     cost = db.Column(db.Integer)
-#     service =db.Column(db.String(250))
-#     streetNumber = db.Column(db.String(50))
-#     city = db.Column(db.String(25))
-#     state = db.Column(db.String(15))
-#     zipcode = db.Column(db.String(5))
-#     weekday = db.Column(db.String(10))
-#     timeSlot = db.Column(db.String(20))
-#     dateSheduled = db.Column(db.String(30))
-#     timeSheduled = db.Column(db.String(20))
-#     scheduled = db.Column(db.Boolean, default=False, nullable=False)
-#     completed = db.Column(db.Boolean, default=False, nullable=False)
-#     cancelled = db.Column(db.Boolean, default=False, nullable=False)
-#     #Link to Pet Owner in user Database
-#     pet_id = db.Column(db.Integer, db.ForeignKey('pet.id'))
-#     owner_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    
 
 #Generate Reports
 @app.route('/admin/reports/generate', methods=['GET', 'POST'])
