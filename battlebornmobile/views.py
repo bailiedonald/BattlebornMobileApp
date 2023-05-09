@@ -1,3 +1,9 @@
+# Team Memebers Contributiing to this page: 
+# Donald Bailie - 
+# Davis DeSarle -
+# Grant Kite -
+# Spencer Carter -
+
 import os, re, random, string, shutil, pdfkit
 from flask import Flask, current_app, render_template, make_response, url_for, flash, redirect, jsonify, abort, request, send_file, send_from_directory
 from battlebornmobile import app, db, bcrypt, mail, client

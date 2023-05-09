@@ -1,3 +1,6 @@
+// Team Memebers Contributiing to this page: 
+// Spencer Carter -
+
 // Set the inactivity timeout to 30 minutes (in milliseconds)
 const INACTIVITY_TIMEOUT = 1 * 60 * 1000;
 

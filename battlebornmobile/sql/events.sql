@@ -1,3 +1,6 @@
+--Team Memebers Contributiing to this page: 
+--Grant Kite -
+
 CREATE TABLE events (
   id INTEGER,
   start DATETIME,

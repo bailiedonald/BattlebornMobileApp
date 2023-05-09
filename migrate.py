@@ -1,3 +1,7 @@
+# Team Memebers Contributiing to this page: 
+# Donald Bailie - 
+
+
 # shell db script to migrate
 # usage: Python3 migrate.py
 from battlebornmobile import app, db

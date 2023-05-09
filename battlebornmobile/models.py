@@ -1,3 +1,9 @@
+# Team Memebers Contributiing to this page: 
+# Donald Bailie - 
+# Davis DeSarle -
+# Grant Kite -
+# Spencer Carter -
+
 import os, random, string, re
 from datetime import datetime
 from battlebornmobile import db, login_manager, mail, app, bcrypt

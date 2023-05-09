@@ -1,4 +1,8 @@
-# For Dev and Local Use
+# Team Memebers Contributiing to this page: 
+# Donald Bailie - 
+# Davis DeSarle -
+# Spencer Carter -
+
 import os
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
@@ -26,9 +30,9 @@ app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 465
 app.config['MAIL_USE_SSL'] = True
 app.config['MAIL_USE_TLS'] = False
-app.config['MAIL_USERNAME'] = 'spencer@alsetdsgd.com'
-app.config['MAIL_PASSWORD'] = 'Spring22'
-app.config['MAIL_DEFAULT_SENDER'] = ('Battle Born Mobile', 'spencer@alsetdsgd.com')
+app.config['MAIL_USERNAME'] = '*******'
+app.config['MAIL_PASSWORD'] = '*******'
+app.config['MAIL_DEFAULT_SENDER'] = ('Battle Born Mobile', '***********S')
 
 
 #Twilio credentials
